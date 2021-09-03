@@ -88,7 +88,7 @@ void GamepadClass::read()
 
 void GamepadClass::save()
 {
-	Storage.setInputMode(current_input_mode);
+	Storage.setInputMode(inputMode);
 	Storage.setDpadMode(dpadMode);
 	Storage.setSOCDMode(socdMode);
 	Storage.save();
@@ -97,9 +97,9 @@ void GamepadClass::save()
 void GamepadClass::load()
 {
 	Storage.start();
-	current_input_mode = Storage.getInputMode();
-	if (current_input_mode > HID)
-		current_input_mode = DEFAULT_INPUT_MODE;
+	inputMode = Storage.getInputMode();
+	if (inputMode > INPUT_MODE_HID)
+		inputMode = DEFAULT_INPUT_MODE;
 
 	dpadMode = Storage.getDpadMode();
 	if (dpadMode > DPAD_MODE_RIGHT_ANALOG)

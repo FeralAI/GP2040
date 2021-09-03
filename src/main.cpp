@@ -15,7 +15,6 @@
 #include "usb_driver.h"
 #include "Gamepad.h"
 #include "GamepadStorage.h"
-#include "StateConverter.h"
 #include "NeoPico.hpp"
 #include "AnimationStation.hpp"
 #include "definitions/BoardConfig.h"
@@ -40,29 +39,32 @@ static inline void setup()
 
 	// Check for input mode override
 	Gamepad.read();
-	InputMode newInputMode = current_input_mode;
-	if (Gamepad.state.pressedR3())
-		newInputMode = HID;
-	else if (Gamepad.state.pressedS1())
-		newInputMode = SWITCH;
-	else if (Gamepad.state.pressedS2())
-		newInputMode = XINPUT;
+	InputMode newInputMode = Gamepad.inputMode;
+	if (Gamepad.pressedR3())
+		newInputMode = INPUT_MODE_HID;
+	else if (Gamepad.pressedS1())
+		newInputMode = INPUT_MODE_SWITCH;
+	else if (Gamepad.pressedS2())
+		newInputMode = INPUT_MODE_XINPUT;
 
-	if (newInputMode != current_input_mode)
+	if (newInputMode != Gamepad.inputMode)
 	{
-		current_input_mode = newInputMode;
-		Storage.setInputMode(current_input_mode);
+		Gamepad.inputMode = newInputMode;
+		Storage.setInputMode(Gamepad.inputMode);
 		Storage.save();
 	}
 
-	// Grab a pointer to the USB report for the selected input
-	report = select_report(&report_size, current_input_mode);
+	current_input_mode = Gamepad.inputMode;
 
 	// Initialize USB/HID driver
+	set_report(Gamepad.getReport(), Gamepad.getReportSize());
 	initialize_driver();
 }
 
 static inline void loop() {
+	static const uint8_t reportSize = Gamepad.getReportSize();
+	static uint8_t *report;
+
 	// Poll every 1ms
 	const uint32_t intervalMS = 1;
 	static uint32_t nextRuntime = 0;
@@ -85,10 +87,10 @@ static inline void loop() {
 	Gamepad.process();
 
 	// Convert to USB report
-	report = fill_report(&Gamepad.state, false);
+	report = Gamepad.getReport();
 
 	// Send it!
-	send_report(report, report_size);
+	send_report(report, reportSize);
 
 	// Ensure next runtime ahead of current time
 	nextRuntime = getMillis() + intervalMS;

@@ -19,7 +19,7 @@ void GamepadStorage::setDpadMode(DpadMode mode)
 
 InputMode GamepadStorage::getInputMode()
 {
-	InputMode mode = XINPUT;
+	InputMode mode = INPUT_MODE_XINPUT;
 	get(STORAGE_INPUT_MODE_INDEX, mode);
 	return mode;
 }

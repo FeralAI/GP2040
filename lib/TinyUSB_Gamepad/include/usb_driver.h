@@ -6,12 +6,7 @@
 #ifndef USB_DRIVER_H_
 #define USB_DRIVER_H_
 
-typedef enum
-{
-	XINPUT,
-	SWITCH,
-	HID,
-} InputMode;
+#include "GamepadDescriptors.h"
 
 extern InputMode current_input_mode;
 
@@ -21,7 +16,8 @@ extern "C"
 #endif
 
 	void initialize_driver(void);
-	void send_report(void *report, uint8_t report_size);
+	void set_report(uint8_t *report, uint8_t report_size);
+	void send_report(uint8_t *report, uint8_t report_size);
 
 #ifdef __cplusplus
 }
