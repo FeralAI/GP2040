@@ -1,8 +1,0 @@
-{
-	"files.associations": {
-		"*.config": "xml",
-		"*.linq": "csharp",
-		"hid_driver.h": "c",
-		"xinput_driver.h": "c"
-	}
-}
