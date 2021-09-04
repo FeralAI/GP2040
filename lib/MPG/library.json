@@ -1,8 +1,8 @@
 {
-	"name": "Gamepad",
+	"name": "MPG",
 	"version": "0.0.1",
-	"description": "C++ library for common gamepad handling.",
-	"keywords": "c c++ baremetal gamepad hid xinput switch",
+	"description": "C++ library for handling USB gamepad inputs on multiple platforms.",
+	"keywords": "c++ baremetal gamepad hid dinput directinput switch xinput",
 	"authors": [
 		{
 			"name": "Jason Skuby",

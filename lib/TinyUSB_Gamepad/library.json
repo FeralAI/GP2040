@@ -10,7 +10,7 @@
 		}
 	],
 	"dependencies": {
-		"GamepadDescriptors": ">0.0.1"
+		"MPG": ">0.0.1"
 	},
 	"license": "MIT"
 }
