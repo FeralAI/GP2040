@@ -1,0 +1,13 @@
+{
+	"name": "GamepadDescriptors",
+	"version": "0.0.1",
+	"description": "Header-only library containing common USB gamepad descriptors",
+	"keywords": "gamepad descriptors hid xinput switch",
+	"authors": [
+		{
+			"name": "Jason Skuby",
+			"url": "https://mytechtoybox.com"
+		}
+	],
+	"license": "MIT"
+}

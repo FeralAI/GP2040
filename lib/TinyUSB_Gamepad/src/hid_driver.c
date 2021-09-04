@@ -24,7 +24,7 @@ bool send_hid_report(uint8_t report_id, uint8_t *report, uint8_t report_size)
 bool hid_device_control_request(uint8_t rhport, tusb_control_request_t const * request)
 {
 	if (
-		current_input_mode == INPUT_MODE_HID &&
+		get_input_mode() == INPUT_MODE_HID &&
 		request->bmRequestType == 0xA1 &&
 		request->bRequest == HID_REQ_CONTROL_GET_REPORT &&
 		request->wValue == 0x0300

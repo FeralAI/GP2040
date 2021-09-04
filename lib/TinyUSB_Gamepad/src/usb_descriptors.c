@@ -21,7 +21,7 @@ uint16_t const *tud_descriptor_string_cb(uint8_t index, uint16_t langid)
 	uint8_t chr_count;
 
 	static const char *string_descriptors[4];
-	switch (current_input_mode)
+	switch (get_input_mode())
 	{
 		case INPUT_MODE_XINPUT:
 			for (int i = 0; i < 4; i++)
@@ -70,7 +70,7 @@ uint16_t const *tud_descriptor_string_cb(uint8_t index, uint16_t langid)
 // Application return pointer to descriptor
 uint8_t const *tud_descriptor_device_cb(void)
 {
-	switch (current_input_mode)
+	switch (get_input_mode())
 	{
 		case INPUT_MODE_XINPUT:
 			return (const uint8_t *)xinput_device_descriptor;
@@ -88,7 +88,7 @@ uint8_t const *tud_descriptor_device_cb(void)
 // Descriptor contents must exist long enough for transfer to complete
 uint8_t const *tud_hid_descriptor_report_cb(void)
 {
-	switch (current_input_mode)
+	switch (get_input_mode())
 	{
 		case INPUT_MODE_SWITCH:
 			return switch_report_descriptor;
@@ -104,7 +104,7 @@ uint8_t const *tud_hid_descriptor_report_cb(void)
 uint8_t const *tud_descriptor_configuration_cb(uint8_t index)
 {
 	(void)index; // for multiple configurations
-	switch (current_input_mode)
+	switch (get_input_mode())
 	{
 		case INPUT_MODE_XINPUT:
 			return xinput_configuration_descriptor;

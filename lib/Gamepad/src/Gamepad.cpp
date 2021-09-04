@@ -311,6 +311,29 @@ void GamepadClass::process()
 	}
 }
 
+void GamepadClass::load()
+{
+	inputMode = Storage.getInputMode();
+	if (inputMode > INPUT_MODE_HID)
+		inputMode = DEFAULT_INPUT_MODE;
+
+	dpadMode = Storage.getDpadMode();
+	if (dpadMode > DPAD_MODE_RIGHT_ANALOG)
+		dpadMode = DEFAULT_DPAD_MODE;
+
+	socdMode = Storage.getSOCDMode();;
+	if (socdMode > SOCD_MODE_SECOND_INPUT_PRIORITY)
+		socdMode = DEFAULT_SOCD_MODE;
+}
+
+void GamepadClass::save()
+{
+	Storage.setInputMode(inputMode);
+	Storage.setDpadMode(dpadMode);
+	Storage.setSOCDMode(socdMode);
+	Storage.save();
+}
+
 bool GamepadClass::isDpadHotkeyPressed()
 {
 	// Select + Start

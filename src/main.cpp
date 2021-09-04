@@ -19,9 +19,6 @@
 #include "AnimationStation.hpp"
 #include "definitions/BoardConfig.h"
 
-void *report;
-uint8_t report_size;
-
 uint32_t getMillis() { return to_ms_since_boot(get_absolute_time()); }
 
 #ifdef BOARD_LEDS_PIN
@@ -29,7 +26,23 @@ NeoPico leds(BOARD_LEDS_PIN, BOARD_LEDS_COUNT);
 AnimationStation as(BOARD_LEDS_COUNT);
 #endif
 
-static inline void setup()
+void setup();
+void loop();
+void core1();
+
+int main()
+{
+	setup();
+
+	multicore_launch_core1(core1);
+
+	while (1)
+		loop();
+
+	return 0;
+}
+
+void setup()
 {
 	// Set up controller
 	Gamepad.setup();
@@ -54,14 +67,12 @@ static inline void setup()
 		Storage.save();
 	}
 
-	current_input_mode = Gamepad.inputMode;
-
-	// Initialize USB/HID driver
-	set_report(Gamepad.getReport(), Gamepad.getReportSize());
-	initialize_driver();
+	// Initialize USB driver
+	initialize_driver(Gamepad.inputMode);
 }
 
-static inline void loop() {
+void loop()
+{
 	static const uint8_t reportSize = Gamepad.getReportSize();
 	static uint8_t *report;
 
@@ -124,16 +135,4 @@ void core1()
 		leds.Show();
 	}
 #endif
-}
-
-int main()
-{
-	setup();
-
-	multicore_launch_core1(core1);
-
-	while (1)
-		loop();
-
-	return 0;
 }

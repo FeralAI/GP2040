@@ -16,47 +16,42 @@
 #include "hid_driver.h"
 #include "xinput_driver.h"
 
-InputMode current_input_mode = INPUT_MODE_XINPUT;
-static uint8_t *current_report;
-static uint8_t current_report_size;
+InputMode input_mode = INPUT_MODE_XINPUT;
 
-void initialize_driver(void)
+InputMode get_input_mode(void)
 {
-	tusb_init();
+	return input_mode;
 }
 
-void set_report(uint8_t *report, uint8_t report_size)
+void initialize_driver(InputMode mode)
 {
-	current_report = report;
-	current_report_size = report_size;
+	input_mode = mode;
+	tusb_init();
 }
 
 void send_report(uint8_t *report, uint8_t report_size)
 {
 	static uint8_t previous_report[CFG_TUD_ENDPOINT0_SIZE] = { };
 
-	current_report = report;
-	current_report_size = report_size;
-
 	if (tud_suspended())
 		tud_remote_wakeup();
 
-	if (memcmp(previous_report, current_report, current_report_size) != 0)
+	if (memcmp(previous_report, report, report_size) != 0)
 	{
 		bool sent = false;
-		switch (current_input_mode)
+		switch (input_mode)
 		{
 			case INPUT_MODE_XINPUT:
-				sent = send_xinput_report(current_report, current_report_size);
+				sent = send_xinput_report(report, report_size);
 				break;
 
 			default:
-				sent = send_hid_report(0, current_report, current_report_size);
+				sent = send_hid_report(0, report, report_size);
 				break;
 		}
 
 		if (sent)
-			memcpy(previous_report, current_report, current_report_size);
+			memcpy(previous_report, report, report_size);
 	}
 
 	tud_task();
@@ -68,7 +63,7 @@ const usbd_class_driver_t *usbd_app_driver_get_cb(uint8_t *driver_count)
 {
 	*driver_count = 1;
 
-	switch (current_input_mode)
+	switch (input_mode)
 	{
 		case INPUT_MODE_XINPUT:
 			return &xinput_driver;
@@ -91,8 +86,23 @@ uint16_t tud_hid_get_report_cb(uint8_t report_id, hid_report_type_t report_type,
 	(void)report_type;
 	(void)reqlen;
 
-	memcpy(buffer, current_report, current_report_size);
-	return current_report_size;
+	uint8_t report_size = 0;
+	SwitchReport switch_report;
+	HIDReport hid_report;
+	switch (input_mode)
+	{
+		case INPUT_MODE_SWITCH:
+			report_size = sizeof(SwitchReport);
+			memcpy(buffer, &switch_report, report_size);
+			break;
+
+		default:
+			report_size = sizeof(HIDReport);
+			memcpy(buffer, &hid_report, report_size);
+			break;
+	}
+
+	return report_size;
 }
 
 // Invoked when received SET_REPORT control request or
