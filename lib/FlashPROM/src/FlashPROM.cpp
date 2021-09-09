@@ -6,11 +6,11 @@
 #include "FlashPROM.h"
 
 uint8_t FlashPROM::cache[EEPROM_SIZE_BYTES] = { };
-mutex_t FlashPROM::flashMutex;
+spin_lock_t *FlashPROM::flashLock;
 
 FlashPROM::FlashPROM()
 {
-	mutex_init(&flashMutex);
+	flashLock = spin_lock_instance(spin_lock_claim_unused(true));
 }
 
 void FlashPROM::start()
@@ -20,10 +20,11 @@ void FlashPROM::start()
 
 void FlashPROM::commit()
 {
-	mutex_enter_blocking(&flashMutex);
-	uint32_t int_status = save_and_disable_interrupts();
+	while (is_spin_locked(flashLock));
+	uint32_t interrupts = spin_lock_blocking(flashLock);
+
 	flash_range_erase((intptr_t)EEPROM_ADDRESS_START - (intptr_t)XIP_BASE, EEPROM_SIZE_BYTES);
 	flash_range_program((intptr_t)EEPROM_ADDRESS_START - (intptr_t)XIP_BASE, cache, EEPROM_SIZE_BYTES);
-	restore_interrupts(int_status);
-	mutex_exit(&flashMutex);
+
+	spin_unlock(flashLock, interrupts);
 }
