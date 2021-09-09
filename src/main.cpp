@@ -12,7 +12,6 @@
 
 #include "pico/stdlib.h"
 #include "pico/multicore.h"
-#include "pico/util/queue.h"
 
 #include "usb_driver.h"
 #include "BoardConfig.h"
@@ -32,7 +31,6 @@ MPG gamepad;
 #ifdef BOARD_LEDS_PIN
 NeoPico leds(BOARD_LEDS_PIN, BOARD_LEDS_COUNT);
 AnimationStation as(BOARD_LEDS_COUNT);
-queue_t animationQueue;
 
 AnimationHotkey animationHotkeys(MPG gamepad)
 {
@@ -123,7 +121,6 @@ void setup()
 
 	// Initialize core1 vars
 	mutex_init(&core1Mutex);
-	queue_init(&animationQueue, sizeof(AnimationHotkey), 1);
 
 	// Initialize USB driver
 	initialize_driver(gamepad.inputMode);
@@ -150,7 +147,10 @@ void loop()
 #ifdef BOARD_LEDS_PIN
 	AnimationHotkey action = animationHotkeys(gamepad);
 	if (action != HOTKEY_LEDS_NONE)
-		queue_add_blocking(&animationQueue, &action);
+	{
+		as.HandleEvent(action);
+		AnimationStore.save(as);
+	}
 #endif
 
 	gamepad.process();
@@ -164,8 +164,6 @@ void loop()
 void core1()
 {
 #ifdef BOARD_LEDS_PIN
-	static AnimationHotkey action;
-
 	AnimationStore.setup();
 
 	AnimationMode mode = AnimationStore.getBaseAnimation();
@@ -186,28 +184,9 @@ void core1()
 
 	while (1)
 	{
-		static const uint32_t intervalMS = 20;
-		static uint32_t nextRuntime = 0;
-
-		mutex_enter_blocking(&core1Mutex);
-
-		if (getMillis() - nextRuntime < 0)
-			return;
-
-		if (queue_try_peek(&animationQueue, &action))
-		{
-			queue_remove_blocking(&animationQueue, &action);
-			as.HandleEvent(action);
-			AnimationStore.save(as);
-		}
-
 		as.Animate();
 		leds.SetFrame(as.frame);
 		leds.Show();
-
-		nextRuntime = getMillis() + intervalMS;
-
-		mutex_exit(&core1Mutex);
 	}
 #endif
 }

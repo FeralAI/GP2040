@@ -26,9 +26,7 @@ GamepadStorage::GamepadStorage()
 
 void GamepadStorage::save()
 {
-	mutex_enter_blocking(&core1Mutex);
 	EEPROM.commit();
-	mutex_exit(&core1Mutex);
 }
 
 DpadMode GamepadStorage::getDpadMode()
@@ -118,13 +116,5 @@ void AnimationStorage::save(AnimationStation as)
 	}
 
 	if (dirty)
-	{
-		uint32_t owner = 0;
-		bool blocked = mutex_try_enter(&core1Mutex, &owner);
-
 		EEPROM.commit();
-
-		if (blocked)
-			mutex_exit(&core1Mutex);
-	}
 }

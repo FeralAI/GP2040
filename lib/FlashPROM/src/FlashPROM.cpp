@@ -6,6 +6,12 @@
 #include "FlashPROM.h"
 
 uint8_t FlashPROM::cache[EEPROM_SIZE_BYTES] = { };
+mutex_t FlashPROM::flashMutex;
+
+FlashPROM::FlashPROM()
+{
+	mutex_init(&flashMutex);
+}
 
 void FlashPROM::start()
 {
@@ -14,8 +20,10 @@ void FlashPROM::start()
 
 void FlashPROM::commit()
 {
+	mutex_enter_blocking(&flashMutex);
 	uint32_t int_status = save_and_disable_interrupts();
 	flash_range_erase((intptr_t)EEPROM_ADDRESS_START - (intptr_t)XIP_BASE, EEPROM_SIZE_BYTES);
 	flash_range_program((intptr_t)EEPROM_ADDRESS_START - (intptr_t)XIP_BASE, cache, EEPROM_SIZE_BYTES);
 	restore_interrupts(int_status);
+	mutex_exit(&flashMutex);
 }
