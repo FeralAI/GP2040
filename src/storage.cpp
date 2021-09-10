@@ -17,7 +17,6 @@
 #include "AnimationStorage.hpp"
 
 #include "LEDConfig.h"
-#include "Multicore.h"
 
 GamepadStorage::GamepadStorage()
 {
@@ -97,7 +96,7 @@ void AnimationStorage::setup()
 }
 
 /* We don't want to couple our event calls directly to what AS is doing. That means we need to
-  let it handle its business, and then afterwards save any changes we find. */
+	let it handle its business, and then afterwards save any changes we find. */
 void AnimationStorage::save(AnimationStation as)
 {
 	bool dirty = false;
