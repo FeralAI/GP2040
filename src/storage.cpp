@@ -47,7 +47,7 @@ void GamepadStorage::get(int index, void *data, uint16_t size)
 
 void GamepadStorage::set(int index, void *data, uint16_t size)
 {
-	getStorageValue(index, data, size);
+	setStorageValue(index, data, size);
 }
 
 /* Animation stuffs */
