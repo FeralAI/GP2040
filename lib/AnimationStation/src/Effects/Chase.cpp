@@ -7,20 +7,20 @@ Chase::Chase(std::vector<Pixel> pixels) : Animation(pixels) {
   this->mode = CHASE;
 }
 
-void Chase::Animate(uint32_t (&frame)[100]) {
+void Chase::Animate(RGB (&frame)[100]) {
   if (!time_reached(this->nextRunTime)) {
     return;
   }
 
   for (size_t i = 0; i != pixels.size(); i++) {
     if (this->IsChasePixel(pixels[i].index)) {
-      uint32_t color = AnimationStation::Wheel(this->WheelFrame(i));
+      RGB color = AnimationStation::Wheel(this->WheelFrame(i));
       for (size_t j = 0; j != pixels[i].positions.size(); j++) {
         frame[pixels[i].positions[j]] = color;
       }
     } else {
       for (size_t j = 0; j != pixels[i].positions.size(); j++) {
-        frame[pixels[i].positions[j]] = 0;
+        frame[pixels[i].positions[j]] = ColorBlack;
       }
     }
   }

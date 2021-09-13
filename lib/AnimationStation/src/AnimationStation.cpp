@@ -11,6 +11,7 @@
 #include "Effects/Chase.hpp"
 #include "Effects/Rainbow.hpp"
 #include "Effects/StaticColor.hpp"
+#include "Effects/StaticColor_NeoGeo.hpp"
 
 uint8_t AnimationStation::brightness = 0;
 float AnimationStation::brightnessX = 0;
@@ -45,34 +46,33 @@ void AnimationStation::ChangeAnimation() {
   }
 
   if (this->animations.size() > 0) {
-    switch (this->animations.at(0)->mode) {
-    case STATIC:
-      this->animations.push_back(new Rainbow(pixels));
-      break;
-    case RAINBOW:
-      this->animations.push_back(new Chase(pixels));
-      break;
-    default:
-      this->animations.push_back(new StaticColor(pixels));
-      break;
-    }
-
+    SetAnimation((AnimationMode)((this->animations.at(0)->mode + 1) % ANIMATION_MODE_COUNT));
     this->animations.erase(this->animations.begin());
   }
 
   AnimationStation::nextAnimationChange = make_timeout_time_ms(250);
 }
 
-void AnimationStation::SetStaticColor() {
-  this->animations.push_back(new StaticColor(pixels));
-}
+void AnimationStation::SetAnimation(AnimationMode mode) {
+  switch (mode)
+  {
+    case RAINBOW:
+      this->animations.push_back(new Rainbow(pixels));
+      break;
 
-void AnimationStation::SetRainbow() {
-  this->animations.push_back(new Rainbow(pixels));
-}
+    case CHASE:
+      this->animations.push_back(new Chase(pixels));
+      break;
 
-void AnimationStation::SetChase() {
-  this->animations.push_back(new Chase(pixels));
+    case STATIC_NEOGEO:
+      this->animations.push_back(new StaticColor_NeoGeo(pixels));
+      break;
+
+    case STATIC:
+    default:
+      this->animations.push_back(new StaticColor(pixels));
+      break;
+  }
 }
 
 void AnimationStation::Animate() {
@@ -90,13 +90,13 @@ void AnimationStation::Animate() {
       this->animations.erase(std::remove(this->animations.begin(), this->animations.end(), element), this->animations.end());
     }
     else {
-      element->Animate(this->frame);
+      element->Animate(frame);
     }
   }
 }
 
 void AnimationStation::Clear() {
-  memcpy(frame, 0, sizeof(frame));
+  memset(frame, 0, sizeof(frame));
 }
 
 float AnimationStation::GetBrightnessX() {
@@ -105,6 +105,11 @@ float AnimationStation::GetBrightnessX() {
 
 uint8_t AnimationStation::GetBrightness() {
   return AnimationStation::brightness;
+}
+
+void AnimationStation::GetAdjustedFrame(uint32_t *frameValue) {
+  for (int i = 0; i < 100; i++)
+    frameValue[i] = this->frame[i].value(brightnessX);
 }
 
 void AnimationStation::SetBrightness(uint8_t brightness) {
@@ -139,21 +144,15 @@ void AnimationStation::IncreaseBrightness() {
   AnimationStation::nextBrightnessChange = make_timeout_time_ms(250);
 }
 
-uint32_t AnimationStation::RGB(uint8_t r, uint8_t g, uint8_t b) {
-  return ((uint32_t)(r * brightnessX) << 8) |
-         ((uint32_t)(g * brightnessX) << 16) |
-         (uint32_t)(b * brightnessX);
-}
-
-uint32_t AnimationStation::Wheel(uint8_t pos) {
+RGB AnimationStation::Wheel(uint8_t pos) {
   pos = 255 - pos;
   if (pos < 85) {
-    return AnimationStation::RGB(255 - pos * 3, 0, pos * 3);
+    return RGB(255 - pos * 3, 0, pos * 3);
   } else if (pos < 170) {
     pos -= 85;
-    return AnimationStation::RGB(0, pos * 3, 255 - pos * 3);
+    return RGB(0, pos * 3, 255 - pos * 3);
   } else {
     pos -= 170;
-    return AnimationStation::RGB(pos * 3, 255 - pos * 3, 0);
+    return RGB(pos * 3, 255 - pos * 3, 0);
   }
 }

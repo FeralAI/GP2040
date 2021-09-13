@@ -7,13 +7,13 @@ Rainbow::Rainbow(std::vector<Pixel> pixels) : Animation(pixels) {
   this->mode = RAINBOW;
 }
 
-void Rainbow::Animate(uint32_t (&frame)[100]) {
+void Rainbow::Animate(RGB (&frame)[100]) {
   if (!time_reached(this->nextRunTime)) {
     return;
   }
 
   for (size_t i = 0; i != pixels.size(); i++) {
-    uint32_t color = AnimationStation::Wheel(this->currentFrame);
+    RGB color = AnimationStation::Wheel(this->currentFrame);
     for (size_t j = 0; j != pixels[i].positions.size(); j++) {
       frame[pixels[i].positions[j]] = color;
     }

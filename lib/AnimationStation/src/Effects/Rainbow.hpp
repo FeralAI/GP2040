@@ -12,7 +12,7 @@ class Rainbow : public Animation {
 public:
   Rainbow(std::vector<Pixel> pixels);
 
-  void Animate(uint32_t (&frame)[100]);
+  void Animate(RGB (&frame)[100]);
 
   static void SetDefaultCycleTime(int cycleTime) {
     Rainbow::defaultCycleTime = cycleTime;

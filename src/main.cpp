@@ -110,24 +110,13 @@ void core1()
 
 #ifdef BOARD_LEDS_PIN
 	static AnimationHotkey action;
+	static uint32_t frame[100];
 
 	AnimationStore.setup();
 
+
 	AnimationMode mode = AnimationStore.getBaseAnimation();
-	switch (mode)
-	{
-		case RAINBOW:
-			as.SetRainbow();
-			break;
-
-		case CHASE:
-			as.SetChase();
-			break;
-
-		default:
-			as.SetStaticColor();
-			break;
-	}
+	as.SetAnimation(mode);
 #endif
 
 	while (1)
@@ -144,7 +133,8 @@ void core1()
 		}
 
 		as.Animate();
-		leds.SetFrame(as.frame);
+		as.GetAdjustedFrame(frame);
+		leds.SetFrame(frame);
 		leds.Show();
 #endif
 

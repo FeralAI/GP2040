@@ -3,7 +3,6 @@
 
 #include "Animation.hpp"
 #include "AnimationStation.hpp"
-#include "Effects/StaticColor.hpp"
 
 class AnimationStorage
 {

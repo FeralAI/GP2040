@@ -1,6 +1,8 @@
 #include <MPG.h>
 #include "AnimationStation.hpp"
 
+static const uint32_t masksNeoGeo[] = { GAMEPAD_MASK_B3, GAMEPAD_MASK_B4, GAMEPAD_MASK_R1, GAMEPAD_MASK_L1 };
+
 static AnimationHotkey animationHotkeys(MPG gamepad)
 {
 	AnimationHotkey action = HOTKEY_LEDS_NONE;
@@ -139,5 +141,5 @@ static AnimationHotkey animationHotkeys(MPG gamepad)
 #endif
 
 #ifndef LEDS_STATIC_COLOR_COLOR
-#define LEDS_STATIC_COLOR_COLOR 255
+#define LEDS_STATIC_COLOR_COLOR ColorRed
 #endif

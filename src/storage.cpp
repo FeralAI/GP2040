@@ -6,6 +6,8 @@
 #include <GamepadStorage.h>
 #include "FlashPROM.h"
 #include "AnimationStorage.hpp"
+#include "AnimationStation/src/Effects/StaticColor.hpp"
+#include "AnimationStation/src/Effects/StaticColor_NeoGeo.hpp"
 #include "BoardConfig.h"
 
 #define STORAGE_LEDS_BRIGHTNESS_INDEX (STORAGE_FIRST_AVAILBLE_INDEX)              // 1 byte
@@ -80,6 +82,7 @@ void AnimationStorage::setup()
 {
 	AnimationStation::SetBrightness(this->getBrightness());
 	StaticColor::SetDefaultColor(LEDS_STATIC_COLOR_COLOR);
+	StaticColor_NeoGeo::setThemeMasks(masksNeoGeo);
 }
 
 void AnimationStorage::save(AnimationStation as)

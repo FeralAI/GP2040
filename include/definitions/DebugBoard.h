@@ -56,8 +56,6 @@
 
 #define LEDS_BASE_ANIMATION CHASE
 
-#define LEDS_BASE_ANIMATION_LAST_PIXEL 23
-
 const static std::vector<Pixel> pixels =
 {
 	{ .index = LEDS_DPAD_LEFT,  .mask = GAMEPAD_MASK_LEFT,  .positions = { 0, 1 } },

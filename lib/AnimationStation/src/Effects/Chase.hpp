@@ -12,7 +12,7 @@ class Chase : public Animation {
 public:
   Chase(std::vector<Pixel> pixels);
 
-  void Animate(uint32_t (&frame)[100]);
+  void Animate(RGB (&frame)[100]);
 
   static void SetDefaultCycleTime(int cycleTime) {
     Chase::defaultCycleTime = cycleTime;
