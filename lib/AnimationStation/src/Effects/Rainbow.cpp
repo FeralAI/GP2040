@@ -13,7 +13,7 @@ void Rainbow::Animate(RGB (&frame)[100]) {
   }
 
   for (size_t i = 0; i != pixels.size(); i++) {
-    RGB color = AnimationStation::Wheel(this->currentFrame);
+    RGB color = RGB::wheel(this->currentFrame);
     for (size_t j = 0; j != pixels[i].positions.size(); j++) {
       frame[pixels[i].positions[j]] = color;
     }

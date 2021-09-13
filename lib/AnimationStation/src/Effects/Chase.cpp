@@ -14,7 +14,7 @@ void Chase::Animate(RGB (&frame)[100]) {
 
   for (size_t i = 0; i != pixels.size(); i++) {
     if (this->IsChasePixel(pixels[i].index)) {
-      RGB color = AnimationStation::Wheel(this->WheelFrame(i));
+      RGB color = RGB::wheel(this->WheelFrame(i));
       for (size_t j = 0; j != pixels[i].positions.size(); j++) {
         frame[pixels[i].positions[j]] = color;
       }

@@ -6,12 +6,7 @@
  */
 
 #include <algorithm>
-
 #include "AnimationStation.hpp"
-#include "Effects/Chase.hpp"
-#include "Effects/Rainbow.hpp"
-#include "Effects/StaticColor.hpp"
-#include "Effects/StaticColor_NeoGeo.hpp"
 
 uint8_t AnimationStation::brightness = 0;
 float AnimationStation::brightnessX = 0;
@@ -142,17 +137,4 @@ void AnimationStation::IncreaseBrightness() {
     AnimationStation::SetBrightness(BRIGHTNESS_STEPS);
 
   AnimationStation::nextBrightnessChange = make_timeout_time_ms(250);
-}
-
-RGB AnimationStation::Wheel(uint8_t pos) {
-  pos = 255 - pos;
-  if (pos < 85) {
-    return RGB(255 - pos * 3, 0, pos * 3);
-  } else if (pos < 170) {
-    pos -= 85;
-    return RGB(0, pos * 3, 255 - pos * 3);
-  } else {
-    pos -= 170;
-    return RGB(pos * 3, 255 - pos * 3, 0);
-  }
 }
