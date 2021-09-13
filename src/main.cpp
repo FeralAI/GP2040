@@ -17,13 +17,12 @@
 
 #include "usb_driver.h"
 #include "BoardConfig.h"
-#include "LEDConfig.h"
 
 MPGS gamepad(GAMEPAD_DEBOUNCE_MILLIS);
 
 #ifdef BOARD_LEDS_PIN
-NeoPico leds(BOARD_LEDS_PIN, BOARD_LEDS_COUNT);
-AnimationStation as(BOARD_LEDS_COUNT);
+NeoPico leds(BOARD_LEDS_PIN, pixels);
+AnimationStation as(pixels);
 queue_t animationQueue;
 #endif
 
@@ -104,7 +103,7 @@ void loop()
 
 void core1()
 {
-	static const uint32_t intervalMS = 20;
+	static const uint32_t intervalMS = 10;
 	static uint32_t nextRuntime = 0;
 
 	multicore_lockout_victim_init();

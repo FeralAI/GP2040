@@ -6,6 +6,8 @@
 #ifndef BOARD_CONFIG_H_
 #define BOARD_CONFIG_H_
 
+#include <vector>
+
 #define DEBUG_BOARD           0
 #define PICO_BOARD            1
 #define OPEN_STICK_BOARD      2
@@ -21,5 +23,9 @@
 #else
 #include "definitions/RP2040Board.h"
 #endif
+
+extern const std::vector<Pixel> pixels;
+
+#include "LEDConfig.h"
 
 #endif

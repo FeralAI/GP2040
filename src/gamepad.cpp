@@ -8,7 +8,6 @@
 #include "pico/stdlib.h"
 
 #include "BoardConfig.h"
-#include "LEDConfig.h"
 
 struct GamepadButtonMapping
 {

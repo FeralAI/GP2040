@@ -1,11 +1,13 @@
 #ifndef _ANIMATION_STATION_H_
 #define _ANIMATION_STATION_H_
 
+#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <vector>
 #include "hardware/clocks.h"
 
+#include "NeoPico.hpp"
 #include "Animation.hpp"
 
 #define BRIGHTNESS_MAXIMUM  100
@@ -26,7 +28,7 @@ typedef enum
 class AnimationStation
 {
 public:
-  AnimationStation(int numPixels);
+  AnimationStation(std::vector<Pixel> pixels);
 
   void Animate();
   void HandleEvent(AnimationHotkey action);
@@ -52,9 +54,7 @@ public:
 protected:
   static uint8_t brightness;
   static float brightnessX;
-
-private:
-  int numPixels = 0;
+  std::vector<Pixel> pixels;
 };
 
 #endif

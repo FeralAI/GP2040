@@ -2,6 +2,10 @@
 #define _ANIMATION_H_
 
 #include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <vector>
+#include "NeoPico.hpp"
 
 typedef enum
 {
@@ -12,26 +16,14 @@ typedef enum
 
 class Animation {
 public:
-  Animation() {
-    this->firstPixel = Animation::defaultFirstPixel;
-    this->lastPixel = Animation::defaultLastPixel;
-    this->totalLoops = 1;
-  }
-  virtual void Animate(uint32_t (&frame)[100]);
+  Animation(std::vector<Pixel> pixels);
+
+  virtual void Animate(uint32_t (&frame)[100]) = 0;
   AnimationMode mode;
 
   bool isComplete();
-
-  static void SetDefaultPixels(int firstPixel, int lastPixel) {
-    Animation::defaultFirstPixel = firstPixel;
-    Animation::defaultLastPixel = lastPixel;
-  }
 protected:
-	static int defaultFirstPixel;
-  static int defaultLastPixel;
-
-  int firstPixel;
-  int lastPixel;
+  std::vector<Pixel> pixels;
   int currentLoop = 0;
   int totalLoops;
   bool baseAnimation = true;

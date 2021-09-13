@@ -5,9 +5,6 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <vector>
 #include <algorithm>
 
 #include "AnimationStation.hpp"
@@ -20,9 +17,8 @@ float AnimationStation::brightnessX = 0;
 absolute_time_t AnimationStation::nextAnimationChange = 0;
 absolute_time_t AnimationStation::nextBrightnessChange = 0;
 
-AnimationStation::AnimationStation(int numPixels) {
-  this->numPixels = numPixels;
-	AnimationStation::SetBrightness(1);
+AnimationStation::AnimationStation(std::vector<Pixel> pixels) : pixels(pixels) {
+  AnimationStation::SetBrightness(1);
 }
 
 void AnimationStation::HandleEvent(AnimationHotkey action) {
@@ -51,13 +47,13 @@ void AnimationStation::ChangeAnimation() {
   if (this->animations.size() > 0) {
     switch (this->animations.at(0)->mode) {
     case STATIC:
-      this->animations.push_back(new Rainbow());
+      this->animations.push_back(new Rainbow(pixels));
       break;
     case RAINBOW:
-      this->animations.push_back(new Chase());
+      this->animations.push_back(new Chase(pixels));
       break;
     default:
-      this->animations.push_back(new StaticColor());
+      this->animations.push_back(new StaticColor(pixels));
       break;
     }
 
@@ -68,14 +64,16 @@ void AnimationStation::ChangeAnimation() {
 }
 
 void AnimationStation::SetStaticColor() {
-  this->animations.push_back(new StaticColor());
+  this->animations.push_back(new StaticColor(pixels));
 }
 
 void AnimationStation::SetRainbow() {
-  this->animations.push_back(new Rainbow());
+  this->animations.push_back(new Rainbow(pixels));
 }
 
-void AnimationStation::SetChase() { this->animations.push_back(new Chase()); }
+void AnimationStation::SetChase() {
+  this->animations.push_back(new Chase(pixels));
+}
 
 void AnimationStation::Animate() {
   if (this->animations.size() == 0) {
@@ -98,9 +96,7 @@ void AnimationStation::Animate() {
 }
 
 void AnimationStation::Clear() {
-  for (int i = 0; i < this->numPixels; ++i) {
-    frame[i] = 0;
-  }
+  memcpy(frame, 0, sizeof(frame));
 }
 
 float AnimationStation::GetBrightnessX() {

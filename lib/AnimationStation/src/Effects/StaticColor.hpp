@@ -1,15 +1,15 @@
 #ifndef _STATIC_COLOR_H_
 #define _STATIC_COLOR_H_
 
+#include <vector>
+#include <stdio.h>
+#include <stdlib.h>
 #include "../Animation.hpp"
 #include "../AnimationStation.hpp"
 
 class StaticColor : public Animation {
 public:
-  StaticColor() : Animation() {
-    this->color = StaticColor::defaultColor;
-    this->mode = STATIC;
-  }
+  StaticColor(std::vector<Pixel> pixels);
 
   void Animate(uint32_t (&frame)[100]);
 

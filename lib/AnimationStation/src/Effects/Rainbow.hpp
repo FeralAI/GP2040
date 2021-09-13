@@ -1,6 +1,7 @@
 #ifndef _RAINBOW_H_
 #define _RAINBOW_H_
 
+#include <vector>
 #include <stdio.h>
 #include <stdlib.h>
 #include "../Animation.hpp"
@@ -9,10 +10,8 @@
 
 class Rainbow : public Animation {
 public:
-  Rainbow() : Animation() {
-    this->cycleTime = Rainbow::defaultCycleTime;
-    this->mode = RAINBOW;
-  }
+  Rainbow(std::vector<Pixel> pixels);
+
   void Animate(uint32_t (&frame)[100]);
 
   static void SetDefaultCycleTime(int cycleTime) {

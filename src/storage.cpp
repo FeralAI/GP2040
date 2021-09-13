@@ -6,7 +6,7 @@
 #include <GamepadStorage.h>
 #include "FlashPROM.h"
 #include "AnimationStorage.hpp"
-#include "LEDConfig.h"
+#include "BoardConfig.h"
 
 #define STORAGE_LEDS_BRIGHTNESS_INDEX (STORAGE_FIRST_AVAILBLE_INDEX)              // 1 byte
 #define STORAGE_LEDS_BASE_ANIMATION_MODE_INDEX (STORAGE_FIRST_AVAILBLE_INDEX + 1) // 4 bytes
@@ -79,7 +79,6 @@ void AnimationStorage::setBrightness(uint8_t brightness)
 void AnimationStorage::setup()
 {
 	AnimationStation::SetBrightness(this->getBrightness());
-	Animation::SetDefaultPixels(LEDS_BASE_ANIMATION_FIRST_PIXEL, LEDS_BASE_ANIMATION_LAST_PIXEL);
 	StaticColor::SetDefaultColor(LEDS_STATIC_COLOR_COLOR);
 }
 
