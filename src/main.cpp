@@ -126,7 +126,7 @@ void core1()
 		{
 			queue_remove_blocking(&animationQueue, &action);
 			as.HandleEvent(action);
-			AnimationStore.save(as);
+			AnimationStore.save();
 		}
 
 		as.Animate();

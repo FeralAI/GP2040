@@ -46,9 +46,10 @@ public:
   void ChangeAnimation();
   void GetAdjustedFrame(uint32_t *frameValue);
 
+  uint8_t GetMode();
+  void SetMode(uint8_t mode);
   static float GetBrightnessX();
   static uint8_t GetBrightness();
-  static uint8_t GetMode();
   static void SetBrightness(uint8_t brightness);
   static void DecreaseBrightness();
   static void IncreaseBrightness();
@@ -61,7 +62,7 @@ public:
 protected:
   static uint8_t brightness;
   static float brightnessX;
-  static uint8_t animationIndex;
+  uint8_t animationIndex = 0;
   std::vector<Pixel> pixels;
 };
 

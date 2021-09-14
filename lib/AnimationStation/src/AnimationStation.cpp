@@ -9,20 +9,19 @@
 
 uint8_t AnimationStation::brightness = 0;
 float AnimationStation::brightnessX = 0;
-uint8_t AnimationStation::animationIndex = 0;
 absolute_time_t AnimationStation::nextAnimationChange = 0;
 absolute_time_t AnimationStation::nextBrightnessChange = 0;
 
 AnimationStation::AnimationStation(std::vector<Pixel> pixels) : pixels(pixels) {
   AnimationStation::SetBrightness(1);
 
-  this->animations.push_back(new StaticColor(pixels));
-  this->animations.push_back(new Rainbow(pixels));
-  this->animations.push_back(new Chase(pixels));
+  animations.push_back(new StaticColor(pixels));
+  animations.push_back(new Rainbow(pixels));
+  animations.push_back(new Chase(pixels));
 }
 
 void AnimationStation::AddAnimation(Animation *animation) {
-  this->animations.push_back(animation);
+  animations.push_back(animation);
 }
 
 void AnimationStation::HandleEvent(AnimationHotkey action) {
@@ -35,11 +34,11 @@ void AnimationStation::HandleEvent(AnimationHotkey action) {
   }
 
   if (action == HOTKEY_LEDS_ANIMATION_UP) {
-    this->ChangeAnimation();
+    ChangeAnimation();
   }
 
   if (action == HOTKEY_LEDS_ANIMATION_DOWN) {
-    this->ChangeAnimation();
+    ChangeAnimation();
   }
 }
 
@@ -53,12 +52,12 @@ void AnimationStation::ChangeAnimation() {
 }
 
 void AnimationStation::Animate() {
-  if (this->animations.size() == 0) {
+  if (animations.size() == 0) {
     this->Clear();
     return;
   }
 
-  Animation *animation = this->animations[animationIndex];
+  Animation *animation = animations[animationIndex];
   if (!animation->isComplete()) {
     animation->Animate(frame);
   }
@@ -77,7 +76,11 @@ uint8_t AnimationStation::GetBrightness() {
 }
 
 uint8_t AnimationStation::GetMode() {
-  return AnimationStation::animationIndex;
+  return animationIndex;
+}
+
+void AnimationStation::SetMode(uint8_t mode) {
+  animationIndex = mode;
 }
 
 void AnimationStation::GetAdjustedFrame(uint32_t *frameValue) {

@@ -10,7 +10,7 @@
 #include "BoardConfig.h"
 
 #define STORAGE_LEDS_BRIGHTNESS_INDEX (STORAGE_FIRST_AVAILBLE_INDEX)              // 1 byte
-#define STORAGE_LEDS_BASE_ANIMATION_MODE_INDEX (STORAGE_FIRST_AVAILBLE_INDEX + 1) // 4 bytes
+#define STORAGE_LEDS_BASE_ANIMATION_MODE_INDEX (STORAGE_FIRST_AVAILBLE_INDEX + 1) // 1 byte
 
 static void getStorageValue(int index, void *data, uint16_t size)
 {
@@ -53,14 +53,14 @@ void GamepadStorage::set(int index, void *data, uint16_t size)
 
 /* Animation stuffs */
 
-uint8_t AnimationStorage::getBaseAnimation()
+uint8_t AnimationStorage::getMode()
 {
-	uint8_t mode;
+	uint8_t mode = 0;
 	getStorageValue(STORAGE_LEDS_BASE_ANIMATION_MODE_INDEX, &mode, sizeof(uint8_t));
 	return mode;
 }
 
-void AnimationStorage::setBaseAnimation(uint8_t mode)
+void AnimationStorage::setMode(uint8_t mode)
 {
 	setStorageValue(STORAGE_LEDS_BASE_ANIMATION_MODE_INDEX, &mode, sizeof(uint8_t));
 }
@@ -79,26 +79,28 @@ void AnimationStorage::setBrightness(uint8_t brightness)
 
 void AnimationStorage::setup(AnimationStation *as)
 {
+	this->as = as;
 	AnimationStation::SetBrightness(this->getBrightness());
 	StaticColor::SetDefaultColor(LEDS_STATIC_COLOR_COLOR);
+	as->SetMode(getMode());
 	configureAnimations(as);
 }
 
-void AnimationStorage::save(AnimationStation as)
+void AnimationStorage::save()
 {
 	bool dirty = false;
 
-	uint8_t brightness = as.GetBrightness();
+	uint8_t brightness = as->GetBrightness();
 	if (brightness != getBrightness())
 	{
 		setBrightness(brightness);
 		dirty = true;
 	}
 
-	uint8_t mode = as.GetMode();
-	if (mode != getBaseAnimation())
+	uint8_t mode = as->GetMode();
+	if (mode != getMode())
 	{
-		setBaseAnimation(mode);
+		setMode(mode);
 		dirty = true;
 	}
 

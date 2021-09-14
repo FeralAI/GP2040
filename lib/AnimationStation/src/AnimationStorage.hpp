@@ -6,14 +6,16 @@
 
 class AnimationStorage
 {
-	public:
-		void setup(AnimationStation *as);
-		void save(AnimationStation as);
+  public:
+    void setup(AnimationStation *as);
+    void save();
 
-		uint8_t getBaseAnimation();
-		void setBaseAnimation(uint8_t mode);
-		uint8_t getBrightness();
-		void setBrightness(uint8_t brightness);
+    uint8_t getMode();
+    void setMode(uint8_t mode);
+    uint8_t getBrightness();
+    void setBrightness(uint8_t brightness);
+  protected:
+    AnimationStation *as;
 };
 
 static AnimationStorage AnimationStore;
