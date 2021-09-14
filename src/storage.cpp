@@ -5,12 +5,7 @@
 
 #include <GamepadStorage.h>
 #include "FlashPROM.h"
-#include "AnimationStorage.hpp"
-#include "AnimationStation/src/Effects/StaticColor.hpp"
 #include "BoardConfig.h"
-
-#define STORAGE_LEDS_BRIGHTNESS_INDEX (STORAGE_FIRST_AVAILBLE_INDEX)              // 1 byte
-#define STORAGE_LEDS_BASE_ANIMATION_MODE_INDEX (STORAGE_FIRST_AVAILBLE_INDEX + 1) // 1 byte
 
 static void getStorageValue(int index, void *data, uint16_t size)
 {
@@ -52,6 +47,14 @@ void GamepadStorage::set(int index, void *data, uint16_t size)
 }
 
 /* Animation stuffs */
+
+#ifdef BOARD_LEDS_PIN
+
+#include "AnimationStorage.hpp"
+#include "AnimationStation/src/Effects/StaticColor.hpp"
+
+#define STORAGE_LEDS_BRIGHTNESS_INDEX (STORAGE_FIRST_AVAILBLE_INDEX)              // 1 byte
+#define STORAGE_LEDS_BASE_ANIMATION_MODE_INDEX (STORAGE_FIRST_AVAILBLE_INDEX + 1) // 1 byte
 
 uint8_t AnimationStorage::getMode()
 {
@@ -106,3 +109,5 @@ void AnimationStorage::save()
 	if (dirty)
 		EEPROM.commit();
 }
+
+#endif
