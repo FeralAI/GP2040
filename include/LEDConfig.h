@@ -1,6 +1,7 @@
 #include <vector>
 #include <MPG.h>
 #include "AnimationStation.hpp"
+#include "LEDThemes.h"
 
 #ifndef LEDS_DPAD_LEFT
 #define LEDS_DPAD_LEFT -1
@@ -104,38 +105,10 @@
 
 extern const std::vector<Pixel> pixels;
 
-static StaticTheme themeNeoGeo(
-	pixels,
-	{
-		{ GAMEPAD_MASK_UP,    ColorWhite },
-		{ GAMEPAD_MASK_DOWN,  ColorWhite },
-		{ GAMEPAD_MASK_LEFT,  ColorWhite },
-		{ GAMEPAD_MASK_RIGHT, ColorWhite },
-		{ GAMEPAD_MASK_B3,    ColorRed },
-		{ GAMEPAD_MASK_B4,    ColorYellow },
-		{ GAMEPAD_MASK_R1,    ColorGreen },
-		{ GAMEPAD_MASK_L1,    ColorBlue },
-	}
-);
-
-static StaticTheme themeNeoGeoCurved(
-	pixels,
-	{
-		{ GAMEPAD_MASK_UP,    ColorWhite },
-		{ GAMEPAD_MASK_DOWN,  ColorWhite },
-		{ GAMEPAD_MASK_LEFT,  ColorWhite },
-		{ GAMEPAD_MASK_RIGHT, ColorWhite },
-		{ GAMEPAD_MASK_B1,    ColorRed },
-		{ GAMEPAD_MASK_B3,    ColorYellow },
-		{ GAMEPAD_MASK_B4,    ColorGreen },
-		{ GAMEPAD_MASK_R1,    ColorBlue },
-	}
-);
-
 static void configureAnimations(AnimationStation *as) {
 	as->SetStaticColor(LEDS_STATIC_COLOR_COLOR);
-	as->AddAnimation(&themeNeoGeo);
-	as->AddAnimation(&themeNeoGeoCurved);
+	for (size_t i = 0; i < customThemes.size(); i++)
+		as->AddAnimation(&customThemes[i]);
 }
 
 static AnimationHotkey animationHotkeys(MPG gamepad)
