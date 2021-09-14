@@ -1,6 +1,8 @@
 #ifndef STATIC_THEME_H_
 #define STATIC_THEME_H_
 
+#include <iterator>
+#include <map>
 #include <vector>
 #include <string.h>
 #include <stdio.h>
@@ -9,12 +11,11 @@
 
 class StaticTheme : public Animation {
 public:
-  StaticTheme(std::vector<Pixel> pixels, std::vector<RGB> theme, std::vector<uint32_t> masks, RGB defaultColor = ColorWhite);
+  StaticTheme(std::vector<Pixel> pixels, std::map<uint32_t, RGB> theme, RGB defaultColor = ColorBlack);
 
   void Animate(RGB (&frame)[100]);
-  std::vector<uint32_t> masks;
+  std::map<uint32_t, RGB> theme;
 protected:
-  std::vector<RGB> theme;
   RGB defaultColor;
 };
 
