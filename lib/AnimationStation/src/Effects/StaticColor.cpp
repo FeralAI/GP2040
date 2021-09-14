@@ -1,8 +1,6 @@
 #include "StaticColor.hpp"
 
-RGB StaticColor::color = ColorRed;
-
-StaticColor::StaticColor(std::vector<Pixel> pixels) : Animation(pixels) {
+StaticColor::StaticColor(std::vector<Pixel> pixels, RGB color) : Animation(pixels), color(color) {
 
 }
 

@@ -11,11 +11,15 @@ uint8_t AnimationStation::brightness = 0;
 float AnimationStation::brightnessX = 0;
 absolute_time_t AnimationStation::nextAnimationChange = 0;
 absolute_time_t AnimationStation::nextBrightnessChange = 0;
+StaticColor *staticColor;
 
 AnimationStation::AnimationStation(std::vector<Pixel> pixels) : pixels(pixels) {
   AnimationStation::SetBrightness(1);
 
-  animations.push_back(new StaticColor(pixels));
+  staticColor = new StaticColor(pixels, ColorWhite);
+
+  animations.push_back(new StaticColor(pixels, ColorBlack));
+  animations.push_back(staticColor);
   animations.push_back(new Rainbow(pixels));
   animations.push_back(new Chase(pixels));
 }
@@ -96,6 +100,10 @@ void AnimationStation::SetBrightness(uint8_t brightness) {
     AnimationStation::brightnessX = 1;
   else if (AnimationStation::brightnessX < 0)
     AnimationStation::brightnessX = 0;
+}
+
+void AnimationStation::SetStaticColor(RGB color) {
+  staticColor->SetColor(color);
 }
 
 void AnimationStation::DecreaseBrightness() {

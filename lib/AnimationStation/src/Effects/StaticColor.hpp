@@ -8,15 +8,15 @@
 
 class StaticColor : public Animation {
 public:
-  StaticColor(std::vector<Pixel> pixels);
+  StaticColor(std::vector<Pixel> pixels, RGB color);
 
   void Animate(RGB (&frame)[100]);
 
-  static void SetColor(RGB color) {
-    StaticColor::color = color;
+  void SetColor(RGB color) {
+    this->color = color;
   }
 protected:
-  static RGB color;
+  RGB color;
 };
 
 #endif

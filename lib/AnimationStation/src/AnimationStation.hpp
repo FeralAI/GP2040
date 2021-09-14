@@ -38,10 +38,7 @@ public:
   void Animate();
   void AddAnimation(Animation *animation);
   void HandleEvent(AnimationHotkey action);
-  void SetStaticColor();
-  void SetRainbow();
-  void SetChase();
-  void SetStaticColorNeoGeo();
+  void SetStaticColor(RGB color);
   void Clear();
   void ChangeAnimation();
   void GetAdjustedFrame(uint32_t *frameValue);
