@@ -52,7 +52,7 @@ void Chase::Animate(RGB (&frame)[100]) {
 }
 
 bool Chase::IsChasePixel(int i) {
-  if (i == this->currentPixel || i == (this->currentPixel - 1) % pixels.size() || i == (this->currentPixel - 2) % pixels.size()) {
+  if (i == this->currentPixel || i == (this->currentPixel - 1) || i == (this->currentPixel - 2)) {
     return true;
   }
 
