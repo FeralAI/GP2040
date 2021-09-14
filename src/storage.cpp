@@ -7,7 +7,6 @@
 #include "FlashPROM.h"
 #include "AnimationStorage.hpp"
 #include "AnimationStation/src/Effects/StaticColor.hpp"
-#include "AnimationStation/src/Effects/StaticColor_NeoGeo.hpp"
 #include "BoardConfig.h"
 
 #define STORAGE_LEDS_BRIGHTNESS_INDEX (STORAGE_FIRST_AVAILBLE_INDEX)              // 1 byte
@@ -54,16 +53,16 @@ void GamepadStorage::set(int index, void *data, uint16_t size)
 
 /* Animation stuffs */
 
-AnimationMode AnimationStorage::getBaseAnimation()
+uint8_t AnimationStorage::getBaseAnimation()
 {
-	AnimationMode mode = RAINBOW;
-	getStorageValue(STORAGE_LEDS_BASE_ANIMATION_MODE_INDEX, &mode, sizeof(AnimationMode));
+	uint8_t mode;
+	getStorageValue(STORAGE_LEDS_BASE_ANIMATION_MODE_INDEX, &mode, sizeof(uint8_t));
 	return mode;
 }
 
-void AnimationStorage::setBaseAnimation(AnimationMode mode)
+void AnimationStorage::setBaseAnimation(uint8_t mode)
 {
-	setStorageValue(STORAGE_LEDS_BASE_ANIMATION_MODE_INDEX, &mode, sizeof(AnimationMode));
+	setStorageValue(STORAGE_LEDS_BASE_ANIMATION_MODE_INDEX, &mode, sizeof(uint8_t));
 }
 
 uint8_t AnimationStorage::getBrightness()
@@ -78,11 +77,11 @@ void AnimationStorage::setBrightness(uint8_t brightness)
 	setStorageValue(STORAGE_LEDS_BRIGHTNESS_INDEX, &brightness, sizeof(uint8_t));
 }
 
-void AnimationStorage::setup()
+void AnimationStorage::setup(AnimationStation *as)
 {
 	AnimationStation::SetBrightness(this->getBrightness());
 	StaticColor::SetDefaultColor(LEDS_STATIC_COLOR_COLOR);
-	StaticColor_NeoGeo::setThemeMasks(masksNeoGeo);
+	configureAnimations(as);
 }
 
 void AnimationStorage::save(AnimationStation as)
@@ -96,9 +95,10 @@ void AnimationStorage::save(AnimationStation as)
 		dirty = true;
 	}
 
-	if (as.animations.size() > 0 && as.animations.at(0)->mode != getBaseAnimation())
+	uint8_t mode = as.GetMode();
+	if (mode != getBaseAnimation())
 	{
-		setBaseAnimation(as.animations.at(0)->mode);
+		setBaseAnimation(mode);
 		dirty = true;
 	}
 

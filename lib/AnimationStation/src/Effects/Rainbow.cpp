@@ -4,7 +4,6 @@ int Rainbow::defaultCycleTime = 40;
 
 Rainbow::Rainbow(std::vector<Pixel> pixels) : Animation(pixels) {
   this->cycleTime = Rainbow::defaultCycleTime;
-  this->mode = RAINBOW;
 }
 
 void Rainbow::Animate(RGB (&frame)[100]) {

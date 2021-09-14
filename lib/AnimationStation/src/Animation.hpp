@@ -7,16 +7,6 @@
 #include <vector>
 #include "Pixel.hpp"
 
-#define ANIMATION_MODE_COUNT 4
-
-typedef enum
-{
-  STATIC,
-  RAINBOW,
-  CHASE,
-  STATIC_NEOGEO,
-} AnimationMode;
-
 struct RGB
 {
   RGB()
@@ -68,8 +58,6 @@ static const RGB ColorMagenta(255, 0, 128);
 class Animation {
 public:
   Animation(std::vector<Pixel> pixels);
-
-  AnimationMode mode;
 
   virtual void Animate(RGB (&frame)[100]) = 0;
   bool isComplete();

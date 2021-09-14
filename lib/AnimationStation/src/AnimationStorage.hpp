@@ -7,11 +7,11 @@
 class AnimationStorage
 {
 	public:
-		void setup();
+		void setup(AnimationStation *as);
 		void save(AnimationStation as);
 
-		AnimationMode getBaseAnimation();
-		void setBaseAnimation(AnimationMode mode);
+		uint8_t getBaseAnimation();
+		void setBaseAnimation(uint8_t mode);
 		uint8_t getBrightness();
 		void setBrightness(uint8_t brightness);
 };

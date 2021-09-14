@@ -113,11 +113,7 @@ void core1()
 	static AnimationHotkey action;
 	static uint32_t frame[100];
 
-	AnimationStore.setup();
-
-
-	AnimationMode mode = AnimationStore.getBaseAnimation();
-	as.SetAnimation(mode);
+	AnimationStore.setup(&as);
 #endif
 
 	while (1)

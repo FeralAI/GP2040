@@ -1,6 +1,7 @@
 #ifndef _ANIMATION_STATION_H_
 #define _ANIMATION_STATION_H_
 
+#include <algorithm>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,7 +13,7 @@
 #include "Effects/Chase.hpp"
 #include "Effects/Rainbow.hpp"
 #include "Effects/StaticColor.hpp"
-#include "Effects/StaticColor_NeoGeo.hpp"
+#include "Effects/StaticTheme.hpp"
 
 #define BRIGHTNESS_MAXIMUM  100
 #define BRIGHTNESS_STEPS 5
@@ -35,8 +36,8 @@ public:
   AnimationStation(std::vector<Pixel> pixels);
 
   void Animate();
+  void AddAnimation(Animation *animation);
   void HandleEvent(AnimationHotkey action);
-  void SetAnimation(AnimationMode mode);
   void SetStaticColor();
   void SetRainbow();
   void SetChase();
@@ -47,6 +48,7 @@ public:
 
   static float GetBrightnessX();
   static uint8_t GetBrightness();
+  static uint8_t GetMode();
   static void SetBrightness(uint8_t brightness);
   static void DecreaseBrightness();
   static void IncreaseBrightness();
@@ -59,6 +61,7 @@ public:
 protected:
   static uint8_t brightness;
   static float brightnessX;
+  static uint8_t animationIndex;
   std::vector<Pixel> pixels;
 };
 

@@ -24,8 +24,6 @@
 #include "definitions/RP2040Board.h"
 #endif
 
-extern const std::vector<Pixel> pixels;
-
 #include "LEDConfig.h"
 
 #endif

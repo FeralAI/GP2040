@@ -4,7 +4,6 @@ int Chase::defaultCycleTime = 85;
 
 Chase::Chase(std::vector<Pixel> pixels) : Animation(pixels) {
   this->cycleTime = Chase::defaultCycleTime;
-  this->mode = CHASE;
 }
 
 void Chase::Animate(RGB (&frame)[100]) {

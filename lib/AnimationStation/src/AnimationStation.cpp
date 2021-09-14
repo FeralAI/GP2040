@@ -5,16 +5,24 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <algorithm>
 #include "AnimationStation.hpp"
 
 uint8_t AnimationStation::brightness = 0;
 float AnimationStation::brightnessX = 0;
+uint8_t AnimationStation::animationIndex = 0;
 absolute_time_t AnimationStation::nextAnimationChange = 0;
 absolute_time_t AnimationStation::nextBrightnessChange = 0;
 
 AnimationStation::AnimationStation(std::vector<Pixel> pixels) : pixels(pixels) {
   AnimationStation::SetBrightness(1);
+
+  this->animations.push_back(new StaticColor(pixels));
+  this->animations.push_back(new Rainbow(pixels));
+  this->animations.push_back(new Chase(pixels));
+}
+
+void AnimationStation::AddAnimation(Animation *animation) {
+  this->animations.push_back(animation);
 }
 
 void AnimationStation::HandleEvent(AnimationHotkey action) {
@@ -40,34 +48,8 @@ void AnimationStation::ChangeAnimation() {
     return;
   }
 
-  if (this->animations.size() > 0) {
-    SetAnimation((AnimationMode)((this->animations.at(0)->mode + 1) % ANIMATION_MODE_COUNT));
-    this->animations.erase(this->animations.begin());
-  }
-
+  animationIndex = (animationIndex + 1) % animations.size();
   AnimationStation::nextAnimationChange = make_timeout_time_ms(250);
-}
-
-void AnimationStation::SetAnimation(AnimationMode mode) {
-  switch (mode)
-  {
-    case RAINBOW:
-      this->animations.push_back(new Rainbow(pixels));
-      break;
-
-    case CHASE:
-      this->animations.push_back(new Chase(pixels));
-      break;
-
-    case STATIC_NEOGEO:
-      this->animations.push_back(new StaticColor_NeoGeo(pixels));
-      break;
-
-    case STATIC:
-    default:
-      this->animations.push_back(new StaticColor(pixels));
-      break;
-  }
 }
 
 void AnimationStation::Animate() {
@@ -76,17 +58,9 @@ void AnimationStation::Animate() {
     return;
   }
 
-  for (auto &element : this->animations) {
-    /* non-base animations (eg. button presses) only run
-      a certain number of times. before we animate, we need
-      to verify that it isn't already complete */
-
-    if (element->isComplete()) {
-      this->animations.erase(std::remove(this->animations.begin(), this->animations.end(), element), this->animations.end());
-    }
-    else {
-      element->Animate(frame);
-    }
+  Animation *animation = this->animations[animationIndex];
+  if (!animation->isComplete()) {
+    animation->Animate(frame);
   }
 }
 
@@ -100,6 +74,10 @@ float AnimationStation::GetBrightnessX() {
 
 uint8_t AnimationStation::GetBrightness() {
   return AnimationStation::brightness;
+}
+
+uint8_t AnimationStation::GetMode() {
+  return AnimationStation::animationIndex;
 }
 
 void AnimationStation::GetAdjustedFrame(uint32_t *frameValue) {

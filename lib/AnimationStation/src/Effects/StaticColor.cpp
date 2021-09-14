@@ -4,7 +4,6 @@ RGB StaticColor::defaultColor = ColorRed;
 
 StaticColor::StaticColor(std::vector<Pixel> pixels) : Animation(pixels) {
   this->color = StaticColor::defaultColor;
-  this->mode = STATIC;
 }
 
 void StaticColor::Animate(RGB (&frame)[100]) {
