@@ -41,7 +41,7 @@ public:
   void SetStaticColor(RGB color);
   void Clear();
   void ChangeAnimation();
-  void GetAdjustedFrame(uint32_t *frameValue);
+  void ApplyBrightness(uint32_t *frameValue);
 
   uint8_t GetMode();
   void SetMode(uint8_t mode);

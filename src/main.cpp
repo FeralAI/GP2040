@@ -130,7 +130,7 @@ void core1()
 		}
 
 		as.Animate();
-		as.GetAdjustedFrame(frame);
+		as.ApplyBrightness(frame);
 		leds.SetFrame(frame);
 		leds.Show();
 #endif

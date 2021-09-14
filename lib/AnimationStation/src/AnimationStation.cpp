@@ -87,7 +87,7 @@ void AnimationStation::SetMode(uint8_t mode) {
   animationIndex = mode;
 }
 
-void AnimationStation::GetAdjustedFrame(uint32_t *frameValue) {
+void AnimationStation::ApplyBrightness(uint32_t *frameValue) {
   for (int i = 0; i < 100; i++)
     frameValue[i] = this->frame[i].value(brightnessX);
 }

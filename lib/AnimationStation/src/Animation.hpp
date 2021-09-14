@@ -32,7 +32,7 @@ struct RGB
     }
   }
 
-  inline uint32_t value(float brightnessX = 1) {
+  inline uint32_t value(float brightnessX = 1.0F) {
     return ((uint32_t)(r * brightnessX) << 8)
          | ((uint32_t)(g * brightnessX) << 16)
          | (uint32_t)(b * brightnessX);
