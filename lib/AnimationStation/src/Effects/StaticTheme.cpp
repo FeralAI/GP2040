@@ -1,7 +1,7 @@
 #include "StaticTheme.hpp"
 
 StaticTheme::StaticTheme(std::vector<Pixel> pixels, std::vector<RGB> theme, std::vector<uint32_t> masks, RGB defaultColor)
-  : Animation(pixels), theme(theme), masks(masks), defaultColor(defaultColor) { }
+  : Animation(pixels), masks(masks), theme(theme), defaultColor(defaultColor) { }
 
 void StaticTheme::Animate(RGB (&frame)[100]) {
   for (size_t i = 0; i != pixels.size(); i++) {

@@ -112,6 +112,7 @@ static StaticTheme themeNeoGeo(
 );
 
 static void configureAnimations(AnimationStation *as) {
+	StaticColor::SetColor(LEDS_STATIC_COLOR_COLOR);
 	as->AddAnimation(&themeNeoGeo);
 }
 

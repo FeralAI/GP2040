@@ -81,7 +81,6 @@ void AnimationStorage::setup(AnimationStation *as)
 {
 	this->as = as;
 	AnimationStation::SetBrightness(this->getBrightness());
-	StaticColor::SetDefaultColor(LEDS_STATIC_COLOR_COLOR);
 	as->SetMode(getMode());
 	configureAnimations(as);
 }

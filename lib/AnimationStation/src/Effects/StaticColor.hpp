@@ -12,12 +12,11 @@ public:
 
   void Animate(RGB (&frame)[100]);
 
-  static void SetDefaultColor(RGB color) {
-    StaticColor::defaultColor = color;
+  static void SetColor(RGB color) {
+    StaticColor::color = color;
   }
 protected:
-  static RGB defaultColor;
-  RGB color;
+  static RGB color;
 };
 
 #endif
