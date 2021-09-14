@@ -5,7 +5,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../Animation.hpp"
-#include "../AnimationStation.hpp"
 #include "hardware/clocks.h"
 
 class Rainbow : public Animation {

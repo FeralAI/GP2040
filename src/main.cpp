@@ -14,6 +14,7 @@
 #include "NeoPico.hpp"
 #include "AnimationStation.hpp"
 #include "AnimationStorage.hpp"
+#include "Pixel.hpp"
 
 #include "usb_driver.h"
 #include "BoardConfig.h"
@@ -21,7 +22,7 @@
 MPGS gamepad(GAMEPAD_DEBOUNCE_MILLIS);
 
 #ifdef BOARD_LEDS_PIN
-NeoPico leds(BOARD_LEDS_PIN, pixels);
+NeoPico leds(BOARD_LEDS_PIN, Pixel::getPixelCount(pixels));
 AnimationStation as(pixels);
 queue_t animationQueue;
 #endif

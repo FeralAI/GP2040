@@ -18,12 +18,9 @@ void NeoPico::PutPixel(uint32_t pixel_grb) {
   pio_sm_put_blocking(pio0, 0, pixel_grb << 8u);
 }
 
-NeoPico::NeoPico(int ledPin, std::vector<Pixel> pixels) : pixels(pixels) {
+NeoPico::NeoPico(int ledPin, int numPixels) : numPixels(numPixels) {
   PIO pio = pio0;
   int sm = 0;
-  for (int i = 0; i != pixels.size(); i++) {
-    this->numPixels += pixels[i].positions.size();
-  }
   uint offset = pio_add_program(pio, &ws2812_program);
   ws2812_program_init(pio, sm, offset, ledPin, 800000, false);
   this->Clear();

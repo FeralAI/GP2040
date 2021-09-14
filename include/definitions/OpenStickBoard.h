@@ -9,7 +9,7 @@
 #include <vector>
 #include <GamepadEnums.h>
 #include <GamepadState.h>
-#include "NeoPico.hpp"
+#include "Pixel.hpp"
 
 #define PIN_DPAD_UP     13
 #define PIN_DPAD_DOWN   11

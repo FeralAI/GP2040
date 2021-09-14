@@ -2,10 +2,10 @@
 #define STATIC_COLOR_NEO_GEO_H_
 
 #include <vector>
+#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "../Animation.hpp"
-#include "../AnimationStation.hpp"
 
 class StaticColor_NeoGeo : public Animation {
 public:

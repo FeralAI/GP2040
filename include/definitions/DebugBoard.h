@@ -9,7 +9,6 @@
 #include <vector>
 #include <GamepadEnums.h>
 #include <GamepadState.h>
-#include "NeoPico.hpp"
 #include "Animation.hpp"
 
 /* Mapped to pins on Waveshare IPS panel w/4 button + HAT */

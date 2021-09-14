@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <vector>
-#include "NeoPico.hpp"
+#include "Pixel.hpp"
 
 #define ANIMATION_MODE_COUNT 4
 

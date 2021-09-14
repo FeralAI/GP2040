@@ -9,8 +9,5 @@
 			"url": "https://jonathanbarket.com"
 		}
 	],
-	"license": "MIT",
-	"dependencies": {
-		"NeoPico": "0.0.1"
-	}
+	"license": "MIT"
 }
