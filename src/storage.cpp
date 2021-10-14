@@ -85,7 +85,6 @@ void AnimationStorage::setup(AnimationStation *as)
 	AnimationStation::ConfigureBrightness(LED_BRIGHTNESS_MAXIMUM, LED_BRIGHTNESS_STEPS);
 	AnimationStation::SetBrightness(this->getBrightness());
 	as->SetMode(getMode());
-	configureAnimations();
 }
 
 void AnimationStorage::save()

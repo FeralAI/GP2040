@@ -45,7 +45,6 @@ public:
   AnimationStation(PixelMatrix matrix);
 
   void Animate();
-  void AddAnimation(Animation *animation);
   void HandleEvent(AnimationHotkey action);
   void Clear();
   void ChangeAnimation(int changeSize);

@@ -12,7 +12,6 @@ uint8_t AnimationStation::brightnessSteps = 5;
 uint8_t AnimationStation::brightness = 0;
 float AnimationStation::brightnessX = 0;
 absolute_time_t AnimationStation::nextChange = 0;
-StaticColor *staticColor;
 
 AnimationStation::AnimationStation(PixelMatrix matrix) : matrix(matrix) {
   AnimationStation::SetBrightness(1);
@@ -85,7 +84,7 @@ void AnimationStation::HandlePressed(std::vector<Pixel> pressed) {
   if (pressed != this->lastPressed) {
     this->lastPressed = pressed;
     if (this->buttonAnimation == nullptr) {
-      this->buttonAnimation = new StaticColor(pressed);
+      this->buttonAnimation = new StaticColor(matrix, pressed, 2);
     }
     else {
       this->buttonAnimation->UpdatePixels(pressed);
@@ -136,16 +135,16 @@ void AnimationStation::SetMode(uint8_t mode) {
 
   switch (newEffect) {
   case AnimationEffects::EFFECT_STATIC_COLOR:
-    this->baseAnimation = new StaticColor(pixels);
+    this->baseAnimation = new StaticColor(matrix);
     break;
   case AnimationEffects::EFFECT_RAINBOW:
-    this->baseAnimation = new Rainbow(pixels);
+    this->baseAnimation = new Rainbow(matrix);
     break;
   case AnimationEffects::EFFECT_CHASE:
-    this->baseAnimation = new Chase(pixels);
+    this->baseAnimation = new Chase(matrix);
     break;
   default:
-    this->baseAnimation = new StaticColor(pixels, 0);
+    this->baseAnimation = new StaticColor(matrix, 0);
     break;
   }
 }
