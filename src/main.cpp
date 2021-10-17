@@ -12,6 +12,7 @@
 #include <MPGS.h>
 
 #include "usb_driver.h"
+#include "webserver.h"
 #include "BoardConfig.h"
 
 #ifdef BOARD_LEDS_PIN
@@ -47,12 +48,20 @@ void core1();
 int main()
 {
 	setup();
-	multicore_launch_core1(core1);
 
-	while (1)
-		loop();
+	if (gamepad.options.inputMode == INPUT_MODE_CONFIG)
+	{
+		webserver();
+	}
+	else
+	{
+		multicore_launch_core1(core1);
 
-	return 0;
+		while (1)
+			loop();
+
+		return 0;
+	}
 }
 
 
@@ -64,6 +73,8 @@ void setup()
 	// Check for input mode override
 	gamepad.read();
 	InputMode newInputMode = gamepad.options.inputMode;
+	if (gamepad.pressedB1())
+		newInputMode = INPUT_MODE_CONFIG;
 	if (gamepad.pressedR3())
 		newInputMode = INPUT_MODE_HID;
 	else if (gamepad.pressedS1())
@@ -71,18 +82,26 @@ void setup()
 	else if (gamepad.pressedS2())
 		newInputMode = INPUT_MODE_XINPUT;
 
-	if (newInputMode != gamepad.options.inputMode)
+	bool configMode = newInputMode == INPUT_MODE_CONFIG;
+	if (newInputMode != gamepad.options.inputMode && !configMode)
 	{
 		gamepad.options.inputMode = newInputMode;
 		gamepad.save();
 	}
+	else
+	{
+		gamepad.options.inputMode = newInputMode;
+	}
 
-	initialize_driver(gamepad.options.inputMode);
+	if (!configMode)
+	{
+		initialize_driver(gamepad.options.inputMode);
 
-#ifdef BOARD_LEDS_PIN
-	queue_init(&animationQueue, sizeof(AnimationHotkey), 1);
-	queue_init(&animationSaveQueue, sizeof(int), 1);
-#endif
+	#ifdef BOARD_LEDS_PIN
+		queue_init(&animationQueue, sizeof(AnimationHotkey), 1);
+		queue_init(&animationSaveQueue, sizeof(int), 1);
+	#endif
+	}
 }
 
 

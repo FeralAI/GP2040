@@ -8,6 +8,7 @@
 #include "tusb.h"
 #include "usb_driver.h"
 #include "GamepadDescriptors.h"
+#include "webserver_descriptors.h"
 
 // Invoked when received GET STRING DESCRIPTOR request
 // Application return pointer to descriptor, whose contents must exist long enough for transfer to complete
@@ -25,6 +26,9 @@ uint8_t const *tud_descriptor_device_cb(void)
 {
 	switch (get_input_mode())
 	{
+		case INPUT_MODE_CONFIG:
+			return webserver_device_descriptor;
+
 		case INPUT_MODE_XINPUT:
 			return xinput_device_descriptor;
 
@@ -59,6 +63,9 @@ uint8_t const *tud_descriptor_configuration_cb(uint8_t index)
 	(void)index; // for multiple configurations
 	switch (get_input_mode())
 	{
+		case INPUT_MODE_CONFIG:
+			return webserver_configuration_descriptor;
+
 		case INPUT_MODE_XINPUT:
 			return xinput_configuration_descriptor;
 
