@@ -7,6 +7,17 @@
 #define WEBSERVER_DESCRIPTORS_H_
 
 #include <stdint.h>
+#include "tusb.h"
+
+enum
+{
+	STRID_LANGID = 0,
+	STRID_MANUFACTURER,
+	STRID_PRODUCT,
+	STRID_SERIAL,
+	STRID_INTERFACE,
+	STRID_MAC
+};
 
 static const uint8_t webserver_string_language[]     = { 0x09, 0x04 };
 static const uint8_t webserver_string_manufacturer[] = "TinyUSB";
@@ -21,90 +32,66 @@ static const uint8_t *webserver_string_descriptors[] =
 	webserver_string_version
 };
 
-static const uint8_t webserver_device_descriptor[] =
+static const tusb_desc_device_t webserver_device_descriptor =
 {
-	0x12,        // bLength
-	0x01,        // bDescriptorType (Device)
-	0x00, 0x02,  // bcdUSB 2.00
-	0xEF,        // bDeviceClass
-	0x02,        // bDeviceSubClass
-	0x01,        // bDeviceProtocol
-	0x40,        // bMaxPacketSize0 64
-	0xFE, 0xCA,  // idVendor 0xCAFE
-	0x21, 0x40,  // idProduct 0x4021
-	0x01, 0x01,  // bcdDevice 2.01
-	0x01,        // iManufacturer (String Index)
-	0x02,        // iProduct (String Index)
-	0x03,        // iSerialNumber (String Index)
-	0x02,        // bNumConfigurations 2
+	.bLength            = sizeof(tusb_desc_device_t),
+	.bDescriptorType    = TUSB_DESC_DEVICE,
+	.bcdUSB             = 0x0200,
+
+	// Use Interface Association Descriptor (IAD) device class
+	.bDeviceClass       = TUSB_CLASS_MISC,
+	.bDeviceSubClass    = MISC_SUBCLASS_COMMON,
+	.bDeviceProtocol    = MISC_PROTOCOL_IAD,
+
+	.bMaxPacketSize0    = CFG_TUD_ENDPOINT0_SIZE,
+
+	.idVendor           = 0xCAFE,
+	.idProduct          = 0x4001,
+	.bcdDevice          = 0x0101,
+
+	.iManufacturer      = 0x01,
+	.iProduct           = 0x02,
+	.iSerialNumber      = 0x03,
+
+	.bNumConfigurations = 0x02 // multiple configurations
 };
 
-static const uint8_t webserver_configuration_descriptor[] =
+#define MAIN_CONFIG_TOTAL_LEN    (TUD_CONFIG_DESC_LEN + TUD_RNDIS_DESC_LEN)
+#define ALT_CONFIG_TOTAL_LEN     (TUD_CONFIG_DESC_LEN + TUD_CDC_ECM_DESC_LEN)
+#define CONFIG_TOTAL_LEN         (TUD_CONFIG_DESC_LEN + TUD_HID_INOUT_DESC_LEN)
+
+#define EPNUM_HID         0x01
+#define EPNUM_NET_NOTIF   0x81
+#define EPNUM_NET_OUT     0x02
+#define EPNUM_NET_IN      0x82
+
+static uint8_t const rndis_configuration[] =
 {
-	0x09,        // bLength
-	0x02,        // bDescriptorType (Configuration)
-	0x4B, 0x00,  // wTotalLength 75
-	0x02,        // bNumInterfaces 2
-	0x01,        // bConfigurationValue
-	0x00,        // iConfiguration (String Index)
-	0x80,        // bmAttributes
-	0x32,        // bMaxPower 100mA
+	// Config number (index+1), interface count, string index, total length, attribute, power in mA
+	TUD_CONFIG_DESCRIPTOR(1, 2, 0, MAIN_CONFIG_TOTAL_LEN, 0, 100),
 
-	0x08,        // bLength
-	0x0B,        // bDescriptorType (Unknown)
-	0x00, 0x02, 0xE0, 0x01, 0x03, 0x00,
-	0x09,        // bLength
-	0x04,        // bDescriptorType (Interface)
-	0x00,        // bInterfaceNumber 0
-	0x00,        // bAlternateSetting
-	0x01,        // bNumEndpoints 1
-	0xE0,        // bInterfaceClass
-	0x01,        // bInterfaceSubClass
-	0x03,        // bInterfaceProtocol
-	0x04,        // iInterface (String Index)
+	// Interface number, string index, EP notification address and size, EP data address (out, in) and size.
+	TUD_RNDIS_DESCRIPTOR(0, STRID_INTERFACE, EPNUM_NET_NOTIF, 8, EPNUM_NET_OUT, EPNUM_NET_IN, CFG_TUD_NET_ENDPOINT_SIZE),
+};
 
-	0x05,        // bLength
-	0x24,        // bDescriptorType (Dependant on Type)
-	0x00, 0x10, 0x01,
-	0x05,        // bLength
-	0x24,        // bDescriptorType (Dependant on Type)
-	0x01, 0x00, 0x01,
-	0x04,        // bLength
-	0x24,        // bDescriptorType (Dependant on Type)
-	0x02, 0x00,
-	0x05,        // bLength
-	0x24,        // bDescriptorType (Dependant on Type)
-	0x06, 0x00, 0x01,
-	0x07,        // bLength
-	0x05,        // bDescriptorType (Endpoint)
-	0x81,        // bEndpointAddress (IN/D2H)
-	0x03,        // bmAttributes (Interrupt)
-	0x08, 0x00,  // wMaxPacketSize 8
-	0x01,        // bInterval 1 (unit depends on device speed)
+static uint8_t const ecm_configuration[] =
+{
+	// Config number (index+1), interface count, string index, total length, attribute, power in mA
+	TUD_CONFIG_DESCRIPTOR(2, 2, 0, ALT_CONFIG_TOTAL_LEN, 0, 100),
 
-	0x09,        // bLength
-	0x04,        // bDescriptorType (Interface)
-	0x01,        // bInterfaceNumber 1
-	0x00,        // bAlternateSetting
-	0x02,        // bNumEndpoints 2
-	0x0A,        // bInterfaceClass
-	0x00,        // bInterfaceSubClass
-	0x00,        // bInterfaceProtocol
-	0x00,        // iInterface (String Index)
+	// Interface number, description string index, MAC address string index, EP notification address and size, EP data address (out, in), and size, max segment size.
+	TUD_CDC_ECM_DESCRIPTOR(0, STRID_INTERFACE, STRID_MAC, EPNUM_NET_NOTIF, 64, EPNUM_NET_OUT, EPNUM_NET_IN, CFG_TUD_NET_ENDPOINT_SIZE, CFG_TUD_NET_MTU),
+};
 
-	0x07,        // bLength
-	0x05,        // bDescriptorType (Endpoint)
-	0x82,        // bEndpointAddress (IN/D2H)
-	0x02,        // bmAttributes (Bulk)
-	0x40, 0x00,  // wMaxPacketSize 64
-	0x00,        // bInterval 0 (unit depends on device speed)
-
-	0x07,        // bLength
-	0x05,        // bDescriptorType (Endpoint)
-	0x02,        // bEndpointAddress (OUT/H2D)
-	0x02,        // bmAttributes (Bulk)
-	0x40, 0x00,  // wMaxPacketSize 64
-	0x00,        // bInterval 0 (unit depends on device speed)
+// Configuration array: RNDIS and CDC-ECM
+// - Windows only works with RNDIS
+// - MacOS only works with CDC-ECM
+// - Linux will work on both
+// Note index is Num-1x
+static uint8_t const * const net_configuration_arr[] =
+{
+	rndis_configuration,
+	ecm_configuration,
 };
 
 #endif

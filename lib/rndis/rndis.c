@@ -49,7 +49,7 @@ try changing the first byte of tud_network_mac_address[] below from 0x02 to 0x00
 #include "server/dnserver.h"
 #include "lwip/init.h"
 #include "lwip/timeouts.h"
-#include "httpd.h"
+#include <httpd.h>
 
 /* lwip context */
 static struct netif netif_data;

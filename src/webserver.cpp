@@ -5,8 +5,8 @@
 #include "lwip/def.h"
 #include "webserver.h"
 
-extern int rndis_init(void);
-extern void rndis_task(void);
+extern int rndis_init();
+extern void rndis_task();
 
 char *html[2]={"/index.html","/Index.html"};
 
