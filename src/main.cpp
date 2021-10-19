@@ -73,13 +73,17 @@ void setup()
 	// Check for input mode override
 	gamepad.read();
 	InputMode newInputMode = gamepad.options.inputMode;
+<<<<<<< HEAD
 	if (gamepad.pressedB1())
 		newInputMode = INPUT_MODE_CONFIG;
 	if (gamepad.pressedR3())
+=======
+	if (gamepad.pressedB3())
+>>>>>>> main
 		newInputMode = INPUT_MODE_HID;
-	else if (gamepad.pressedS1())
+	else if (gamepad.pressedB1())
 		newInputMode = INPUT_MODE_SWITCH;
-	else if (gamepad.pressedS2())
+	else if (gamepad.pressedB2())
 		newInputMode = INPUT_MODE_XINPUT;
 
 	bool configMode = newInputMode == INPUT_MODE_CONFIG;
