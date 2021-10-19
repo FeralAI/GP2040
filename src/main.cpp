@@ -73,7 +73,9 @@ void setup()
 	// Check for input mode override
 	gamepad.read();
 	InputMode newInputMode = gamepad.options.inputMode;
-	if (gamepad.pressedB3())
+	if (gamepad.pressedS2())
+		newInputMode = INPUT_MODE_CONFIG;
+	else if (gamepad.pressedB3())
 		newInputMode = INPUT_MODE_HID;
 	else if (gamepad.pressedB1())
 		newInputMode = INPUT_MODE_SWITCH;
@@ -91,10 +93,10 @@ void setup()
 		gamepad.options.inputMode = newInputMode;
 	}
 
+	initialize_driver(gamepad.options.inputMode);
+
 	if (!configMode)
 	{
-		initialize_driver(gamepad.options.inputMode);
-
 	#ifdef BOARD_LEDS_PIN
 		queue_init(&animationQueue, sizeof(AnimationHotkey), 1);
 		queue_init(&animationSaveQueue, sizeof(int), 1);
