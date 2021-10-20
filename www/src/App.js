@@ -2,7 +2,7 @@ import { Router, Route, Switch } from "react-router-dom";
 import { createBrowserHistory } from 'history'
 import './App.css';
 import Navbar from './Components/Navbar'
-import HomePage from './Home'
+import HomePage from './Pages/HomePage'
 
 const browserHistory = createBrowserHistory();
 
