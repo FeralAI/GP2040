@@ -1,26 +1,24 @@
-import { BrowserRouter, Route, Switch } from "react-router-dom";
-import { createBrowserHistory } from 'history'
+import React from 'react';
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import './App.css';
 import Navbar from './Components/Navbar'
 import HomePage from './Pages/HomePage'
 import PinMappingPage from "./Pages/PinMapping";
 
-const browserHistory = createBrowserHistory();
-
 function App() {
 	return (
 		<div className="App">
-			<Navbar />
-			<BrowserRouter history={browserHistory}>
+			<Router>
+				<Navbar />
 				<Switch>
 					<Route exact path="/">
 						<HomePage />
 					</Route>
-					<Route exact path="/pin-mapping">
+					<Route path="/pin-mapping">
 						<PinMappingPage />
 					</Route>
 				</Switch>
-			</BrowserRouter>
+			</Router>
 		</div>
 	);
 }
