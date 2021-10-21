@@ -40,6 +40,10 @@
 #include "lwip/err.h"
 #include "lwip/pbuf.h"
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 /** Set this to 1 to support CGI */
 #ifndef LWIP_HTTPD_CGI
@@ -226,11 +230,17 @@ void httpd_post_finished(void *connection, char *response_uri, u16_t response_ur
 #endif
 
 #if LWIP_HTTPD_POST_MANUAL_WND
+
 void httpd_post_data_recved(void *connection, u16_t recved_len);
+
 #endif /* LWIP_HTTPD_POST_MANUAL_WND */
 
 #endif /* LWIP_HTTPD_SUPPORT_POST */
 
 void httpd_init(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __HTTPD_H__ */

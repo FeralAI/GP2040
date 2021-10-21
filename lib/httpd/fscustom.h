@@ -1,7 +1,7 @@
 #ifndef FSCUSTOM_H_
 #define FSCUSTOM_H_
 
-#include "lwip/apps/fs.h"
+#include "fs.h"
 
 #ifdef __cplusplus
 extern "C" {
