@@ -1,0 +1,19 @@
+.title-logo {
+	height: 22px;
+	margin-right: 5px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .title-logo {
+    animation: clockwise-spin infinite 20s linear;
+  }
+}
+
+@keyframes clockwise-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

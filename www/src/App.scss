@@ -1,0 +1,11 @@
+.body-content {
+  background-color: #282c34;
+  min-height: calc(100vh - 56px);
+	min-width: 400px;
+  display: flex;
+  flex-direction: column;
+  /* font-size: calc(10px + 2vmin); */
+  color: white;
+	margin: 56px 0 0;
+	padding: 10px 20px;
+}
