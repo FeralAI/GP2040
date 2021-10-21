@@ -68,14 +68,6 @@ fs_open(struct fs_file *file, const char *name)
      return ERR_ARG;
   }
 
-#if LWIP_HTTPD_CUSTOM_FILES
-  if (fs_open_custom(file, name)) {
-    file->is_custom_file = 1;
-    return ERR_OK;
-  }
-  file->is_custom_file = 0;
-#endif /* LWIP_HTTPD_CUSTOM_FILES */
-
   for (f = FS_ROOT; f != NULL; f = f->next) {
     if (!strcmp(name, (char *)f->name)) {
       file->data = (const char *)f->data;
@@ -83,6 +75,7 @@ fs_open(struct fs_file *file, const char *name)
       file->index = f->len;
       file->pextension = NULL;
       file->http_header_included = f->http_header_included;
+			file->is_custom_file = 0;
 #if HTTPD_PRECALCULATED_CHECKSUM
       file->chksum_count = f->chksum_count;
       file->chksum = f->chksum;
@@ -92,6 +85,14 @@ fs_open(struct fs_file *file, const char *name)
 #endif /* #if LWIP_HTTPD_FILE_STATE */
       return ERR_OK;
     }
+
+#if LWIP_HTTPD_CUSTOM_FILES
+  if (fs_open_custom(file, name)) {
+    file->is_custom_file = 1;
+    return ERR_OK;
+  }
+#endif /* LWIP_HTTPD_CUSTOM_FILES */
+
   }
   /* file not found */
   return ERR_VAL;

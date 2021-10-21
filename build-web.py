@@ -15,7 +15,7 @@ os.chdir("..")
 print("Done")
 
 print("Regenerating " + fsdata_filename)
-os.system("./tools/makefsdata " + website_dir + " -f:" + fsdata_filename)
+os.system("./tools/makefsdata -11 " + website_dir + " -f:" + fsdata_filename)
 print("Done")
 
 print("Replace includes")

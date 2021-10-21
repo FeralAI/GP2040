@@ -109,9 +109,6 @@ const static tHTTPHeader g_psHTTPHeaders[] =
  { "swf",  HTTP_HDR_SWF},
  { "xml",  HTTP_HDR_XML},
  { "xsl",  HTTP_HDR_XML},
- { "pdf",  HTTP_HDR_PDF},
- { "json", HTTP_HDR_JSON},
- { "svg", HTTP_HDR_SVG}
 };
 
 #define NUM_HTTP_HEADERS (sizeof(g_psHTTPHeaders) / sizeof(tHTTPHeader))

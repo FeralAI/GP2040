@@ -15,7 +15,7 @@ function Navbar(props) {
 							<NavLink exact={true} className="nav-link" activeClassName="active" to="/">Home</NavLink >
 						</li>
 						<li className="nav-item">
-							<NavLink exact={true} className="nav-link" activeClassName="active" to="/something">Something?!?</NavLink >
+							<NavLink exact={true} className="nav-link" activeClassName="active" to="/pin-mapping">Pin Mapping</NavLink >
 						</li>
 						<li className="nav-item">
 							<NavLink exact={true} className="nav-link disabled" activeClassName="active" to="/path/to/nowhere">Disabled</NavLink >

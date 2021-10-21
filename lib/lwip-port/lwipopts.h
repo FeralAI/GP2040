@@ -57,4 +57,7 @@
 
 #define LWIP_SINGLE_NETIF               1
 
+#define LWIP_HTTPD_SUPPORT_V09          0
+#define LWIP_HTTPD_SUPPORT_11_KEEPALIVE 1
+
 #endif /* __LWIPOPTS_H__ */
