@@ -141,6 +141,9 @@ void AnimationStation::SetMode(uint8_t mode) {
   case AnimationEffects::EFFECT_CHASE:
     this->baseAnimation = new Chase(matrix);
     break;
+  case AnimationEffects::EFFECT_STATIC_THEME:
+    this->baseAnimation = new StaticTheme(matrix);
+    break;
   default:
     this->baseAnimation = new StaticColor(matrix);
     break;

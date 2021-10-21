@@ -43,6 +43,17 @@ void LEDs::setup() {
   queue_init(&animationSaveQueue, sizeof(int), 1);
 
   AnimationStore.setup(&as);
+  StaticTheme::AddTheme(themeStaticRainbow);
+  StaticTheme::AddTheme(themeGuiltyGearTypeA);
+  StaticTheme::AddTheme(themeGuiltyGearTypeD);
+  StaticTheme::AddTheme(themeGuiltyGearCustom);
+  StaticTheme::AddTheme(themeNeoGeo);
+  StaticTheme::AddTheme(themeNeoGeoCurved);
+  StaticTheme::AddTheme(themeNeoGeoModern);
+  StaticTheme::AddTheme(themeSixButtonFighter);
+  StaticTheme::AddTheme(themeSixButtonFighterPlus);
+  StaticTheme::AddTheme(themeSuperFamicom);
+  StaticTheme::AddTheme(themeXbox);
 }
 
 void LEDs::process(Gamepad *gamepad) {

@@ -19,11 +19,12 @@ typedef enum
 {
   EFFECT_STATIC_COLOR,
   EFFECT_RAINBOW,
-  EFFECT_CHASE
+  EFFECT_CHASE,
+  EFFECT_STATIC_THEME
 } AnimationEffects;
 
 // We can't programmatically determine how many elements are in an enum. Yes, that's dumb.
-const int TOTAL_EFFECTS = 3;
+const int TOTAL_EFFECTS = 4;
 
 typedef enum
 {
@@ -46,6 +47,7 @@ struct AnimationOptions
   uint8_t buttonColorIndex = 1;
   int16_t chaseCycleTime = 85;
   int16_t rainbowCycleTime = 40;
+  uint8_t themeIndex = 0;
 };
 
 class AnimationStation
