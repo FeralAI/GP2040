@@ -1,11 +1,9 @@
 #include "StaticColor.hpp"
 
-int StaticColor::defaultColorIndex = 2;
-
-StaticColor::StaticColor(PixelMatrix &matrix, int colorIndex) : Animation(matrix), colorIndex(colorIndex) {
+StaticColor::StaticColor(PixelMatrix &matrix) : Animation(matrix) {
 }
 
-StaticColor::StaticColor(PixelMatrix &matrix, std::vector<Pixel> pixels, int colorIndex) : Animation(matrix), colorIndex(colorIndex) {
+StaticColor::StaticColor(PixelMatrix &matrix, std::vector<Pixel> pixels) : Animation(matrix) {
   this->pixels = pixels;
   this->filtered = true;
 }
@@ -17,27 +15,64 @@ void StaticColor::Animate(RGB (&frame)[100]) {
         continue;
 
       for (size_t p = 0; p != matrix->pixels[r][c].positions.size(); p++) {
-        frame[matrix->pixels[r][c].positions[p]] = colors[colorIndex];
+        frame[matrix->pixels[r][c].positions[p]] = colors[this->GetColor()];
       }
     }
   }
 }
 
-void StaticColor::ParameterUp() {
-  if (this->colorIndex < colors.size() - 1)
-  {
-    this->colorIndex++;
+uint8_t StaticColor::GetColor() {
+  if (this->filtered) {
+    return AnimationStation::options.buttonColorIndex;
   }
   else {
-    this->colorIndex = 0;
+    return AnimationStation::options.staticColorIndex;
+  }
+}
+
+void StaticColor::ParameterUp() {
+  uint8_t colorIndex;
+  if (this->filtered) {
+    colorIndex = AnimationStation::options.buttonColorIndex;
+  }
+  else {
+    colorIndex = AnimationStation::options.staticColorIndex;
+  }
+
+  if (colorIndex < colors.size() - 1)
+  {
+    colorIndex++;
+  }
+  else {
+    colorIndex = 0;
+  }
+
+  this->SaveIndexOptions(colorIndex);
+}
+
+void StaticColor::SaveIndexOptions(uint8_t colorIndex) {
+  if (this->filtered) {
+    AnimationStation::options.buttonColorIndex = colorIndex;
+  }
+  else {
+    AnimationStation::options.staticColorIndex = colorIndex;
   }
 }
 
 void StaticColor::ParameterDown() {
-  if (this->colorIndex > 0) {
-    this->colorIndex--;
+  uint8_t colorIndex;
+  if (this->filtered) {
+    colorIndex = AnimationStation::options.buttonColorIndex;
   }
   else {
-    this->colorIndex = colors.size() - 1;
+    colorIndex = AnimationStation::options.staticColorIndex;
   }
+
+  if (colorIndex > 0) {
+    colorIndex--;
+  }
+  else {
+    colorIndex = colors.size() - 1;
+  }
+  this->SaveIndexOptions(colorIndex);
 }
