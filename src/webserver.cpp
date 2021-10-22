@@ -13,41 +13,20 @@
 #include "webserver.h"
 
 #define PATH_INDEX      "/index.html"
-#define PATH_GENERATED  "/generated.html"
 #define PATH_CGI_ACTION "/cgi/action"
+
+#define ACTION_GET_ECHO_PARAMS  "echoParams"
+#define ACTION_GET_PIN_MAPPINGS "getPinMappings"
+#define ACTION_SET_PIN_MAPPINGS "setPinMappings"
 
 extern struct fsdata_file file__index_html[];
 
-char *html[] = { PATH_INDEX, PATH_CGI_ACTION };
 char *excludePaths[] = { "/css", "/images", "/js", "/static" };
 int excludePathCount = 4;
 
 int cgiParamCount;
 char **cgiParams;
 char **cgiValues;
-
-const char generated_html[] =
-"<html>\n"
-"<head><title>lwIP - A Lightweight TCP/IP Stack</title></head>\n"
-" <body bgcolor=\"white\" text=\"black\">\n"
-"  <table width=\"100%\">\n"
-"   <tr valign=\"top\">\n"
-"    <td width=\"80\">\n"
-"     <a href=\"http://www.sics.se/\"><img src=\"/img/sics.gif\"\n"
-"      border=\"0\" alt=\"SICS logo\" title=\"SICS logo\"></a>\n"
-"    </td>\n"
-"    <td width=\"500\">\n"
-"     <h1>lwIP - A Lightweight TCP/IP Stack</h1>\n"
-"     <h2>Generated page</h2>\n"
-"     <p>This page might be generated in-memory at runtime</p>\n"
-"    </td>\n"
-"    <td>\n"
-"    &nbsp;\n"
-"    </td>\n"
-"   </tr>\n"
-"  </table>\n"
-" </body>\n"
-"</html>";
 
 // Generic CGI method for capturing query params
 static const char *cgi_action(int iIndex, int iNumParams, char *pcParam[], char *pcValue[])
@@ -87,35 +66,53 @@ void set_file_data(struct fs_file *file, const char *data, size_t size)
 	file->http_header_included = 0;
 }
 
-int fs_open_custom(struct fs_file *file, const char *name)
+char *get_param(char *name, char **params, char **values, int count)
 {
-	if (!strcmp(name, PATH_GENERATED))
-	{
-		/* initialize fs_file correctly */
-		memset(file, 0, sizeof(struct fs_file));
-		file->pextension = mem_malloc(sizeof(generated_html));
-		if (file->pextension != NULL)
-		{
-			/* instead of doing memcpy, you would generate e.g. a JSON here */
-			memcpy(file->pextension, generated_html, sizeof(generated_html));
-			file->data = (const char *)file->pextension;
-			file->len = sizeof(generated_html) - 1; /* don't send the trailing 0 */
-			file->index = file->len;
-			return 1;
-		}
+	for (int i = 0; i < count; i++) {
+		if (strncmp(name, params[i], sizeof(name)))
+			return values[i];
 	}
 
+	return NULL;
+}
+
+std::string to_json(bool success, char **props, char **values, int count)
+{
+	std::string json;
+	if (success)
+		json += "{ \"success\": true";
+	else
+		json += "{ \"success\": false";
+
+	if (count > 0)
+	{
+		for (int i = 0; i < count; i++)
+			json = json + std::string(", \"") + props[i] + "\": \"" + values[i] + "\"";
+	}
+
+	json += " }";
+
+	return json;
+}
+
+int fs_open_custom(struct fs_file *file, const char *name)
+{
 	if (!memcmp(name, PATH_CGI_ACTION, sizeof(PATH_CGI_ACTION)))
 	{
-		std::string message("{ \"success\": true");
-		if (cgiParamCount > 0)
+		if (!strncmp(name, ACTION_GET_ECHO_PARAMS, sizeof(ACTION_GET_ECHO_PARAMS)))
 		{
-			for (int i = 0; i < cgiParamCount; i++)
-				message = message + std::string(", \"") + cgiParams[i] + "\": \"" + cgiValues[i] + "\"";
+			std::string json = to_json(true, cgiParams, cgiValues, cgiParamCount);
+			set_file_data(file, json.data(), json.length());
 		}
-		message += " }";
+		else if (!strncmp(name, ACTION_GET_PIN_MAPPINGS, sizeof(ACTION_GET_PIN_MAPPINGS)))
+		{
 
-		set_file_data(file, message.data(), message.length());
+		}
+		else if (!strncmp(name, ACTION_SET_PIN_MAPPINGS, sizeof(ACTION_SET_PIN_MAPPINGS)))
+		{
+
+		}
+
 		return 1;
 	}
 

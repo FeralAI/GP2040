@@ -13,6 +13,7 @@
 #include "BoardConfig.h"
 #include "usb_driver.h"
 #include "gamepad.hpp"
+#include "webserver.h"
 
 #ifdef BOARD_LEDS_PIN
 #include "leds.h"
@@ -36,13 +37,24 @@ int main()
 		loop();
 
   return 0;
+
+	// if (gamepad.options.inputMode == INPUT_MODE_CONFIG)
+	// {
+	// 	webserver();
+	// }
+	// else
+	// {
+	// 	while (1)
+	// 		loop();
+
+	// 	return 0;
+	// }
 }
 
 
 void setup()
 {
 	gamepad.setup();
-	gamepad.load();
 
 	// Check for input mode override
 	gamepad.read();
@@ -55,8 +67,8 @@ void setup()
 		newInputMode = INPUT_MODE_SWITCH;
 	else if (gamepad.pressedB2())
 		newInputMode = INPUT_MODE_XINPUT;
-  else if (gamepad.pressedF1() && gamepad.pressedUp())
-    reset_usb_boot(0, 0);
+	else if (gamepad.pressedF1() && gamepad.pressedUp())
+		reset_usb_boot(0, 0);
 
 	bool configMode = newInputMode == INPUT_MODE_CONFIG;
 	if (newInputMode != gamepad.options.inputMode && !configMode)
@@ -72,7 +84,7 @@ void setup()
 	initialize_driver(gamepad.options.inputMode);
 
 #ifdef BOARD_LEDS_PIN
-  leds.setup();
+	leds.setup();
 #endif
 }
 
@@ -81,10 +93,10 @@ void loop()
 	static void *report;
 	static const uint16_t reportSize = gamepad.getReportSize();
 
-  gamepad.read();
+	gamepad.read();
 
 #if GAMEPAD_DEBOUNCE_MILLIS > 0
-  gamepad.debounce();
+	gamepad.debounce();
 #endif
 
 	gamepad.hotkey();
@@ -93,9 +105,9 @@ void loop()
 	leds.process(&gamepad);
 #endif
 
-  gamepad.process();
-  report = gamepad.getReport();
-  send_report(report, reportSize);
+	gamepad.process();
+	report = gamepad.getReport();
+	send_report(report, reportSize);
 
 #ifdef BOARD_LEDS_PIN
 	leds.trySave();
@@ -103,11 +115,11 @@ void loop()
 }
 
 void core1() {
-  multicore_lockout_victim_init();
+	multicore_lockout_victim_init();
 
-  while (1) {
+	while (1) {
 #ifdef BOARD_LEDS_PIN
-    leds.loop();
+		leds.loop();
 #endif
-  }
+	}
 }
