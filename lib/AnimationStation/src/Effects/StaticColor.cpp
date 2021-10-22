@@ -1,4 +1,4 @@
-#include "StaticColor.hpp"
+ #include "StaticColor.hpp"
 
 StaticColor::StaticColor(PixelMatrix &matrix) : Animation(matrix) {
 }
