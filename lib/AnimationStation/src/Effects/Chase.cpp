@@ -94,3 +94,4 @@ void Chase::ParameterDown() {
     AnimationStation::options.chaseCycleTime = AnimationStation::options.chaseCycleTime - 10;
   }
 }
+
