@@ -8,21 +8,19 @@ import PinMappingPage from "./Pages/PinMapping";
 
 function App() {
 	return (
-		<div className="App">
-			<Router>
-				<Navbar />
-				<div className="container-fluid body-content">
-					<Switch>
-						<Route exact path="/">
-							<HomePage />
-						</Route>
-						<Route path="/pin-mapping">
-							<PinMappingPage />
-						</Route>
-					</Switch>
-				</div>
-			</Router>
-		</div>
+		<Router>
+			<Navbar />
+			<div className="container-fluid body-content">
+				<Switch>
+					<Route exact path="/">
+						<HomePage />
+					</Route>
+					<Route path="/pin-mapping">
+						<PinMappingPage />
+					</Route>
+				</Switch>
+			</div>
+		</Router>
 	);
 }
 

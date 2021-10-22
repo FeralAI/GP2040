@@ -1,3 +1,21 @@
-.pin-input {
-	width: 50px;
+table.pin-mapping-table {
+	width: inherit;
+	vertical-align: middle;
+
+	th {
+		width: 120px;
+	}
+}
+
+input.pin-input {
+	width: 100px;
+}
+
+.select-button-labels-container {
+	align-self: center;
+}
+
+select.select-button-labels {
+	display: inline-block;
+	width: 150px;
 }
