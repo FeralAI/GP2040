@@ -30,9 +30,10 @@ void core1();
 int main()
 {
 	setup();
+	multicore_launch_core1(core1);
 
-  while (1)
-    loop();
+	while (1)
+		loop();
 
   return 0;
 }
