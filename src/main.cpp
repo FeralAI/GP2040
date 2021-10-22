@@ -33,22 +33,17 @@ int main()
 	setup();
 	multicore_launch_core1(core1);
 
-	while (1)
-		loop();
+	if (gamepad.options.inputMode == INPUT_MODE_CONFIG)
+	{
+		webserver();
+	}
+	else
+	{
+		while (1)
+			loop();
 
-  return 0;
-
-	// if (gamepad.options.inputMode == INPUT_MODE_CONFIG)
-	// {
-	// 	webserver();
-	// }
-	// else
-	// {
-	// 	while (1)
-	// 		loop();
-
-	// 	return 0;
-	// }
+		return 0;
+	}
 }
 
 
