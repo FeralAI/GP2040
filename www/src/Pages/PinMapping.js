@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Button, Form, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 
+import data from '../Data/PinMapping.json'
+import boardParams from '../Data/BoardParams.json'
+
 import './PinMappings.scss';
 
 const baseButtonMappings = [
@@ -32,29 +35,45 @@ const buttonLabelOptions = [
 	{ label: 'Nintendo Switch', value: 'switch' },
 	{ label: 'PS3', value: 'ps3' },
 	{ label: 'DirectInput', value: 'dinput' },
-]
+];
 
-const pinMappingParams = {
-	name: 'pico',
-	min: 0,
-	max: 28,
-	invalid: [23, 24, 25],
-};
+const requiredButtons = ['B1', 'B2', 'B3', 'S2'];
 
 export default function PinMappingPage() {
 	const [buttonMappings, setButtonMappings] = useState(baseButtonMappings);
+	const [selectedBoard, setSelectedBoard] = useState(process.env.REACT_APP_GP2040_BOARD);
 	const [selectedButtonLabels, setSelectedButtonLabels] = useState(buttonLabelOptions[0]);
 	const [validated, setValidated] = useState(false);
 
 	useEffect(() => {
-		axios.get('cgi/action?method=getPinMapping')
-			.then((response) => {
-				setButtonMappings(baseButtonMappings);
-				console.log(response);
-			})
-			.catch((error) => {
-				console.error(error);
-			});
+		if (process.env.NODE_ENV === 'production') {
+			axios.get('cgi/action?method=getPinMappings')
+				.then((response) => {
+					console.log(response.data);
+					let newMappings = [...baseButtonMappings];
+					for (let prop of Object.keys(response.data)) {
+						let results = newMappings.filter(m => m.button === prop);
+						if (results.length > 0)
+							results[0].pin = parseInt(response.data[prop]);
+					}
+
+					setButtonMappings(newMappings);
+				})
+				.catch((error) => {
+					console.error(error);
+				});
+		}
+		else {
+			// Test code
+			let newMappings = [...baseButtonMappings];
+			for (let prop of Object.keys(data[selectedBoard])) {
+				let results = newMappings.filter(m => m.button === prop);
+				if (results.length > 0)
+					results[0].pin = parseInt(data[selectedBoard][prop]);
+			}
+
+			setButtonMappings(newMappings);
+		}
 	}, []);
 
 	const buttonLabelsChanged = (e) => {
@@ -62,19 +81,21 @@ export default function PinMappingPage() {
 	};
 
 	const handlePinChange = (e, i) => {
-		validatePin(i);
-		if (!buttonMappings[i].error) {
-			buttonMappings[i].pin = parseInt(e.target.value);
-			setButtonMappings(buttonMappings);
-		}
+		const newMappings = [...buttonMappings];
+		if (e.target.value)
+			newMappings[i].pin = parseInt(e.target.value);
+		else
+			newMappings[i].pin = '';
+
+		validateMappings(newMappings);
 	};
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		for (let i = 0; i < buttonMappings.length; i++)
-			validatePin(i);
+		const newMappings = [...buttonMappings];
+		validateMappings(newMappings);
 
 		const form = e.currentTarget;
 		if (form.checkValidity() === false) {
@@ -84,29 +105,23 @@ export default function PinMappingPage() {
 		setValidated(true);
 	};
 
-	const validatePin = (i) => {
-		let changed = false;
+	const validateMappings = (mappings) => {
+		for (let mapping of mappings) {
+			mapping.error = null;
+			for (let otherMapping of mappings) {
+				if (mapping.error || mapping.button === otherMapping.button)
+					continue;
 
-		if (buttonMappings[i].pin === -1)
-			return;
-
-		for (let buttonMapping of buttonMappings) {
-			if (buttonMappings[i].button === buttonMapping.button)
-				continue;
-
-			if (buttonMappings[i].pin === buttonMapping.pin) {
-				buttonMappings[i].error = `Pin ${buttonMappings[i].pin} is already assigned`;
-				changed = true;
+				if (mapping.pin === '' && !requiredButtons.filter(b => b === otherMapping.button).length)
+					mapping.error = `${mapping.button} is required`;
+				else if (mapping.pin === otherMapping.pin)
+					mapping.error = `Pin ${mapping.pin} is already assigned`;
+				else if (boardParams[selectedBoard]?.invalid.filter(p => p === mapping.pin).length > 0)
+					mapping.error = `Pin ${mapping.pin} is invalid for this board`;
 			}
 		}
 
-		if (!changed && pinMappingParams.invalid.filter(p => p === buttonMappings[i].pin).length > 0) {
-			buttonMappings[i].error = `Pin ${buttonMappings[i].pin} is invalid for this board`;
-			changed = true;
-		}
-
-		if (changed)
-			setButtonMappings(buttonMappings);
+		setButtonMappings(mappings);
 	};
 
 	return (
@@ -137,10 +152,12 @@ export default function PinMappingPage() {
 								<td>
 									<Form.Control
 										type="number"
-										min={pinMappingParams.min}
-										max={pinMappingParams.max}
 										className="pin-input form-control-sm"
+										value={mapping.pin}
+										min={boardParams[selectedBoard]?.min}
+										max={boardParams[selectedBoard]?.max}
 										isInvalid={!!mapping.error}
+										required={requiredButtons.filter(b => b === mapping.button).length}
 										onChange={(e) => handlePinChange(e, i)}
 									></Form.Control>
 									<Form.Control.Feedback type="invalid">{mapping.error}</Form.Control.Feedback>

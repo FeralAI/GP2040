@@ -6,7 +6,10 @@ function Navbar(props) {
 	return (
 		<nav className="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
 			<div className="container-fluid">
-				<NavLink className="navbar-brand" to="/"><img src="images/logo.png" className="title-logo" alt="logo" /> GP2040 Configurator</NavLink>
+				<NavLink className="navbar-brand" to="/">
+					<img src="images/logo.png" className="title-logo" alt="logo" />
+					GP2040 <span className="title-sm">({process.env.NODE_ENV})</span>
+				</NavLink>
 				<button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
 					<span className="navbar-toggler-icon"></span>
 				</button>

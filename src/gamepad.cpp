@@ -58,7 +58,7 @@ void Gamepad::setup()
 		mapButtonA2  = new GamepadButtonMapping(PIN_BUTTON_A2,  GAMEPAD_MASK_A2);
 	}
 
-	GamepadButtonMapping *gamepadMappings[] =
+	gamepadMappings = new GamepadButtonMapping *[GAMEPAD_DIGITAL_INPUT_COUNT]
 	{
 		mapDpadUp,   mapDpadDown, mapDpadLeft, mapDpadRight,
 		mapButtonB1, mapButtonB2, mapButtonB3, mapButtonB4,

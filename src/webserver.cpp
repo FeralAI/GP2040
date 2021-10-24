@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <vector>
 #include <string>
 #include <string.h>
 #include "pico/stdlib.h"
@@ -15,25 +16,35 @@
 #define PATH_INDEX      "/index.html"
 #define PATH_CGI_ACTION "/cgi/action"
 
-#define ACTION_GET_ECHO_PARAMS  "echoParams"
-#define ACTION_GET_PIN_MAPPINGS "getPinMappings"
-#define ACTION_SET_PIN_MAPPINGS "setPinMappings"
+#define METHOD_GET_ECHO_PARAMS  "echoParams"
+#define METHOD_GET_PIN_MAPPINGS "getPinMappings"
+#define METHOD_SET_PIN_MAPPINGS "setPinMappings"
+
+using namespace std;
 
 extern struct fsdata_file file__index_html[];
 
-char *excludePaths[] = { "/css", "/images", "/js", "/static" };
-int excludePathCount = 4;
+static char *excludePaths[] = { "/css", "/images", "/js", "/static" };
+static int excludePathCount = 4;
 
-int cgiParamCount;
-char **cgiParams;
-char **cgiValues;
+static int cgiParamCount;
+static vector<string> cgiParams;
+static vector<string> cgiValues;
+static Gamepad *gamepad;
 
 // Generic CGI method for capturing query params
 static const char *cgi_action(int iIndex, int iNumParams, char *pcParam[], char *pcValue[])
 {
+	cgiParams.clear();
+	cgiValues.clear();
 	cgiParamCount = iNumParams;
-	cgiParams = pcParam;
-	cgiValues = pcValue;
+
+	for (int i = 0; i < cgiParamCount; i++)
+	{
+		cgiParams.push_back(pcParam[i]);
+		cgiValues.push_back(pcValue[i]);
+	}
+
 	return PATH_CGI_ACTION;
 }
 
@@ -45,8 +56,9 @@ static const tCGI cgi_handlers[] =
 	},
 };
 
-void webserver()
+void webserver(Gamepad *instance)
 {
+	gamepad = instance;
 	rndis_init();
 	http_set_cgi_handlers(cgi_handlers, LWIP_ARRAYSIZE(cgi_handlers));
 	while (1)
@@ -54,6 +66,10 @@ void webserver()
 		rndis_task();
 	}
 }
+
+/*************************
+ * Helper methods
+ *************************/
 
 void set_file_data(struct fs_file *file, const char *data, size_t size)
 {
@@ -66,19 +82,19 @@ void set_file_data(struct fs_file *file, const char *data, size_t size)
 	file->http_header_included = 0;
 }
 
-char *get_param(char *name, char **params, char **values, int count)
+string get_param_value(string name)
 {
-	for (int i = 0; i < count; i++) {
-		if (strncmp(name, params[i], sizeof(name)))
-			return values[i];
+	for (int i = 0; i < cgiParamCount; i++) {
+		if (!name.compare(cgiParams[i]))
+			return cgiValues[i];
 	}
 
 	return NULL;
 }
 
-std::string to_json(bool success, char **props, char **values, int count)
+string to_json(bool success, vector<string> props, vector<string> values, int count)
 {
-	std::string json;
+	string json;
 	if (success)
 		json += "{ \"success\": true";
 	else
@@ -87,7 +103,7 @@ std::string to_json(bool success, char **props, char **values, int count)
 	if (count > 0)
 	{
 		for (int i = 0; i < count; i++)
-			json = json + std::string(", \"") + props[i] + "\": \"" + values[i] + "\"";
+			json = json + string(", \"") + props[i] + "\": \"" + values[i] + "\"";
 	}
 
 	json += " }";
@@ -95,25 +111,65 @@ std::string to_json(bool success, char **props, char **values, int count)
 	return json;
 }
 
+/*************************
+ * API methods
+ *************************/
+
+string getPinMappings()
+{
+	string result;
+	vector<string> props;
+	vector<string> values;
+
+	props.push_back("Up");    values.push_back(to_string(gamepad->mapDpadUp->pin));
+	props.push_back("Down");  values.push_back(to_string(gamepad->mapDpadDown->pin));
+	props.push_back("Left");  values.push_back(to_string(gamepad->mapDpadLeft->pin));
+	props.push_back("Right"); values.push_back(to_string(gamepad->mapDpadRight->pin));
+	props.push_back("B1");    values.push_back(to_string(gamepad->mapButtonB1->pin));
+	props.push_back("B2");    values.push_back(to_string(gamepad->mapButtonB2->pin));
+	props.push_back("B3");    values.push_back(to_string(gamepad->mapButtonB3->pin));
+	props.push_back("B4");    values.push_back(to_string(gamepad->mapButtonB4->pin));
+	props.push_back("L1");    values.push_back(to_string(gamepad->mapButtonL1->pin));
+	props.push_back("R1");    values.push_back(to_string(gamepad->mapButtonR1->pin));
+	props.push_back("L2");    values.push_back(to_string(gamepad->mapButtonL2->pin));
+	props.push_back("R2");    values.push_back(to_string(gamepad->mapButtonR2->pin));
+	props.push_back("S1");    values.push_back(to_string(gamepad->mapButtonS1->pin));
+	props.push_back("S2");    values.push_back(to_string(gamepad->mapButtonS2->pin));
+	props.push_back("L3");    values.push_back(to_string(gamepad->mapButtonL3->pin));
+	props.push_back("R3");    values.push_back(to_string(gamepad->mapButtonR3->pin));
+	props.push_back("A1");    values.push_back(to_string(gamepad->mapButtonA1->pin));
+	props.push_back("A2");    values.push_back(to_string(gamepad->mapButtonA2->pin));
+
+	return to_json(true, props, values, props.size());
+}
+
+/*************************
+ * LWIP implementation
+ *************************/
+
 int fs_open_custom(struct fs_file *file, const char *name)
 {
 	if (!memcmp(name, PATH_CGI_ACTION, sizeof(PATH_CGI_ACTION)))
 	{
-		if (!strncmp(name, ACTION_GET_ECHO_PARAMS, sizeof(ACTION_GET_ECHO_PARAMS)))
+		string method = get_param_value("method");
+
+		if (!method.compare(METHOD_GET_ECHO_PARAMS))
 		{
-			std::string json = to_json(true, cgiParams, cgiValues, cgiParamCount);
+			string json = to_json(true, cgiParams, cgiValues, cgiParamCount);
 			set_file_data(file, json.data(), json.length());
+			return 1;
 		}
-		else if (!strncmp(name, ACTION_GET_PIN_MAPPINGS, sizeof(ACTION_GET_PIN_MAPPINGS)))
+		else if (!method.compare(METHOD_GET_PIN_MAPPINGS))
+		{
+			string json = getPinMappings();
+			set_file_data(file, json.data(), json.length());
+			return 1;
+		}
+		else if (!method.compare(METHOD_SET_PIN_MAPPINGS))
 		{
 
+			return 1;
 		}
-		else if (!strncmp(name, ACTION_SET_PIN_MAPPINGS, sizeof(ACTION_SET_PIN_MAPPINGS)))
-		{
-
-		}
-
-		return 1;
 	}
 
 	bool isExclude = false;

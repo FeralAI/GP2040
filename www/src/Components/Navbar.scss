@@ -1,12 +1,18 @@
 .title-logo {
-	height: 22px;
-	margin-right: 5px;
+	height: 24px;
+	margin-right: 10px;
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .title-logo {
     animation: clockwise-spin infinite 20s linear;
   }
+}
+
+.title-sm {
+	font-size: 0.675rem;
+	vertical-align: middle;
+	line-height: 2rem;
 }
 
 @keyframes clockwise-spin {

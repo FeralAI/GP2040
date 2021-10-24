@@ -48,6 +48,8 @@ public:
 	GamepadButtonMapping *mapButtonR3;
 	GamepadButtonMapping *mapButtonA1;
 	GamepadButtonMapping *mapButtonA2;
+
+	GamepadButtonMapping **gamepadMappings;
 };
 
 #endif

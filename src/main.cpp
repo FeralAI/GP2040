@@ -22,7 +22,7 @@ LEDs leds;
 
 uint32_t getMillis() { return to_ms_since_boot(get_absolute_time()); }
 
-Gamepad gamepad(GAMEPAD_DEBOUNCE_MILLIS);
+static Gamepad gamepad(GAMEPAD_DEBOUNCE_MILLIS);
 
 void setup();
 void loop();
@@ -35,7 +35,7 @@ int main()
 
 	if (gamepad.options.inputMode == INPUT_MODE_CONFIG)
 	{
-		webserver();
+		webserver(&gamepad);
 	}
 	else
 	{
