@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, Form, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 
-import data from '../Data/PinMapping.json'
+import pinMapping from '../Data/PinMapping.json'
 import boardParams from '../Data/BoardParams.json'
 
 import './PinMappings.scss';
@@ -41,7 +41,7 @@ const requiredButtons = ['B1', 'B2', 'B3', 'S2'];
 
 export default function PinMappingPage() {
 	const [buttonMappings, setButtonMappings] = useState(baseButtonMappings);
-	const [selectedBoard, setSelectedBoard] = useState(process.env.REACT_APP_GP2040_BOARD);
+	const [selectedBoard] = useState(process.env.REACT_APP_GP2040_BOARD);
 	const [selectedButtonLabels, setSelectedButtonLabels] = useState(buttonLabelOptions[0]);
 	const [validated, setValidated] = useState(false);
 
@@ -59,22 +59,20 @@ export default function PinMappingPage() {
 
 					setButtonMappings(newMappings);
 				})
-				.catch((error) => {
-					console.error(error);
-				});
+				.catch(console.error);
 		}
 		else {
 			// Test code
 			let newMappings = [...baseButtonMappings];
-			for (let prop of Object.keys(data[selectedBoard])) {
+			for (let prop of Object.keys(pinMapping[selectedBoard])) {
 				let results = newMappings.filter(m => m.button === prop);
 				if (results.length > 0)
-					results[0].pin = parseInt(data[selectedBoard][prop]);
+					results[0].pin = parseInt(pinMapping[selectedBoard][prop]);
 			}
 
 			setButtonMappings(newMappings);
 		}
-	}, []);
+	}, [selectedBoard]);
 
 	const buttonLabelsChanged = (e) => {
 		setSelectedButtonLabels(buttonLabelOptions.filter(o => o.value === e.target.value)[0]);
@@ -100,6 +98,22 @@ export default function PinMappingPage() {
 		const form = e.currentTarget;
 		if (form.checkValidity() === false) {
 			console.error('Invalid!');
+		}
+		else {
+			const data = newMappings.reduce((last, next) => {
+				let prefix = '';
+				if (last)
+					prefix = `${last}|`;
+
+				return `${prefix}${next.button}:${next.pin}`;
+			}, '');
+
+			axios.get(`cgi/action?method=setPinMappings&mappings=${data}`)
+				.then((response) => {
+					console.log(response.data);
+					// TODO: Show success message
+				})
+				.catch(console.error);
 		}
 
 		setValidated(true);

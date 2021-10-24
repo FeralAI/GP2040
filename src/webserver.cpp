@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <vector>
+#include <map>
 #include <string>
+#include <sstream>
 #include <string.h>
 #include "pico/stdlib.h"
 #include "pico/bootrom.h"
@@ -11,9 +13,9 @@
 #include "httpd/fscustom.h"
 #include "httpd/fsdata.h"
 #include "rndis/rndis.h"
+#include "storage.h"
 #include "webserver.h"
 
-#define PATH_INDEX      "/index.html"
 #define PATH_CGI_ACTION "/cgi/action"
 
 #define METHOD_GET_ECHO_PARAMS  "echoParams"
@@ -24,26 +26,18 @@ using namespace std;
 
 extern struct fsdata_file file__index_html[];
 
-static char *excludePaths[] = { "/css", "/images", "/js", "/static" };
-static int excludePathCount = 4;
-
-static int cgiParamCount;
-static vector<string> cgiParams;
-static vector<string> cgiValues;
+static vector<string> spaPaths = { "/pin-mappings" };
+static vector<string> excludePaths = { "/css", "/images", "/js", "/static" };
+static map<string, string> cgiParams;
 static Gamepad *gamepad;
 
 // Generic CGI method for capturing query params
 static const char *cgi_action(int iIndex, int iNumParams, char *pcParam[], char *pcValue[])
 {
 	cgiParams.clear();
-	cgiValues.clear();
-	cgiParamCount = iNumParams;
 
-	for (int i = 0; i < cgiParamCount; i++)
-	{
-		cgiParams.push_back(pcParam[i]);
-		cgiValues.push_back(pcValue[i]);
-	}
+	for (int i = 0; i < iNumParams; i++)
+		cgiParams.emplace(pcParam[i], pcValue[i]);
 
 	return PATH_CGI_ACTION;
 }
@@ -71,12 +65,22 @@ void webserver(Gamepad *instance)
  * Helper methods
  *************************/
 
+vector<string> split_string(const string &s, char delim)
+{
+	vector<string> result;
+	stringstream ss(s);
+	string item;
+
+	while (getline(ss, item, delim))
+		result.push_back(item);
+
+	return result;
+}
+
 void set_file_data(struct fs_file *file, const char *data, size_t size)
 {
 	memset(file, 0, sizeof(struct fs_file));
-	file->pextension = mem_malloc(size);
-	memcpy(file->pextension, data, size);
-	file->data = (const char *)file->pextension;
+	file->data = (const char *)data;
 	file->len = size;
 	file->index = file->len;
 	file->http_header_included = 0;
@@ -84,26 +88,49 @@ void set_file_data(struct fs_file *file, const char *data, size_t size)
 
 string get_param_value(string name)
 {
-	for (int i = 0; i < cgiParamCount; i++) {
-		if (!name.compare(cgiParams[i]))
-			return cgiValues[i];
+	for (auto& param : cgiParams)
+	{
+		if (!name.compare(param.first))
+			return param.second;
 	}
 
-	return NULL;
+	return {};
 }
 
-string to_json(bool success, vector<string> props, vector<string> values, int count)
+map<string, string> get_param_data(string name)
 {
-	string json;
-	if (success)
-		json += "{ \"success\": true";
-	else
-		json += "{ \"success\": false";
+	static string delim = "|";
 
+	map<string, string> data;
+	string rawValue = get_param_value(name);
+	if (!rawValue.empty())
+	{
+		int start = 0U;
+		int end = (int)rawValue.find(delim);
+		while (end != -1)
+		{
+			vector<string> split = split_string(rawValue.substr(start, end - start), ':');
+			data.emplace(split[0], split[1]);
+			start = end + (int)delim.length();
+			end = (int)rawValue.find(delim, start);
+		}
+
+		vector<string> split = split_string(rawValue.substr(start, end - start), ':');
+		data.emplace(split[0], split[1]);
+	}
+
+	return data;
+}
+
+string to_json(string method, map<string, string> props)
+{
+	string json = "{ \"method\": \"" + method + "\"";
+
+	int count = props.size();
 	if (count > 0)
 	{
-		for (int i = 0; i < count; i++)
-			json = json + string(", \"") + props[i] + "\": \"" + values[i] + "\"";
+		for (auto &nv : props)
+			json = json + string(", \"") + nv.first + "\": \"" + nv.second + "\"";
 	}
 
 	json += " }";
@@ -118,29 +145,59 @@ string to_json(bool success, vector<string> props, vector<string> values, int co
 string getPinMappings()
 {
 	string result;
-	vector<string> props;
-	vector<string> values;
+	map<string, string> props;
 
-	props.push_back("Up");    values.push_back(to_string(gamepad->mapDpadUp->pin));
-	props.push_back("Down");  values.push_back(to_string(gamepad->mapDpadDown->pin));
-	props.push_back("Left");  values.push_back(to_string(gamepad->mapDpadLeft->pin));
-	props.push_back("Right"); values.push_back(to_string(gamepad->mapDpadRight->pin));
-	props.push_back("B1");    values.push_back(to_string(gamepad->mapButtonB1->pin));
-	props.push_back("B2");    values.push_back(to_string(gamepad->mapButtonB2->pin));
-	props.push_back("B3");    values.push_back(to_string(gamepad->mapButtonB3->pin));
-	props.push_back("B4");    values.push_back(to_string(gamepad->mapButtonB4->pin));
-	props.push_back("L1");    values.push_back(to_string(gamepad->mapButtonL1->pin));
-	props.push_back("R1");    values.push_back(to_string(gamepad->mapButtonR1->pin));
-	props.push_back("L2");    values.push_back(to_string(gamepad->mapButtonL2->pin));
-	props.push_back("R2");    values.push_back(to_string(gamepad->mapButtonR2->pin));
-	props.push_back("S1");    values.push_back(to_string(gamepad->mapButtonS1->pin));
-	props.push_back("S2");    values.push_back(to_string(gamepad->mapButtonS2->pin));
-	props.push_back("L3");    values.push_back(to_string(gamepad->mapButtonL3->pin));
-	props.push_back("R3");    values.push_back(to_string(gamepad->mapButtonR3->pin));
-	props.push_back("A1");    values.push_back(to_string(gamepad->mapButtonA1->pin));
-	props.push_back("A2");    values.push_back(to_string(gamepad->mapButtonA2->pin));
+	props.emplace("Up", to_string(gamepad->mapDpadUp->pin));
+	props.emplace("Down", to_string(gamepad->mapDpadDown->pin));
+	props.emplace("Left", to_string(gamepad->mapDpadLeft->pin));
+	props.emplace("Right", to_string(gamepad->mapDpadRight->pin));
+	props.emplace("B1", to_string(gamepad->mapButtonB1->pin));
+	props.emplace("B2", to_string(gamepad->mapButtonB2->pin));
+	props.emplace("B3", to_string(gamepad->mapButtonB3->pin));
+	props.emplace("B4", to_string(gamepad->mapButtonB4->pin));
+	props.emplace("L1", to_string(gamepad->mapButtonL1->pin));
+	props.emplace("R1", to_string(gamepad->mapButtonR1->pin));
+	props.emplace("L2", to_string(gamepad->mapButtonL2->pin));
+	props.emplace("R2", to_string(gamepad->mapButtonR2->pin));
+	props.emplace("S1", to_string(gamepad->mapButtonS1->pin));
+	props.emplace("S2", to_string(gamepad->mapButtonS2->pin));
+	props.emplace("L3", to_string(gamepad->mapButtonL3->pin));
+	props.emplace("R3", to_string(gamepad->mapButtonR3->pin));
+	props.emplace("A1", to_string(gamepad->mapButtonA1->pin));
+	props.emplace("A2", to_string(gamepad->mapButtonA2->pin));
 
-	return to_json(true, props, values, props.size());
+	return to_json(METHOD_GET_PIN_MAPPINGS, props);
+}
+
+// Data format example:
+// Up:1|B1:3
+string setPinMappings()
+{
+	map<string, string> data = get_param_data("mappings");
+	BoardOptions options =
+	{
+		.useUserDefinedPins = true,
+		.pinDpadUp    = (uint8_t)stoul(data.find("Up")->second),
+		.pinDpadDown  = (uint8_t)stoul(data.find("Down")->second),
+		.pinDpadLeft  = (uint8_t)stoul(data.find("Left")->second),
+		.pinDpadRight = (uint8_t)stoul(data.find("Right")->second),
+		.pinButtonB1  = (uint8_t)stoul(data.find("B1")->second),
+		.pinButtonB2  = (uint8_t)stoul(data.find("B2")->second),
+		.pinButtonB3  = (uint8_t)stoul(data.find("B3")->second),
+		.pinButtonB4  = (uint8_t)stoul(data.find("B4")->second),
+		.pinButtonL1  = (uint8_t)stoul(data.find("L1")->second),
+		.pinButtonR1  = (uint8_t)stoul(data.find("R1")->second),
+		.pinButtonL2  = (uint8_t)stoul(data.find("L2")->second),
+		.pinButtonR2  = (uint8_t)stoul(data.find("R2")->second),
+		.pinButtonS1  = (uint8_t)stoul(data.find("S1")->second),
+		.pinButtonS2  = (uint8_t)stoul(data.find("S2")->second),
+		.pinButtonL3  = (uint8_t)stoul(data.find("L3")->second),
+		.pinButtonR3  = (uint8_t)stoul(data.find("R3")->second),
+		.pinButtonA1  = (uint8_t)stoul(data.find("A1")->second),
+		.pinButtonA2  = (uint8_t)stoul(data.find("A2")->second),
+	};
+
+	setBoardOptions(options);
 }
 
 /*************************
@@ -155,37 +212,41 @@ int fs_open_custom(struct fs_file *file, const char *name)
 
 		if (!method.compare(METHOD_GET_ECHO_PARAMS))
 		{
-			string json = to_json(true, cgiParams, cgiValues, cgiParamCount);
-			set_file_data(file, json.data(), json.length());
+			string json = to_json(METHOD_GET_ECHO_PARAMS, cgiParams);
+			set_file_data(file, json.data(), json.size());
 			return 1;
 		}
 		else if (!method.compare(METHOD_GET_PIN_MAPPINGS))
 		{
 			string json = getPinMappings();
-			set_file_data(file, json.data(), json.length());
+			set_file_data(file, json.data(), json.size());
 			return 1;
 		}
 		else if (!method.compare(METHOD_SET_PIN_MAPPINGS))
 		{
-
+			string json = setPinMappings();
+			set_file_data(file, json.data(), json.size());
 			return 1;
 		}
 	}
 
 	bool isExclude = false;
-	for (int i = 0; i < excludePathCount; i++)
-		isExclude = isExclude || strstr(name, excludePaths[i]) != NULL;
+	for (auto &excludePath : excludePaths)
+		if (!excludePath.compare(name))
+			return 0;
 
-	if (!isExclude)
+	for (auto &spaPath : spaPaths)
 	{
-		// Redirect everything else to index page
-		file->data = (const char *)file__index_html[0].data;
-		file->len = file__index_html[0].len;
-		file->index = file__index_html[0].len;
-		file->http_header_included = file__index_html[0].http_header_included;
-		file->pextension = NULL;
-		file->is_custom_file = 0;
-		return 1;
+		if (!spaPath.compare(name))
+		{
+			file->data = (const char *)file__index_html[0].data;
+			file->len = file__index_html[0].len;
+			file->index = file__index_html[0].len;
+			file->http_header_included = file__index_html[0].http_header_included;
+			file->pextension = NULL;
+			file->is_custom_file = 0;
+			return 1;
+		}
 	}
 
 	return 0;
