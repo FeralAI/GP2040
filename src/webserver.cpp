@@ -65,6 +65,34 @@ void webserver(Gamepad *instance)
  * Helper methods
  *************************/
 
+string url_decode(const string& value)
+{
+	string result;
+	result.reserve(value.size());
+
+	for (std::size_t i = 0; i < value.size(); ++i)
+	{
+		auto ch = value[i];
+		if (ch == '%' && (i + 2) < value.size())
+		{
+			auto hex = value.substr(i + 1, 2);
+			auto dec = static_cast<char>(std::strtol(hex.c_str(), nullptr, 16));
+			result.push_back(dec);
+			i += 2;
+		}
+		else if (ch == '+')
+		{
+			result.push_back(' ');
+		}
+		else
+		{
+			result.push_back(ch);
+		}
+	}
+
+	return result;
+}
+
 vector<string> split_string(const string &s, char delim)
 {
 	vector<string> result;
@@ -91,7 +119,7 @@ string get_param_value(string name)
 	for (auto& param : cgiParams)
 	{
 		if (!name.compare(param.first))
-			return param.second;
+			return url_decode(param.second);
 	}
 
 	return {};
@@ -169,10 +197,10 @@ string getPinMappings()
 	return to_json(METHOD_GET_PIN_MAPPINGS, props);
 }
 
-// Data format example:
-// Up:1|B1:3
 string setPinMappings()
 {
+	// Data format example:
+	// A1:28|A2:18|B1:4|B2:5|B3:0|B4:1|Down:11|L1:3|L2:7|L3:17|Left:10|R1:2|R2:6|R3:16|Right:12|S1:8|S2:9|Up:13
 	map<string, string> data = get_param_data("mappings");
 	BoardOptions options =
 	{
@@ -198,6 +226,7 @@ string setPinMappings()
 	};
 
 	setBoardOptions(options);
+	return to_json(METHOD_SET_PIN_MAPPINGS, data);
 }
 
 /*************************
