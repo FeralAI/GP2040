@@ -15,6 +15,7 @@
 #include "rndis/rndis.h"
 #include "storage.h"
 #include "webserver.h"
+#include "GamepadStorage.h"
 
 #define PATH_CGI_ACTION "/cgi/action"
 
@@ -226,6 +227,7 @@ string setPinMappings()
 	};
 
 	setBoardOptions(options);
+	GamepadStore.save();
 	return to_json(METHOD_SET_PIN_MAPPINGS, data);
 }
 
