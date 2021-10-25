@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Form, Row, Col } from 'react-bootstrap';
+import { Button, Form } from 'react-bootstrap';
 import axios from 'axios';
 
 import pinMapping from '../Data/PinMapping.json'
@@ -44,6 +44,7 @@ export default function PinMappingPage() {
 	const [selectedBoard] = useState(process.env.REACT_APP_GP2040_BOARD);
 	const [selectedButtonLabels, setSelectedButtonLabels] = useState(buttonLabelOptions[0]);
 	const [validated, setValidated] = useState(false);
+	const [saveMessage, setSaveMessage] = useState('');
 
 	useEffect(() => {
 		if (process.env.NODE_ENV === 'production') {
@@ -92,7 +93,7 @@ export default function PinMappingPage() {
 		validateMappings(newMappings);
 
 		if (Object.keys(newMappings).filter(p => !!newMappings[p].error).length) {
-			console.error('Invalid!');
+			setSaveMessage('Validation errors, see above');
 			return;
 		}
 
@@ -108,12 +109,16 @@ export default function PinMappingPage() {
 			axios.get(`cgi/action?method=setPinMappings&mappings=${data}`)
 				.then((response) => {
 					console.log(response.data);
-					// TODO: Show success message
+					setSaveMessage("Saved!");
 				})
-				.catch(console.error);
+				.catch((err) => {
+					console.error(err);
+					setSaveMessage(err);
+				});
 		}
 		else {
 			console.log(data);
+			setSaveMessage(data);
 		}
 	};
 
@@ -145,27 +150,31 @@ export default function PinMappingPage() {
 		<div>
 			<Form noValidate validated={validated} onSubmit={handleSubmit}>
 				<header>
-					<Row className="mb-3">
-						<Col>
-							<h1>Pin Mapping</h1>
-						</Col>
-						<Form.Group as={Col} className="select-button-labels-container">
-							<Form.Select className="select-button-labels form-select-sm float-end" onChange={buttonLabelsChanged}>
-								{buttonLabelOptions.map((o, i) => <option key={`button-label-option-${i}`} value={o.value}>{o.label}</option>)}
-							</Form.Select>
-						</Form.Group>
-					</Row>
+					<h1>Pin Mapping</h1>
 				</header>
-				<table className="table table-striped pin-mapping-table">
-					<thead>
+				<p>Use the form below to reconfigure your button-to-pin mapping.</p>
+				<p className="alert alert-warning">
+					Mapping buttons to pins you don't have connected or available can leave your device in non-functional state.
+					If this happens, you can reset your device by flashing <a href="downloads/flash_nuke.uf2">flash_nuke.uf2</a> to your
+					RP2040 board. Then reflash GP2040 onto the controller to get back to defaults.
+				</p>
+				<Form.Group className="select-button-labels-container">
+					<Form.Label>Labels</Form.Label>
+					<Form.Select className="select-button-labels form-select-sm" onChange={buttonLabelsChanged}>
+						{buttonLabelOptions.map((o, i) => <option key={`button-label-option-${i}`} value={o.value}>{o.label}</option>)}
+					</Form.Select>
+				</Form.Group>
+				<table className="table table-sm table-striped pin-mapping-table">
+					<thead className="table-dark">
 						<tr>
+							<th className="table-header-button-label">{selectedButtonLabels.label}</th>
 							<th>Pin</th>
-							<th>{selectedButtonLabels.label}</th>
 						</tr>
 					</thead>
 					<tbody>
 						{Object.keys(buttonMappings)?.map((prop, i) =>
-							<tr key={`button-map-${i}`}>
+							<tr key={`button-map-${i}`} className={validated && !!buttonMappings[prop].error ? "table-danger" : ""}>
+								<td>{buttonMappings[prop][selectedButtonLabels.value]}</td>
 								<td>
 									<Form.Control
 										type="number"
@@ -179,13 +188,13 @@ export default function PinMappingPage() {
 									></Form.Control>
 									<Form.Control.Feedback type="invalid">{buttonMappings[prop].error}</Form.Control.Feedback>
 								</td>
-								<td>{buttonMappings[prop][selectedButtonLabels.value]}</td>
 							</tr>
 						)}
 					</tbody>
 				</table>
 
 				<Button type="submit">Save</Button>
+				{saveMessage ? <span className="alert">{saveMessage}</span> : null}
 			</Form>
 		</div>
 	);

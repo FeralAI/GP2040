@@ -1,3 +1,18 @@
+.navbar {
+	padding-top: 0.5rem;
+	padding-bottom: 0.5rem;
+}
+
+.navbar-brand {
+	display: flex;
+	flex: 0 0 auto;
+	line-height: 1.325rem;
+}
+
+.nav-item * {
+	font-size: 0.825rem;
+}
+
 .title-logo {
 	height: 24px;
 	margin-right: 10px;

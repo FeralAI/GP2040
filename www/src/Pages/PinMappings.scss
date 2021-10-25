@@ -1,21 +1,34 @@
 table.pin-mapping-table {
-	width: inherit;
+	width: 100%;
 	vertical-align: middle;
 
-	th {
-		width: 120px;
+	.table-header-button-label {
+		width: 150px;
+	}
+
+	input.pin-input {
+		display: inline-block;
+		width: 80px;
+
+		+ .invalid-feedback {
+			display: inline;
+			margin-left: 20px;
+			margin-right: 10px;
+		}
 	}
 }
 
-input.pin-input {
-	width: 100px;
-}
-
 .select-button-labels-container {
-	align-self: center;
+	margin-bottom: 10px;
+
+	.select-button-labels {
+		display: inline-block;
+		width: 150px;
+	}
+
+	label {
+		line-height: 2rem;
+		margin-right: 10px;
+	}
 }
 
-select.select-button-labels {
-	display: inline-block;
-	width: 150px;
-}
