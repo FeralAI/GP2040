@@ -27,7 +27,7 @@ using namespace std;
 
 extern struct fsdata_file file__index_html[];
 
-static vector<string> spaPaths = { "/pin-mappings" };
+static vector<string> spaPaths = { "/pin-mapping" };
 static vector<string> excludePaths = { "/css", "/images", "/js", "/static" };
 static map<string, string> cgiParams;
 static Gamepad *gamepad;
