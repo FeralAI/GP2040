@@ -8,6 +8,18 @@
 uint8_t endpoint_in = 0;
 uint8_t endpoint_out = 0;
 
+void receive_xinput_feedback(uint8_t *buffer)
+{
+	if (
+		tud_ready() &&
+		(endpoint_out != 0) && (!usbd_edpt_busy(0, endpoint_out))
+	) {
+		usbd_edpt_claim(0, endpoint_out);   // Take control of OUT endpoint
+		usbd_edpt_xfer(0, endpoint_out, buffer, 32);
+		usbd_edpt_release(0, endpoint_out); // Release control of OUT endpoint
+	}
+}
+
 bool send_xinput_report(void *report, uint8_t report_size)
 {
 	bool sent = false;
@@ -30,12 +42,12 @@ static void xinput_init(void)
 
 }
 
-static void xinput_reset(uint8_t __unused rhport)
+static void xinput_reset(uint8_t rhport)
 {
-
+	(void)rhport;
 }
 
-static uint16_t xinput_open(uint8_t __unused rhport, tusb_desc_interface_t const *itf_descriptor, uint16_t max_length)
+static uint16_t xinput_open(uint8_t rhport, tusb_desc_interface_t const *itf_descriptor, uint16_t max_length)
 {
 	uint16_t driver_length = sizeof(tusb_desc_interface_t) + (itf_descriptor->bNumEndpoints * sizeof(tusb_desc_endpoint_t)) + 16;
 
@@ -63,18 +75,27 @@ static uint16_t xinput_open(uint8_t __unused rhport, tusb_desc_interface_t const
 	return driver_length;
 }
 
-static bool xinput_device_control_request(uint8_t __unused rhport, tusb_control_request_t __unused const *request)
+static bool xinput_device_control_request(uint8_t rhport, tusb_control_request_t const *request)
 {
+	(void)rhport;
+	(void)request;
+
 	return true;
 }
 
-static bool xinput_control_complete(uint8_t __unused rhport, tusb_control_request_t __unused const *request)
+static bool xinput_control_complete(uint8_t rhport, tusb_control_request_t const *request)
 {
+	(void)rhport;
+	(void)request;
+
 	return true;
 }
 
-static bool xinput_xfer_callback(uint8_t __unused rhport, uint8_t __unused ep_addr, xfer_result_t __unused result, uint32_t __unused xferred_bytes)
+static bool xinput_xfer_callback(uint8_t rhport, uint8_t ep_addr, xfer_result_t result, uint32_t xferred_bytes)
 {
+	(void)rhport;
+	(void)result;
+
 	return true;
 }
 
