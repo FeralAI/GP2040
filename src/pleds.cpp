@@ -1,11 +1,14 @@
-#include "pleds.h"
+#include "BoardConfig.h"
 
 #ifdef PLED_TYPE
 
 #include <vector>
 #include "pico/stdlib.h"
 #include "hardware/pwm.h"
+#include "pleds.h"
 #include "xinput_driver.h"
+
+const uint8_t PLED_PINS[] = {PLED1_PIN, PLED2_PIN, PLED3_PIN, PLED4_PIN};
 
 PLEDAnimationState getXInputAnimation(uint8_t *data)
 {
