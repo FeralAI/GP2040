@@ -1,3 +1,8 @@
+/*
+ * SPDX-License-Identifier: MIT
+ * SPDX-FileCopyrightText: Copyright (c) 2021 Jason Skuby (mytechtoybox.com)
+ */
+
 #include "BoardConfig.h"
 
 #ifdef PLED_TYPE
@@ -15,7 +20,7 @@ PLEDAnimationState getXInputAnimation(uint8_t *data)
 	PLEDAnimationState animationState =
 	{
 		.state = 0,
-		.animation = PLED_ANIM_OFF,
+		.animation = PLED_ANIM_NONE,
 		.speed = PLED_SPEED_OFF,
 	};
 
@@ -98,7 +103,7 @@ void PWMPlayerLEDs::display()
 
 void PLEDModule::setup()
 {
-	queue_init(&featureQueue, PLED_REPORT_SIZE, 1);
+	queue_init(&featureQueue, PLED_REPORT_SIZE, 20);
 
 	switch (type)
 	{

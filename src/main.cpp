@@ -86,7 +86,6 @@ void setup()
 		gamepad.options.inputMode = newInputMode;
 	}
 
-	initialize_driver(gamepad.options.inputMode);
 	queue_init(&gamepadQueue, sizeof(Gamepad), 1);
 
 #ifdef BOARD_LEDS_PIN
@@ -98,6 +97,8 @@ void setup()
 
 	for (auto module : modules)
 		module->setup();
+
+	initialize_driver(gamepad.options.inputMode);
 }
 
 void loop()

@@ -37,7 +37,10 @@ void initialize_driver(InputMode mode)
 void receive_report(uint8_t *buffer)
 {
 	if (input_mode == INPUT_MODE_XINPUT)
-		receive_xinput_feedback(buffer);
+	{
+		receive_xinput_report();
+		memcpy(buffer, xinput_out_buffer, XINPUT_OUT_SIZE);
+	}
 }
 
 void send_report(void *report, uint16_t report_size)

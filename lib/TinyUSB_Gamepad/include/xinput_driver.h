@@ -12,11 +12,7 @@
 
 #include "descriptors/XInputDescriptors.h"
 
-// USB endpoint state vars
-extern uint8_t endpoint_in;
-extern uint8_t endpoint_out;
-
-extern const usbd_class_driver_t xinput_driver;
+#define XINPUT_OUT_SIZE 32
 
 typedef enum
 {
@@ -36,11 +32,17 @@ typedef enum
 	XINPUT_PLED_ALTERNATE = 0x0D, // Alternating (e.g. 1+4-2+3), then back to previous*
 } XInputPLEDPattern;
 
+// USB endpoint state vars
+extern uint8_t endpoint_in;
+extern uint8_t endpoint_out;
+extern uint8_t xinput_out_buffer[XINPUT_OUT_SIZE];
+extern const usbd_class_driver_t xinput_driver;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void receive_xinput_feedback(uint8_t *buffer);
+void receive_xinput_report(void);
 bool send_xinput_report(void *report, uint8_t report_size);
 
 #ifdef __cplusplus
