@@ -17,7 +17,7 @@ Once you have the project loaded into PlatformIO, edit the `config/Pico/BoardCon
 1. Create a new folder in `configs` for your board, e.g. `configs/NewBoard`.
 1. Create `configs/NewBoard/BoardConfig.h` and add your pin configuration and options. A `BoardConfig.h` file can be as basic as some pin definitions:
 
-    ```clike
+    ```cpp
     // BoardConfig.h
 
     #define PIN_DPAD_UP     2
@@ -44,7 +44,7 @@ Once you have the project loaded into PlatformIO, edit the `config/Pico/BoardCon
 
 1. Create `configs/NewBoard/env.ini` using the following template:
 
-    ```clike
+    ```cpp
     [env:new-board]
     upload_port = .pio/build/new-board/
     build_flags =
@@ -54,7 +54,7 @@ Once you have the project loaded into PlatformIO, edit the `config/Pico/BoardCon
 
     a. If you're not using a Pico or bare RP2040, check the `include/pico/config_autogen.h` file to see if there is a define for your board. If so, add or update the `-D BOARD_...` option in `build_flags`, for example if using the SparkFun Pro Micro RP2040:
 
-    ```clike
+    ```cpp
     [env:sparkfun-pro-micro]
     upload_port = .pio/build/sparkfun-pro-micro/
     build_flags =
@@ -69,7 +69,7 @@ Select your environment from the VS Code status bar menu. You may need to restar
 
 If your board has WS2812 (or similar) LEDs, they can be configured in the `BoardConfig.h` file. The `AnimationStation` local library uses the `Pixel` struct to map buttons to LEDs:
 
-```clike
+```cpp
 struct Pixel {
   uint8_t index;                  // The pixel index
   uint32_t mask;                  // Used to detect per-pixel lighting
@@ -99,7 +99,7 @@ The following options are available for use in your `BoardConfig.h` file:
 
 A full pixel setup in your `BoardConfig.h` file:
 
-```clike
+```cpp
 #include "enums.h"
 #include "NeoPico.hpp"
 #include "Animation.hpp"
