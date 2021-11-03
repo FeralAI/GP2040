@@ -1,19 +1,14 @@
----
-layout: page
-title: GP2040
----
+# GP2040 - Multi-platform Gamepad Firmware for RP2040 microcontrollers
 
-## GP2040
-
-GP2040 is a low latency, feature-rich, multiplatform gamepad firmware for the RP2040 microcontroller. The current feature set is:
+The goal of GP2040 is to provide multi-platform compatibility for RP2040-based game controllers. The current feature set is:
 
 * Support for the following input modes:
   * Nintendo Switch
   * XInput (PC, Android, Raspberry Pi)
   * DirectInput (PC, Mac, PS3)
-* Low input latency, with default 1000 Hz (1 ms) polling rate in all modes
-* 3 SOCD cleaning modes - Neutral, Up Priority (a.k.a. Hitbox), Second Input Priority
 * Left and Right stick emulation via D-pad inputs
+* 3 SOCD cleaning modes - Neutral, Up Priority (a.k.a. Hitbox), Second Input Priority
+* Low input latency, with default 1000 Hz (1 ms) polling rate in all modes
 * Save options to internal memory
 * Per-button LED support
 
@@ -21,10 +16,9 @@ Prebuilt `uf2` files are available in the [Releases](https://github.com/FeralAI/
 
 * [Raspberry Pi Pico](https://github.com/FeralAI/GP2040/tree/main/configs/Pico) and other pin-compatible boards such as the Pimoroni Pico Lipo
 * [Pico Fighting Board](https://github.com/FeralAI/GP2040-Config-PicoFightingBoard/tree/ca6659ca678aad4f5fbb2756fdbf6d00782c6cd2)
-* [Crush Counter](https://github.com/FeralAI/GP2040/tree/main/configs/CrushCounter) (previous revision known as [OSFRD](https://github.com/FeralAI/GP2040/tree/main/configs/OSFRD))
-* [DURAL](https://github.com/FeralAI/GP2040/tree/main/configs/DURAL)
+* [OSFRD](https://github.com/FeralAI/GP2040/tree/main/configs/OSFRD)
 
-Several other working example configurations are located in the [configs](https://github.com/FeralAI/GP2040/tree/main/configs) folder of the repository.
+Several other working example configurations are located in the [configs](https://github.com/FeralAI/GP2040/tree/main/configs) folder.
 
 ## Installation
 
