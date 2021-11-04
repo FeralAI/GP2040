@@ -1,2 +1,3 @@
-* [Home](./)
-* [Development](./development/index)
+* [Home](/)
+* [Usage](usage)
+* [Development](development)
