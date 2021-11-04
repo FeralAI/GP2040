@@ -2,7 +2,7 @@
 
 ## Buttons
 
-GP2040 uses a generic button labeling for gamepad state, which is then converted to the appropriate input type before sending. This table provides a map of GP2040 buttons to common gamepads/layouts:
+GP2040 uses a generic button labeling for gamepad state, which is then converted to the appropriate input type before sending. This table provides a map of GP2040 buttons to the supported input types and layouts:
 
 | GP2040  | XInput | Switch  | PS3          | DirectInput  | Arcade |
 | ------- | ------ | ------- | ------------ | ------------ | ------ |
@@ -21,9 +21,7 @@ GP2040 uses a generic button labeling for gamepad state, which is then converted
 | A1      | Guide  | Home    | -            | 13           | -      |
 | A2      | -      | Capture | -            | 14           | -      |
 
-## Home Button
-
-If you do not have a dedicated Home button, you can activate it via the **`BACK + START + UP`** button combination.
+If you do not have a dedicated Home button, you can activate it via the **`S1 + S2 + UP`** button combination.
 
 ## Input Modes
 

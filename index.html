@@ -7,7 +7,7 @@
 	<meta name="description" content="Description">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify-themeable@0/dist/css/theme-simple-dark.css">
-	<link rel="stylesheet" href="path/to/prismjs-theme.css">
+	<link rel="stylesheet" href="docs/css/prism-coldark-dark.css">
 </head>
 <body>
 	<div id="app"></div>
@@ -15,12 +15,14 @@
 		window.$docsify = {
 			name: 'GP2040',
 			repo: 'https://github.com/FeralAI/GP2040/',
-			loadNavbar: true,
+			homepage: './README.md',
+			loadNavbar: 'docs/_navbar.md',
 			themeable: {
 					readyTransition : true, // default
 					responsiveTables: true  // default
 			}
 		}
+
 	</script>
 	<!-- Docsify v4 -->
 	<script src="//cdn.jsdelivr.net/npm/docsify@4"></script>

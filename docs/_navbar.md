@@ -1,3 +1,3 @@
 * [Home](/)
-* [Usage](usage)
-* [Development](development)
+* [Usage](docs/usage)
+* [Development](docs/development)
