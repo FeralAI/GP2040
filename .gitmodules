@@ -1,3 +1,0 @@
-[submodule "configs/PicoFightingBoard"]
-	path = configs/PicoFightingBoard
-	url = git@github.com:FeralAI/GP2040-Config-PicoFightingBoard.git
