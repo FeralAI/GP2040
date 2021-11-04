@@ -1,26 +1,34 @@
-# GP2040 - Multi-platform Gamepad Firmware for RP2040 microcontrollers
+# GP2040
 
-The goal of GP2040 is to provide multi-platform compatibility for RP2040-based game controllers. The current feature set is:
+GP2040 is a game controller firmware for RP2040 microcontrollers. The goal is to provide high performance and a rich feature set across multiple platforms. GP2040 currently has the following features:
 
-* Support for the following input modes:
-  * Nintendo Switch
-  * XInput (PC, Android, Raspberry Pi)
-  * DirectInput (PC, Mac, PS3)
+* Support for XInput, DirectInput and Nintendo Switch input modes
+* Less than 1ms of input latency at the default 1000 Hz (1 ms) polling rate
+* Multiple SOCD cleaning modes - Neutral, Up Priority (a.k.a. Hitbox), Second Input Priority
 * Left and Right stick emulation via D-pad inputs
-* 3 SOCD cleaning modes - Neutral, Up Priority (a.k.a. Hitbox), Second Input Priority
-* Low input latency, with default 1000 Hz (1 ms) polling rate in all modes
-* Save options to internal memory
-* Per-button LED support
+* Per-button RGB LED support
+* PWM and RGB player indicator LED support (XInput only)
+* Saves options to internal memory
+
+## Performance
+
+Input latency is tested using the methodology outlined at [WydD's inputlag.science website](https://inputlag.science/controller/methodology), using the default 1000 Hz (1 ms) polling rate in the firmware.
+
+| Version | Mode | Poll Rate | Min | Max | Avg | Stdev | % on time | %1f skip | %2f skip |
+| - | - | - | - | - | - | - | - | - | - |
+| v0.3.1 | All | 1 ms | 0.56 ms | 1.32 ms | 0.85 ms | 0.24 ms | 95.95% | 4.05% | 0% |
+
+Full results can be found in the [GP2040 Firmware Latency Test Results](https://docs.google.com/spreadsheets/d/1eeX0SCOYnUDZMYzt_69wDpjnB_XUtvsfvHJYxxgTj28/edit#gid=1559471406) Google Sheet.
+
+## Installation
 
 Prebuilt `uf2` files are available in the [Releases](https://github.com/FeralAI/GP2040/releases) section for the following boards:
 
 * [Raspberry Pi Pico](https://github.com/FeralAI/GP2040/tree/main/configs/Pico) and other pin-compatible boards such as the Pimoroni Pico Lipo
-* [Pico Fighting Board](https://github.com/FeralAI/GP2040-Config-PicoFightingBoard/tree/ca6659ca678aad4f5fbb2756fdbf6d00782c6cd2)
-* [OSFRD](https://github.com/FeralAI/GP2040/tree/main/configs/OSFRD)
+* [Pico Fighting Board](https://github.com/FeralAI/GP2040-Config-PicoFightingBoard/)
+* [Crush Counter](https://github.com/FeralAI/GP2040/tree/main/configs/CrushCounter) (formerly the [OSFRD](https://github.com/FeralAI/GP2040/tree/main/configs/OSFRD))
 
 Several other working example configurations are located in the [configs](https://github.com/FeralAI/GP2040/tree/main/configs) folder.
-
-## Installation
 
 The instructions will slightly vary based on your device. These instructions are for a Raspberry Pi Pico.
 
@@ -29,16 +37,6 @@ The instructions will slightly vary based on your device. These instructions are
 1. Hold the BOOTSEL button on the Pico and plug into your computer. A new removable drive named `RPI-RP2` should appear in your file explorer.
 1. Drag and drop the `GP2040.uf2` file into the removable drive. This will flash the board.
 1. The board is now running the GP2040 firmware and will appear as a controller on your computer.
-
-## Performance
-
-One of the highest priorities of GP2040 is low input latency. Why bother building a custom controller if it's just a laggy, input-missing mess?
-
-Input latency is tested using the methodology outlined at [WydD's inputlag.science website](https://inputlag.science/controller/methodology), using the default 1000 Hz (1 ms) polling rate in the firmware.
-
-| Mode | Poll Rate | Min | Max | Avg | Stdev | % on time | %1f skip | %2f skip |
-| - | - | - | - | - | - | - | - | - |
-| All | 1 ms | 0.56 ms | 1.59 ms | 0.87 ms | 0.24 ms | 95.88% | 4.12% | 0% |
 
 ## Buttons
 
@@ -65,7 +63,7 @@ GP2040 uses a generic button labeling for gamepad state, which is then converted
 
 Any button references in this documentation will use the `XInput` labels for clarity.
 
-> NOTE: LED modes are only available for custom builds and the OSFRD configuration right now.
+> NOTE: LED modes are available on the Pico Fighting Board, Crush Counter/OSFRD and custom builds only.
 
 ### Home Button
 
@@ -126,10 +124,4 @@ Swap between LED modes using the `BACK + START + A` or `BACK + START + X`. The f
 
 ## Support
 
-If you would like to discuss features, issues or anything else related to GP2040 please join the [OpenStick GP2040 Discord channel](https://discord.gg/ABQafnty).
-
-## Acknowledgements
-
-* Ha Thach's excellent [TinyUSB library](https://github.com/hathach/tinyusb) examples
-* fluffymadness's [tinyusb-xinput](https://github.com/fluffymadness/tinyusb-xinput) sample
-* Kevin Boone's [blog post on using RP2040 flash memory as emulated EEPROM](https://kevinboone.me/picoflash.html)
+If you would like to discuss features, issues or anything else related to GP2040 please [create an issue](https://github.com/FeralAI/GP2040/issues/new) or join the [OpenStick GP2040 Discord channel](https://discord.gg/ABQafnty).
