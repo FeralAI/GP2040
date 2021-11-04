@@ -47,3 +47,9 @@ Full results can be found in the [GP2040 Firmware Latency Test Results](https://
 ## Support
 
 If you would like to discuss features, issues or anything else related to GP2040 please [create an issue](https://github.com/FeralAI/GP2040/issues/new) or join the [OpenStick GP2040 Discord channel](https://discord.gg/ABQafnty).
+
+## Acknowledgements
+
+* Ha Thach's excellent [TinyUSB library](https://github.com/hathach/tinyusb) examples
+* fluffymadness's [tinyusb-xinput](https://github.com/fluffymadness/tinyusb-xinput) sample
+* Kevin Boone's [blog post on using RP2040 flash memory as emulated EEPROM](https://kevinboone.me/picoflash.html)
