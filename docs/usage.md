@@ -1,4 +1,4 @@
-# GP2040 Usage Guide
+# GP2040 Usage
 
 ## Buttons
 
