@@ -20,7 +20,7 @@ const baseButtonMappings = {
 	R1:    { pin: -1, button: 'R1', xinput: 'RB', switch: 'R', ps3: 'R1', dinput: '6', arcade: 'R1', error: null },
 	L2:    { pin: -1, button: 'L2', xinput: 'LT', switch: 'ZL', ps3: 'L2', dinput: '7', arcade: 'L2', error: null },
 	R2:    { pin: -1, button: 'R2', xinput: 'RT', switch: 'ZR', ps3: 'R2', dinput: '8', arcade: 'R2', error: null },
-	S1:    { pin: -1, button: 'S1', xinput: 'Back', switch: 'Minus', ps3: 'Select', dinput: '9', arcade: 'Coin', error: null },
+	S1:    { pin: -1, button: 'S1', xinput: 'Back', switch: 'Minus', ps3: 'Select', dinput: '9', arcade: 'Select', error: null },
 	S2:    { pin: -1, button: 'S2', xinput: 'Start', switch: 'Plus', ps3: 'Start', dinput: '10', arcade: 'Start', error: null },
 	L3:    { pin: -1, button: 'L3', xinput: 'LS', switch: 'LS', ps3: 'L3', dinput: '11', arcade: 'L3', error: null },
 	R3:    { pin: -1, button: 'R3', xinput: 'RS', switch: 'RS', ps3: 'R3', dinput: '12', arcade: 'R3', error: null },
