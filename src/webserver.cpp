@@ -5,7 +5,6 @@
 #include <sstream>
 #include <string.h>
 #include "pico/stdlib.h"
-#include "pico/bootrom.h"
 #include "httpd/fs.h"
 #include "httpd/httpd.h"
 #include "lwip/def.h"
@@ -19,9 +18,11 @@
 
 #define PATH_CGI_ACTION "/cgi/action"
 
-#define METHOD_GET_ECHO_PARAMS  "echoParams"
-#define METHOD_GET_PIN_MAPPINGS "getPinMappings"
-#define METHOD_SET_PIN_MAPPINGS "setPinMappings"
+#define API_GET_PIN_MAPPINGS "/api/getPinMappings"
+#define API_SET_PIN_MAPPINGS "/api/setPinMappings"
+
+#define LWIP_HTTPD_POST_MAX_URI_LEN 128
+#define LWIP_HTTPD_POST_MAX_PAYLOAD_LEN 1024
 
 using namespace std;
 
@@ -31,31 +32,15 @@ static vector<string> spaPaths = { "/pin-mapping" };
 static vector<string> excludePaths = { "/css", "/images", "/js", "/static" };
 static map<string, string> cgiParams;
 static Gamepad *gamepad;
-
-// Generic CGI method for capturing query params
-static const char *cgi_action(int iIndex, int iNumParams, char *pcParam[], char *pcValue[])
-{
-	cgiParams.clear();
-
-	for (int i = 0; i < iNumParams; i++)
-		cgiParams.emplace(pcParam[i], pcValue[i]);
-
-	return PATH_CGI_ACTION;
-}
-
-static const tCGI cgi_handlers[] =
-{
-	{
-		PATH_CGI_ACTION,
-		cgi_action
-	},
-};
+static bool is_post = false;
+static char *http_post_uri;
+static char http_post_payload[LWIP_HTTPD_POST_MAX_PAYLOAD_LEN];
+static uint16_t http_post_payload_len = 0;
 
 void webserver(Gamepad *instance)
 {
 	gamepad = instance;
 	rndis_init();
-	http_set_cgi_handlers(cgi_handlers, LWIP_ARRAYSIZE(cgi_handlers));
 	while (1)
 	{
 		rndis_task();
@@ -66,89 +51,14 @@ void webserver(Gamepad *instance)
  * Helper methods
  *************************/
 
-string url_decode(const string& value)
-{
-	string result;
-	result.reserve(value.size());
-
-	for (std::size_t i = 0; i < value.size(); ++i)
-	{
-		auto ch = value[i];
-		if (ch == '%' && (i + 2) < value.size())
-		{
-			auto hex = value.substr(i + 1, 2);
-			auto dec = static_cast<char>(std::strtol(hex.c_str(), nullptr, 16));
-			result.push_back(dec);
-			i += 2;
-		}
-		else if (ch == '+')
-		{
-			result.push_back(' ');
-		}
-		else
-		{
-			result.push_back(ch);
-		}
-	}
-
-	return result;
-}
-
-vector<string> split_string(const string &s, char delim)
-{
-	vector<string> result;
-	stringstream ss(s);
-	string item;
-
-	while (getline(ss, item, delim))
-		result.push_back(item);
-
-	return result;
-}
-
 void set_file_data(struct fs_file *file, const char *data, size_t size)
 {
-	memset(file, 0, sizeof(struct fs_file));
+	// memset(file, 0, sizeof(struct fs_file));
 	file->data = (const char *)data;
 	file->len = size;
 	file->index = file->len;
-	file->http_header_included = 0;
-}
-
-string get_param_value(string name)
-{
-	for (auto& param : cgiParams)
-	{
-		if (!name.compare(param.first))
-			return url_decode(param.second);
-	}
-
-	return {};
-}
-
-map<string, string> get_param_data(string name)
-{
-	static string delim = "|";
-
-	map<string, string> data;
-	string rawValue = get_param_value(name);
-	if (!rawValue.empty())
-	{
-		int start = 0U;
-		int end = (int)rawValue.find(delim);
-		while (end != -1)
-		{
-			vector<string> split = split_string(rawValue.substr(start, end - start), ':');
-			data.emplace(split[0], split[1]);
-			start = end + (int)delim.length();
-			end = (int)rawValue.find(delim, start);
-		}
-
-		vector<string> split = split_string(rawValue.substr(start, end - start), ':');
-		data.emplace(split[0], split[1]);
-	}
-
-	return data;
+	file->http_header_included = 1;
+	file->pextension = NULL;
 }
 
 string to_json(string method, map<string, string> props)
@@ -195,67 +105,105 @@ string getPinMappings()
 	props.emplace("A1", to_string(gamepad->mapButtonA1->pin));
 	props.emplace("A2", to_string(gamepad->mapButtonA2->pin));
 
-	return to_json(METHOD_GET_PIN_MAPPINGS, props);
+	return to_json(API_GET_PIN_MAPPINGS, props);
 }
 
 string setPinMappings()
 {
 	// Data format example:
-	// A1:28|A2:18|B1:4|B2:5|B3:0|B4:1|Down:11|L1:3|L2:7|L3:17|Left:10|R1:2|R2:6|R3:16|Right:12|S1:8|S2:9|Up:13
-	map<string, string> data = get_param_data("mappings");
-	BoardOptions options =
-	{
-		.useUserDefinedPins = true,
-		.pinDpadUp    = (uint8_t)stoul(data.find("Up")->second),
-		.pinDpadDown  = (uint8_t)stoul(data.find("Down")->second),
-		.pinDpadLeft  = (uint8_t)stoul(data.find("Left")->second),
-		.pinDpadRight = (uint8_t)stoul(data.find("Right")->second),
-		.pinButtonB1  = (uint8_t)stoul(data.find("B1")->second),
-		.pinButtonB2  = (uint8_t)stoul(data.find("B2")->second),
-		.pinButtonB3  = (uint8_t)stoul(data.find("B3")->second),
-		.pinButtonB4  = (uint8_t)stoul(data.find("B4")->second),
-		.pinButtonL1  = (uint8_t)stoul(data.find("L1")->second),
-		.pinButtonR1  = (uint8_t)stoul(data.find("R1")->second),
-		.pinButtonL2  = (uint8_t)stoul(data.find("L2")->second),
-		.pinButtonR2  = (uint8_t)stoul(data.find("R2")->second),
-		.pinButtonS1  = (uint8_t)stoul(data.find("S1")->second),
-		.pinButtonS2  = (uint8_t)stoul(data.find("S2")->second),
-		.pinButtonL3  = (uint8_t)stoul(data.find("L3")->second),
-		.pinButtonR3  = (uint8_t)stoul(data.find("R3")->second),
-		.pinButtonA1  = (uint8_t)stoul(data.find("A1")->second),
-		.pinButtonA2  = (uint8_t)stoul(data.find("A2")->second),
-	};
-
-	setBoardOptions(options);
-	GamepadStore.save();
-	return to_json(METHOD_SET_PIN_MAPPINGS, data);
+	map<string, string> data;
+	return to_json(API_SET_PIN_MAPPINGS, data);
 }
 
 /*************************
  * LWIP implementation
  *************************/
 
+
+// LWIP callback on HTTP POST to validate the URI
+err_t httpd_post_begin(void *connection, const char *uri, const char *http_request,
+                       uint16_t http_request_len, int content_len, char *response_uri,
+                       uint16_t response_uri_len, uint8_t *post_auto_wnd)
+{
+	LWIP_UNUSED_ARG(http_request);
+	LWIP_UNUSED_ARG(http_request_len);
+	LWIP_UNUSED_ARG(content_len);
+	LWIP_UNUSED_ARG(response_uri);
+	LWIP_UNUSED_ARG(response_uri_len);
+
+	struct http_state *hs = (struct http_state *)connection;
+	if (!uri || (uri[0] == '\0') || memcmp(uri, "/api", 4))
+		return ERR_ARG;
+
+	http_post_uri = (char *)uri;
+	*post_auto_wnd = 1;
+	is_post = true;
+	return ERR_OK;
+}
+
+// LWIP callback on HTTP POST to for receiving payload
+err_t httpd_post_receive_data(void *connection, struct pbuf *p)
+{
+	struct http_state *hs = (struct http_state *)connection;
+	struct pbuf *q = p;
+
+	int count;
+	uint32_t http_post_payload_full_flag = 0;
+
+	// Cache the received data to http_post_payload
+	while (q != NULL)
+	{
+		if (http_post_payload_len + q-> len <= LWIP_HTTPD_POST_MAX_PAYLOAD_LEN)
+		{
+			MEMCPY(http_post_payload + http_post_payload_len, q-> payload, q-> len);
+			http_post_payload_len += q-> len;
+		}
+		else // Buffer overflow Set overflow flag
+		{
+			http_post_payload_full_flag = 1;
+			break;
+		}
+
+		q = q-> next;
+	}
+
+	pbuf_free (p);//  release pbuf
+
+	// If the buffer overflows, error out
+	if (http_post_payload_full_flag)
+		return ERR_BUF;
+
+	return ERR_OK;
+}
+
+// LWIP callback to set the HTTP POST response_uri, which can then be looked up via the fs_custom callbacks
+void httpd_post_finished(void *connection, char *response_uri, uint16_t response_uri_len)
+{
+	LWIP_UNUSED_ARG(connection);
+	LWIP_UNUSED_ARG(response_uri);
+	LWIP_UNUSED_ARG(response_uri_len);
+
+	response_uri = http_post_uri;
+}
+
 int fs_open_custom(struct fs_file *file, const char *name)
 {
-	if (!memcmp(name, PATH_CGI_ACTION, sizeof(PATH_CGI_ACTION)))
-	{
-		string method = get_param_value("method");
+	LWIP_UNUSED_ARG(name);
 
-		if (!method.compare(METHOD_GET_ECHO_PARAMS))
-		{
-			string json = to_json(METHOD_GET_ECHO_PARAMS, cgiParams);
-			set_file_data(file, json.data(), json.size());
-			return 1;
-		}
-		else if (!method.compare(METHOD_GET_PIN_MAPPINGS))
-		{
-			string json = getPinMappings();
-			set_file_data(file, json.data(), json.size());
-			return 1;
-		}
-		else if (!method.compare(METHOD_SET_PIN_MAPPINGS))
+	if (is_post)
+	{
+		if (!memcmp(http_post_uri, API_SET_PIN_MAPPINGS, sizeof(API_SET_PIN_MAPPINGS)))
 		{
 			string json = setPinMappings();
+			set_file_data(file, json.data(), json.size());
+			return 1;
+		}
+	}
+	else
+	{
+		if (!memcmp(name, API_GET_PIN_MAPPINGS, sizeof(API_GET_PIN_MAPPINGS)))
+		{
+			string json = getPinMappings();
 			set_file_data(file, json.data(), json.size());
 			return 1;
 		}
@@ -290,4 +238,6 @@ void fs_close_custom(struct fs_file *file)
 		mem_free(file->pextension);
 		file->pextension = NULL;
 	}
+
+	is_post = false;
 }

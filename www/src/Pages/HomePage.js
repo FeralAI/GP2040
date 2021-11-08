@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { filter, orderBy } from 'lodash';
+import { orderBy } from 'lodash';
+
+const currentVersion = process.env.REACT_APP_CURRENT_VERSION;
 
 export default function HomePage() {
-	const [currentVersion, setCurrentVersion] = useState(process.env.REACT_APP_CURRENT_VERSION);
 	const [latestVersion, setLatestVersion] = useState('');
 
 	useEffect(() => {
@@ -23,7 +24,7 @@ export default function HomePage() {
 				<h5>Version</h5>
 				<div>Current Version: { currentVersion }</div>
 				<div>Latest Version: { latestVersion }</div>
-				{(currentVersion === latestVersion) ?
+				{(currentVersion !== latestVersion) ?
 					<div>
 						<a
 							target="_blank"

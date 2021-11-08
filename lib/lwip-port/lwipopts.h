@@ -50,14 +50,15 @@
 
 #define ETHARP_SUPPORT_STATIC_ENTRIES   1
 
-#define LWIP_HTTPD_CGI                  1
+#define LWIP_HTTPD_CGI                  0
 #define LWIP_HTTPD_SSI                  0
+#define LWIP_HTTPD_CGI_SSI              0
 #define LWIP_HTTPD_SSI_INCLUDE_TAG      0
 #define LWIP_HTTPD_CUSTOM_FILES         1
+#define LWIP_HTTPD_SUPPORT_POST         1
+#define LWIP_HTTPD_SUPPORT_V09          0
+#define LWIP_HTTPD_SUPPORT_11_KEEPALIVE 0 // Causes lockups with CGI requests
 
 #define LWIP_SINGLE_NETIF               1
-
-#define LWIP_HTTPD_SUPPORT_V09          0
-#define LWIP_HTTPD_SUPPORT_11_KEEPALIVE 0
 
 #endif /* __LWIPOPTS_H__ */

@@ -11,11 +11,15 @@ Simple web application for gamepad configuration.
 
 ## Development
 
-The `build-web-py` is used to build the React application and regenerate the embedded version in `lib/httpd/fsdata.c`. The `makefsdata` tool that performs the conversion doesn't set the correct `#include` lines for our use. This script will fix this issue.
+The `build-web.py` script is used to build the React application and regenerate the embedded data in `lib/httpd/fsdata.c`. The `makefsdata` tool that performs the conversion doesn't set the correct `#include` lines for our use. This script will fix this issue.
 
 The lwIP lib in Wiz-IO Pico PlatformIO platform doesn't include the `makefsdata` source. A precompiled version for Windows and Unix are included in the `tools` folder.
 
-Use JPG and PNG files for images, SVG file support requires modification that I haven't done.
+Use JPG and PNG files for images, SVG file support requires modification to the lwIP library that hasn't been completed.
+
+## Web API
+
+
 
 ## References
 

@@ -49,7 +49,7 @@ export default function PinMappingPage() {
 
 	useEffect(() => {
 		if (process.env.NODE_ENV === 'production') {
-			axios.get('cgi/action?method=getPinMappings')
+			axios.get('api/getPinMappings')
 				.then((response) => {
 					let newMappings = {...baseButtonMappings};
 					for (let prop of Object.keys(response.data)) {
@@ -107,7 +107,7 @@ export default function PinMappingPage() {
 		}, '');
 
 		if (process.env.NODE_ENV === 'production') {
-			axios.get(`cgi/action?method=setPinMappings&mappings=${data}`)
+			axios.post(`api/setPinMappings`, data)
 				.then((response) => {
 					console.log(response.data);
 					setSaveMessage("Saved!");
