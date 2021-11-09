@@ -2,16 +2,18 @@
 #include <vector>
 #include <map>
 #include <string>
-#include <sstream>
 #include <string.h>
+
 #include "pico/stdlib.h"
+#include "ArduinoJson/ArduinoJson.h"
 #include "httpd/fs.h"
+#include "httpd/fscustom.h"
+#include "httpd/fsdata.h"
 #include "httpd/httpd.h"
 #include "lwip/def.h"
 #include "lwip/mem.h"
-#include "httpd/fscustom.h"
-#include "httpd/fsdata.h"
 #include "rndis/rndis.h"
+
 #include "storage.h"
 #include "webserver.h"
 #include "GamepadStorage.h"
@@ -28,14 +30,13 @@ using namespace std;
 
 extern struct fsdata_file file__index_html[];
 
-static vector<string> spaPaths = { "/pin-mapping" };
-static vector<string> excludePaths = { "/css", "/images", "/js", "/static" };
-static map<string, string> cgiParams;
+const static vector<string> spaPaths = { "/pin-mapping" };
+const static vector<string> excludePaths = { "/css", "/images", "/js", "/static" };
 static Gamepad *gamepad;
-static bool is_post = false;
 static char *http_post_uri;
 static char http_post_payload[LWIP_HTTPD_POST_MAX_PAYLOAD_LEN];
 static uint16_t http_post_payload_len = 0;
+static bool is_post = false;
 
 void webserver(Gamepad *instance)
 {
@@ -51,30 +52,31 @@ void webserver(Gamepad *instance)
  * Helper methods
  *************************/
 
+DynamicJsonDocument get_post_data()
+{
+	vector<char> raw;
+	for (int i = 0; i < http_post_payload_len; i++)
+		raw.push_back(http_post_payload[i]);
+
+	DynamicJsonDocument doc(LWIP_HTTPD_POST_MAX_PAYLOAD_LEN);
+	deserializeJson(doc, raw);
+	return doc;
+}
+
+inline string serialize_json(DynamicJsonDocument &doc)
+{
+	string data;
+	serializeJson(doc, data);
+	return data;
+}
+
 void set_file_data(struct fs_file *file, const char *data, size_t size)
 {
-	// memset(file, 0, sizeof(struct fs_file));
 	file->data = (const char *)data;
 	file->len = size;
 	file->index = file->len;
-	file->http_header_included = 1;
+	file->http_header_included = 0;
 	file->pextension = NULL;
-}
-
-string to_json(string method, map<string, string> props)
-{
-	string json = "{ \"method\": \"" + method + "\"";
-
-	int count = props.size();
-	if (count > 0)
-	{
-		for (auto &nv : props)
-			json = json + string(", \"") + nv.first + "\": \"" + nv.second + "\"";
-	}
-
-	json += " }";
-
-	return json;
 }
 
 /*************************
@@ -83,36 +85,79 @@ string to_json(string method, map<string, string> props)
 
 string getPinMappings()
 {
-	string result;
-	map<string, string> props;
+	static DynamicJsonDocument doc(LWIP_HTTPD_POST_MAX_PAYLOAD_LEN);
+	doc.clear();
 
-	props.emplace("Up", to_string(gamepad->mapDpadUp->pin));
-	props.emplace("Down", to_string(gamepad->mapDpadDown->pin));
-	props.emplace("Left", to_string(gamepad->mapDpadLeft->pin));
-	props.emplace("Right", to_string(gamepad->mapDpadRight->pin));
-	props.emplace("B1", to_string(gamepad->mapButtonB1->pin));
-	props.emplace("B2", to_string(gamepad->mapButtonB2->pin));
-	props.emplace("B3", to_string(gamepad->mapButtonB3->pin));
-	props.emplace("B4", to_string(gamepad->mapButtonB4->pin));
-	props.emplace("L1", to_string(gamepad->mapButtonL1->pin));
-	props.emplace("R1", to_string(gamepad->mapButtonR1->pin));
-	props.emplace("L2", to_string(gamepad->mapButtonL2->pin));
-	props.emplace("R2", to_string(gamepad->mapButtonR2->pin));
-	props.emplace("S1", to_string(gamepad->mapButtonS1->pin));
-	props.emplace("S2", to_string(gamepad->mapButtonS2->pin));
-	props.emplace("L3", to_string(gamepad->mapButtonL3->pin));
-	props.emplace("R3", to_string(gamepad->mapButtonR3->pin));
-	props.emplace("A1", to_string(gamepad->mapButtonA1->pin));
-	props.emplace("A2", to_string(gamepad->mapButtonA2->pin));
+	doc["Up"]    = gamepad->mapDpadUp->pin;
+	doc["Down"]  = gamepad->mapDpadDown->pin;
+	doc["Left"]  = gamepad->mapDpadLeft->pin;
+	doc["Right"] = gamepad->mapDpadRight->pin;
+	doc["B1"]    = gamepad->mapButtonB1->pin;
+	doc["B2"]    = gamepad->mapButtonB2->pin;
+	doc["B3"]    = gamepad->mapButtonB3->pin;
+	doc["B4"]    = gamepad->mapButtonB4->pin;
+	doc["L1"]    = gamepad->mapButtonL1->pin;
+	doc["R1"]    = gamepad->mapButtonR1->pin;
+	doc["L2"]    = gamepad->mapButtonL2->pin;
+	doc["R2"]    = gamepad->mapButtonR2->pin;
+	doc["S1"]    = gamepad->mapButtonS1->pin;
+	doc["S2"]    = gamepad->mapButtonS2->pin;
+	doc["L3"]    = gamepad->mapButtonL3->pin;
+	doc["R3"]    = gamepad->mapButtonR3->pin;
+	doc["A1"]    = gamepad->mapButtonA1->pin;
+	doc["A2"]    = gamepad->mapButtonA2->pin;
 
-	return to_json(API_GET_PIN_MAPPINGS, props);
+	return serialize_json(doc);
 }
 
 string setPinMappings()
 {
-	// Data format example:
-	map<string, string> data;
-	return to_json(API_SET_PIN_MAPPINGS, data);
+	DynamicJsonDocument doc = get_post_data();
+
+	BoardOptions options;
+	options.useUserDefinedPins = true;
+	options.pinDpadUp    = doc["Up"];
+	options.pinDpadDown  = doc["Down"];
+	options.pinDpadLeft  = doc["Left"];
+	options.pinDpadRight = doc["Right"];
+	options.pinButtonB1  = doc["B1"];
+	options.pinButtonB2  = doc["B2"];
+	options.pinButtonB3  = doc["B3"];
+	options.pinButtonB4  = doc["B4"];
+	options.pinButtonL1  = doc["L1"];
+	options.pinButtonR1  = doc["R1"];
+	options.pinButtonL2  = doc["L2"];
+	options.pinButtonR2  = doc["R2"];
+	options.pinButtonS1  = doc["S1"];
+	options.pinButtonS2  = doc["S2"];
+	options.pinButtonL3  = doc["L3"];
+	options.pinButtonR3  = doc["R3"];
+	options.pinButtonA1  = doc["A1"];
+	options.pinButtonA2  = doc["A2"];
+
+	setBoardOptions(options);
+	GamepadStore.save();
+
+	gamepad->mapDpadUp->setPin(options.pinDpadUp);
+	gamepad->mapDpadDown->setPin(options.pinDpadDown);
+	gamepad->mapDpadLeft->setPin(options.pinDpadLeft);
+	gamepad->mapDpadRight->setPin(options.pinDpadRight);
+	gamepad->mapButtonB1->setPin(options.pinButtonB1);
+	gamepad->mapButtonB2->setPin(options.pinButtonB2);
+	gamepad->mapButtonB3->setPin(options.pinButtonB3);
+	gamepad->mapButtonB4->setPin(options.pinButtonB4);
+	gamepad->mapButtonL1->setPin(options.pinButtonL1);
+	gamepad->mapButtonR1->setPin(options.pinButtonR1);
+	gamepad->mapButtonL2->setPin(options.pinButtonL2);
+	gamepad->mapButtonR2->setPin(options.pinButtonR2);
+	gamepad->mapButtonS1->setPin(options.pinButtonS1);
+	gamepad->mapButtonS2->setPin(options.pinButtonS2);
+	gamepad->mapButtonL3->setPin(options.pinButtonL3);
+	gamepad->mapButtonR3->setPin(options.pinButtonR3);
+	gamepad->mapButtonA1->setPin(options.pinButtonA1);
+	gamepad->mapButtonA2->setPin(options.pinButtonA2);
+
+	return serialize_json(doc);
 }
 
 /*************************
@@ -131,12 +176,11 @@ err_t httpd_post_begin(void *connection, const char *uri, const char *http_reque
 	LWIP_UNUSED_ARG(response_uri);
 	LWIP_UNUSED_ARG(response_uri_len);
 
-	struct http_state *hs = (struct http_state *)connection;
 	if (!uri || (uri[0] == '\0') || memcmp(uri, "/api", 4))
 		return ERR_ARG;
 
 	http_post_uri = (char *)uri;
-	*post_auto_wnd = 1;
+	// *post_auto_wnd = 1;
 	is_post = true;
 	return ERR_OK;
 }
@@ -144,19 +188,20 @@ err_t httpd_post_begin(void *connection, const char *uri, const char *http_reque
 // LWIP callback on HTTP POST to for receiving payload
 err_t httpd_post_receive_data(void *connection, struct pbuf *p)
 {
-	struct http_state *hs = (struct http_state *)connection;
 	struct pbuf *q = p;
 
 	int count;
 	uint32_t http_post_payload_full_flag = 0;
 
 	// Cache the received data to http_post_payload
+	http_post_payload_len = 0;
+	memset(http_post_payload, 0, LWIP_HTTPD_POST_MAX_PAYLOAD_LEN);
 	while (q != NULL)
 	{
-		if (http_post_payload_len + q-> len <= LWIP_HTTPD_POST_MAX_PAYLOAD_LEN)
+		if (http_post_payload_len + q->len <= LWIP_HTTPD_POST_MAX_PAYLOAD_LEN)
 		{
-			MEMCPY(http_post_payload + http_post_payload_len, q-> payload, q-> len);
-			http_post_payload_len += q-> len;
+			MEMCPY(http_post_payload + http_post_payload_len, q->payload, q->len);
+			http_post_payload_len += q->len;
 		}
 		else // Buffer overflow Set overflow flag
 		{
@@ -164,7 +209,7 @@ err_t httpd_post_receive_data(void *connection, struct pbuf *p)
 			break;
 		}
 
-		q = q-> next;
+		q = q->next;
 	}
 
 	pbuf_free (p);//  release pbuf
@@ -173,6 +218,7 @@ err_t httpd_post_receive_data(void *connection, struct pbuf *p)
 	if (http_post_payload_full_flag)
 		return ERR_BUF;
 
+	get_post_data();
 	return ERR_OK;
 }
 
@@ -188,14 +234,12 @@ void httpd_post_finished(void *connection, char *response_uri, uint16_t response
 
 int fs_open_custom(struct fs_file *file, const char *name)
 {
-	LWIP_UNUSED_ARG(name);
-
 	if (is_post)
 	{
 		if (!memcmp(http_post_uri, API_SET_PIN_MAPPINGS, sizeof(API_SET_PIN_MAPPINGS)))
 		{
-			string json = setPinMappings();
-			set_file_data(file, json.data(), json.size());
+			string data = setPinMappings();
+			set_file_data(file, data.c_str(), data.size());
 			return 1;
 		}
 	}
@@ -203,8 +247,9 @@ int fs_open_custom(struct fs_file *file, const char *name)
 	{
 		if (!memcmp(name, API_GET_PIN_MAPPINGS, sizeof(API_GET_PIN_MAPPINGS)))
 		{
-			string json = getPinMappings();
-			set_file_data(file, json.data(), json.size());
+			string data = getPinMappings();
+			// string data = "{\"testing\":123}";
+			set_file_data(file, data.c_str(), data.size());
 			return 1;
 		}
 	}
