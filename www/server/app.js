@@ -1,3 +1,7 @@
+/**
+ * GP2040 Configurator Development Server
+ */
+
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser')

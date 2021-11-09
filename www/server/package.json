@@ -1,7 +1,7 @@
 {
-  "name": "server",
+  "name": "gp2040-development-server",
   "version": "1.0.0",
-  "description": "",
+  "description": "Local server for GP2040 Configurator development",
   "main": "index.js",
   "scripts": {
     "start": "nodemon --exec node app.js",
