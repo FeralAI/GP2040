@@ -55,8 +55,15 @@ export default function SettingsPage() {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const success = WebApi.setGamepadOptions(gamepadOptions);
-		setSaveMessage(success ? 'Saved!' : 'Unable to Save');
+		const form = e.currentTarget;
+		const isValid = form.checkValidity();
+		setValidated(true);
+
+		if (isValid)
+		{
+			const success = WebApi.setGamepadOptions(gamepadOptions);
+			setSaveMessage(success ? 'Saved!' : 'Unable to Save');
+		}
 	};
 
 	return (

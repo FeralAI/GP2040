@@ -30,7 +30,7 @@ async function getGamepadOptions() {
 }
 
 async function setGamepadOptions(options) {
-	return axios.post(`${baseUrl}/api/setGamepadOptions`)
+	return axios.post(`${baseUrl}/api/setGamepadOptions`, options)
 		.then((response) => {
 			console.log(response.data);
 			return true;

@@ -4,7 +4,6 @@
 
 const express = require('express');
 const cors = require('cors');
-const bodyParser = require('body-parser')
 
 const controllers = require('../src/Data/Controllers.json');
 
@@ -32,7 +31,7 @@ const baseButtonMappings = {
 
 const app = express();
 app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json());
 
 app.get('/api/getGamepadOptions', (req, res) => {
 	console.log('/api/getGamepadOptions');
