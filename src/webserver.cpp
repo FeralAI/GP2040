@@ -20,6 +20,8 @@
 
 #define PATH_CGI_ACTION "/cgi/action"
 
+#define API_GET_GAMEPAD_OPTIONS "/api/getGamepadOptions"
+#define API_SET_GAMEPAD_OPTIONS "/api/setGamepadOptions"
 #define API_GET_PIN_MAPPINGS "/api/getPinMappings"
 #define API_SET_PIN_MAPPINGS "/api/setPinMappings"
 
@@ -30,7 +32,7 @@ using namespace std;
 
 extern struct fsdata_file file__index_html[];
 
-const static vector<string> spaPaths = { "/pin-mapping" };
+const static vector<string> spaPaths = { "/pin-mapping", "/settings" };
 const static vector<string> excludePaths = { "/css", "/images", "/js", "/static" };
 static Gamepad *gamepad;
 static char *http_post_uri;
@@ -84,6 +86,31 @@ int set_file_data(struct fs_file *file, string data)
 /*************************
  * API methods
  *************************/
+
+string getGamepadOptions()
+{
+	static DynamicJsonDocument doc(LWIP_HTTPD_POST_MAX_PAYLOAD_LEN);
+	doc.clear();
+
+	GamepadOptions options = GamepadStore.getGamepadOptions();
+	doc["dpadMode"]  = options.dpadMode;
+	doc["inputMode"] = options.inputMode;
+	doc["socdMode"]  = options.socdMode;
+
+	return serialize_json(doc);
+}
+
+string setGamepadOptions()
+{
+	DynamicJsonDocument doc = get_post_data();
+
+	gamepad->options.dpadMode  = doc["dpadMode"];
+	gamepad->options.inputMode = doc["inputMode"];
+	gamepad->options.socdMode  = doc["socdMode"];
+	gamepad->save();
+
+	return serialize_json(doc);
+}
 
 string getPinMappings()
 {
@@ -166,7 +193,6 @@ string setPinMappings()
  * LWIP implementation
  *************************/
 
-
 // LWIP callback on HTTP POST to validate the URI
 err_t httpd_post_begin(void *connection, const char *uri, const char *http_request,
                        uint16_t http_request_len, int content_len, char *response_uri,
@@ -238,11 +264,15 @@ int fs_open_custom(struct fs_file *file, const char *name)
 {
 	if (is_post)
 	{
+		if (!memcmp(http_post_uri, API_SET_GAMEPAD_OPTIONS, sizeof(API_SET_GAMEPAD_OPTIONS)))
+			return set_file_data(file, setGamepadOptions());
 		if (!memcmp(http_post_uri, API_SET_PIN_MAPPINGS, sizeof(API_SET_PIN_MAPPINGS)))
 			return set_file_data(file, setPinMappings());
 	}
 	else
 	{
+		if (!memcmp(name, API_GET_GAMEPAD_OPTIONS, sizeof(API_GET_GAMEPAD_OPTIONS)))
+			return set_file_data(file, getGamepadOptions());
 		if (!memcmp(name, API_GET_PIN_MAPPINGS, sizeof(API_GET_PIN_MAPPINGS)))
 			return set_file_data(file, getPinMappings());
 	}

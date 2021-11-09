@@ -4,3 +4,4 @@
 .vscode/launch.json
 .vscode/ipch
 .vscode/settings.json
+node_modules/

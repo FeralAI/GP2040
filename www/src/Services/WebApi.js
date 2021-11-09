@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import controllers from '../Data/Controllers.json'
+const baseUrl = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:8080';
 
 export const baseButtonMappings = {
 	Up:    { pin: -1, error: null },
@@ -23,52 +23,54 @@ export const baseButtonMappings = {
 	A2:    { pin: -1, error: null },
 };
 
+async function getGamepadOptions() {
+	return axios.get(`${baseUrl}/api/getGamepadOptions`)
+		.then((response) => response.data)
+		.catch(console.error);
+}
+
+async function setGamepadOptions(options) {
+	return axios.post(`${baseUrl}/api/setGamepadOptions`)
+		.then((response) => {
+			console.log(response.data);
+			return true;
+		})
+		.catch((err) => {
+			console.error(err);
+			return false;
+		});
+}
+
 async function getPinMappings() {
-	if (process.env.NODE_ENV === 'production') {
-		return axios.get('api/getPinMappings')
-			.then((response) => {
-				let mappings = { ...baseButtonMappings };
-				for (let prop of Object.keys(response.data))
-					mappings[prop].pin = parseInt(response.data[prop]);
+	return axios.get(`${baseUrl}/api/getPinMappings`)
+		.then((response) => {
+			let mappings = { ...baseButtonMappings };
+			for (let prop of Object.keys(response.data))
+				mappings[prop].pin = parseInt(response.data[prop]);
 
-				return mappings;
-			})
-			.catch(console.error);
-	}
-	else {
-		// Test code
-		let mappings = { ...baseButtonMappings };
-		for (let prop of Object.keys(controllers['pico'])) {
-			if (mappings[prop])
-				mappings[prop].pin = parseInt(controllers['pico'][prop]);
-		}
-
-		return mappings;
-	}
+			return mappings;
+		})
+		.catch(console.error);
 }
 
 async function setPinMappings(mappings) {
 	let data = {};
 	Object.keys(mappings).map((button, i) => data[button] = mappings[button].pin);
 
-	if (process.env.NODE_ENV === 'production') {
-		return axios.post(`api/setPinMappings`, data)
-			.then((response) => {
-				console.log(response.data);
-				return true;
-			})
-			.catch((err) => {
-				console.error(err);
-				return false;
-			});
-	}
-	else {
-		console.log(data);
-		return true;
-	}
+	return axios.post(`${baseUrl}/api/setPinMappings`, data)
+		.then((response) => {
+			console.log(response.data);
+			return true;
+		})
+		.catch((err) => {
+			console.error(err);
+			return false;
+		});
 }
 
 const WebApi = {
+	getGamepadOptions,
+	setGamepadOptions,
 	getPinMappings,
 	setPinMappings,
 };

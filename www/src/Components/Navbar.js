@@ -17,6 +17,9 @@ function Navbar(props) {
 						<li className="nav-item">
 							<NavLink exact={true} className="nav-link" activeClassName="active" to="/">Home</NavLink >
 						</li>
+						<li className="nav-item">
+							<NavLink exact={true} className="nav-link" activeClassName="active" to="/settings">Settings</NavLink >
+						</li>
 						<li className="nav-item dropdown">
 							<a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Advanced</a>
 							<ul className="dropdown-menu">

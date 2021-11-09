@@ -19,12 +19,12 @@ const buttonLabelOptions = [
 const requiredButtons = ['B1', 'B2', 'B3', 'S2'];
 
 export default function PinMappingPage() {
+	const [validated, setValidated] = useState(false);
+	const [saveMessage, setSaveMessage] = useState('');
 	const [buttonMappings, setButtonMappings] = useState(baseButtonMappings);
 	const [selectedController] = useState(process.env.REACT_APP_GP2040_CONTROLLER);
 	const [selectedBoard] = useState(process.env.REACT_APP_GP2040_BOARD);
 	const [selectedButtonLabels, setSelectedButtonLabels] = useState(buttonLabelOptions[0]);
-	const [validated, setValidated] = useState(false);
-	const [saveMessage, setSaveMessage] = useState('');
 
 	useEffect(() => {
 		async function fetchData() {
@@ -50,6 +50,7 @@ export default function PinMappingPage() {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+		e.stopPropagation();
 
 		let mappings = {...buttonMappings};
 		validateMappings(mappings);

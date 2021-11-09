@@ -5,6 +5,7 @@ import './App.scss';
 import Navbar from './Components/Navbar'
 import HomePage from './Pages/HomePage'
 import PinMappingPage from "./Pages/PinMapping";
+import SettingsPage from './Pages/SettingsPage';
 
 function App() {
 	return (
@@ -14,6 +15,9 @@ function App() {
 				<Switch>
 					<Route exact path="/">
 						<HomePage />
+					</Route>
+					<Route path="/settings">
+						<SettingsPage />
 					</Route>
 					<Route path="/pin-mapping">
 						<PinMappingPage />
