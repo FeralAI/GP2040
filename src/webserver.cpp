@@ -70,13 +70,15 @@ inline string serialize_json(DynamicJsonDocument &doc)
 	return data;
 }
 
-void set_file_data(struct fs_file *file, const char *data, size_t size)
+int set_file_data(struct fs_file *file, string data)
 {
-	file->data = (const char *)data;
-	file->len = size;
+	file->data = (const char *)data.c_str();
+	file->len = data.size();
 	file->index = file->len;
 	file->http_header_included = 0;
 	file->pextension = NULL;
+
+	return 1;
 }
 
 /*************************
@@ -237,21 +239,12 @@ int fs_open_custom(struct fs_file *file, const char *name)
 	if (is_post)
 	{
 		if (!memcmp(http_post_uri, API_SET_PIN_MAPPINGS, sizeof(API_SET_PIN_MAPPINGS)))
-		{
-			string data = setPinMappings();
-			set_file_data(file, data.c_str(), data.size());
-			return 1;
-		}
+			return set_file_data(file, setPinMappings());
 	}
 	else
 	{
 		if (!memcmp(name, API_GET_PIN_MAPPINGS, sizeof(API_GET_PIN_MAPPINGS)))
-		{
-			string data = getPinMappings();
-			// string data = "{\"testing\":123}";
-			set_file_data(file, data.c_str(), data.size());
-			return 1;
-		}
+			return set_file_data(file, getPinMappings());
 	}
 
 	bool isExclude = false;
