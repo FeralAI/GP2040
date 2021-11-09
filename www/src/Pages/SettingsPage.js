@@ -72,10 +72,9 @@ export default function SettingsPage() {
 				<header>
 					<h1>Settings</h1>
 				</header>
-				<h5>Gamepad Options</h5>
 				<Form.Group className="row mb-3">
 					<Form.Label>Input Mode</Form.Label>
-					<div className="col-sm-10">
+					<div className="col-sm-4">
 						<Form.Select className="form-select-sm" onChange={inputModeChanged}>
 							{InputModes.map((o, i) => <option key={`button-inputMode-option-${i}`} value={o.value}>{o.label}</option>)}
 						</Form.Select>
@@ -83,7 +82,7 @@ export default function SettingsPage() {
 				</Form.Group>
 				<Form.Group className="row mb-3">
 					<Form.Label>D-Pad Mode</Form.Label>
-					<div className="col-sm-10">
+					<div className="col-sm-4">
 						<Form.Select className="form-select-sm" onChange={dpadModeChanged}>
 							{DpadModes.map((o, i) => <option key={`button-inputMode-option-${i}`} value={o.value}>{o.label}</option>)}
 						</Form.Select>
@@ -91,7 +90,7 @@ export default function SettingsPage() {
 				</Form.Group>
 				<Form.Group className="row mb-3">
 					<Form.Label>SOCD Mode</Form.Label>
-					<div className="col-sm-10">
+					<div className="col-sm-4">
 						<Form.Select className="form-select-sm" onChange={socdModeChanged}>
 							{SOCDModes.map((o, i) => <option key={`button-inputMode-option-${i}`} value={o.value}>{o.label}</option>)}
 						</Form.Select>

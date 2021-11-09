@@ -30,6 +30,10 @@
 	line-height: 2rem;
 }
 
+.danger-zone {
+	border-radius: 4px;
+}
+
 @keyframes clockwise-spin {
   from {
     transform: rotate(0deg);

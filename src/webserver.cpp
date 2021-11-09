@@ -39,6 +39,7 @@ static char *http_post_uri;
 static char http_post_payload[LWIP_HTTPD_POST_MAX_PAYLOAD_LEN];
 static uint16_t http_post_payload_len = 0;
 static bool is_post = false;
+static DynamicJsonDocument doc(LWIP_HTTPD_POST_MAX_PAYLOAD_LEN);
 
 void webserver(Gamepad *instance)
 {
@@ -89,7 +90,6 @@ int set_file_data(struct fs_file *file, string data)
 
 string getGamepadOptions()
 {
-	static DynamicJsonDocument doc(LWIP_HTTPD_POST_MAX_PAYLOAD_LEN);
 	doc.clear();
 
 	GamepadOptions options = GamepadStore.getGamepadOptions();
@@ -114,7 +114,6 @@ string setGamepadOptions()
 
 string getPinMappings()
 {
-	static DynamicJsonDocument doc(LWIP_HTTPD_POST_MAX_PAYLOAD_LEN);
 	doc.clear();
 
 	doc["Up"]    = gamepad->mapDpadUp->pin;
