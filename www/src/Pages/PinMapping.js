@@ -1,33 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
-import axios from 'axios';
 
+import WebApi, { baseButtonMappings } from '../Services/WebApi';
 import boards from '../Data/Boards.json'
 import buttons from '../Data/Buttons.json'
-import controllers from '../Data/Controllers.json'
 
 import './PinMappings.scss';
-
-const baseButtonMappings = {
-	Up:    { pin: -1, error: null },
-	Down:  { pin: -1, error: null },
-	Left:  { pin: -1, error: null },
-	Right: { pin: -1, error: null },
-	B1:    { pin: -1, error: null },
-	B2:    { pin: -1, error: null },
-	B3:    { pin: -1, error: null },
-	B4:    { pin: -1, error: null },
-	L1:    { pin: -1, error: null },
-	R1:    { pin: -1, error: null },
-	L2:    { pin: -1, error: null },
-	R2:    { pin: -1, error: null },
-	S1:    { pin: -1, error: null },
-	S2:    { pin: -1, error: null },
-	L3:    { pin: -1, error: null },
-	R3:    { pin: -1, error: null },
-	A1:    { pin: -1, error: null },
-	A2:    { pin: -1, error: null },
-};
 
 const buttonLabelOptions = [
 	{ label: 'GP2040', value: 'gp2040' },
@@ -49,30 +27,12 @@ export default function PinMappingPage() {
 	const [saveMessage, setSaveMessage] = useState('');
 
 	useEffect(() => {
-		if (process.env.NODE_ENV === 'production') {
-			axios.get('api/getPinMappings')
-				.then((response) => {
-					let newMappings = {...baseButtonMappings};
-					for (let prop of Object.keys(response.data)) {
-						if (newMappings[prop])
-							newMappings[prop].pin = parseInt(response.data[prop]);
-					}
-
-					setButtonMappings(newMappings);
-				})
-				.catch(console.error);
+		async function fetchData() {
+			setButtonMappings(await WebApi.getPinMappings());
 		}
-		else {
-			// Test code
-			let newMappings = {...baseButtonMappings};
-			for (let prop of Object.keys(controllers[selectedController])) {
-				if (newMappings[prop])
-					newMappings[prop].pin = parseInt(controllers[selectedController][prop]);
-			}
 
-			setButtonMappings(newMappings);
-		}
-	}, [selectedController]);
+		fetchData();
+	}, [setButtonMappings, selectedController]);
 
 	const buttonLabelsChanged = (e) => {
 		setSelectedButtonLabels(buttonLabelOptions.filter(o => o.value === e.target.value)[0]);
@@ -88,35 +48,19 @@ export default function PinMappingPage() {
 		validateMappings(newMappings);
 	};
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
 
-		let newMappings = {...buttonMappings};
-		validateMappings(newMappings);
+		let mappings = {...buttonMappings};
+		validateMappings(mappings);
 
-		if (Object.keys(newMappings).filter(p => !!newMappings[p].error).length) {
+		if (Object.keys(mappings).filter(p => !!mappings[p].error).length) {
 			setSaveMessage('Validation errors, see above');
 			return;
 		}
 
-		let data = {};
-		Object.keys(newMappings).map((button, i) => data[button] = newMappings[button].pin);
-
-		if (process.env.NODE_ENV === 'production') {
-			axios.post(`api/setPinMappings`, data)
-				.then((response) => {
-					console.log(response.data);
-					setSaveMessage('Saved!');
-				})
-				.catch((err) => {
-					console.error(err);
-					setSaveMessage(err);
-				});
-		}
-		else {
-			console.log(data);
-			setSaveMessage('Saved!');
-		}
+		const success = await WebApi.setPinMappings(mappings);
+		setSaveMessage(success ? 'Saved!' : 'Unable to Save');
 	};
 
 	const validateMappings = (mappings) => {

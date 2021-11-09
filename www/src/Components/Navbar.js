@@ -17,8 +17,11 @@ function Navbar(props) {
 						<li className="nav-item">
 							<NavLink exact={true} className="nav-link" activeClassName="active" to="/">Home</NavLink >
 						</li>
-						<li className="nav-item">
-							<NavLink exact={true} className="nav-link" activeClassName="active" to="/pin-mapping">Pin Mapping</NavLink >
+						<li className="nav-item dropdown">
+							<a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Advanced</a>
+							<ul className="dropdown-menu">
+								<li><NavLink exact={true} className="dropdown-item" activeClassName="active" to="/pin-mapping">Pin Mapping</NavLink ></li>
+							</ul>
 						</li>
 						<li className="nav-item dropdown">
 							<a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Links</a>
