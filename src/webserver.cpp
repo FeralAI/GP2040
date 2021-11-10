@@ -4,9 +4,9 @@
 #include <string>
 #include <string.h>
 
+#include <ArduinoJson.h>
 #include "pico/stdlib.h"
 #include "hardware/watchdog.h"
-#include "ArduinoJson/ArduinoJson.h"
 #include "FlashPROM.h"
 #include "httpd/fs.h"
 #include "httpd/fscustom.h"
