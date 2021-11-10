@@ -31,6 +31,7 @@ function Navbar(props) {
 							<a className="nav-link dropdown-toggle btn-danger danger-zone" href="#" role="button" data-bs-toggle="dropdown">DANGER ZONE</a>
 							<ul className="dropdown-menu">
 								<li><NavLink exact={true} className="dropdown-item" activeClassName="active" to="/pin-mapping">Pin Mapping</NavLink ></li>
+								<li><NavLink exact={true} className="dropdown-item" activeClassName="active" to="/reset-settings">Reset Settings</NavLink ></li>
 							</ul>
 						</li>
 					</ul>

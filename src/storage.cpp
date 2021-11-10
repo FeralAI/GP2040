@@ -53,23 +53,25 @@ void GamepadStorage::save()
 
 GamepadOptions GamepadStorage::getGamepadOptions()
 {
-	GamepadOptions options =
-	{
-		.inputMode = InputMode::INPUT_MODE_XINPUT,
-		.dpadMode = DpadMode::DPAD_MODE_DIGITAL,
-#ifdef DEFAULT_SOCD_MODE
-		.socdMode = DEFAULT_SOCD_MODE,
-#else
-		.socdMode = SOCD_MODE_NEUTRAL,
-#endif
-	};
-
+	GamepadOptions options;
 	EEPROM.get(0, options);
+	if (!options.isSet)
+	{
+		options.inputMode = InputMode::INPUT_MODE_XINPUT;
+		options.dpadMode = DpadMode::DPAD_MODE_DIGITAL;
+#ifdef DEFAULT_SOCD_MODE
+		options.socdMode = DEFAULT_SOCD_MODE;
+#else
+		options.socdMode = SOCD_MODE_NEUTRAL;
+#endif
+	}
+
 	return options;
 }
 
 void GamepadStorage::setGamepadOptions(GamepadOptions options)
 {
+	options.isSet = true;
 	EEPROM.set(0, options);
 }
 

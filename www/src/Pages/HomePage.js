@@ -18,23 +18,28 @@ export default function HomePage() {
 
 	return (
 		<div>
-			<h1>Welcome to the GP2040 web configurator!</h1>
+			<h1>Welcome to the GP2040 Web Configurator!</h1>
 			<p>Please select a menu option to proceed.</p>
-			<div>
-				<h5>Version</h5>
-				<div>Current Version: { currentVersion }</div>
-				<div>Latest Version: { latestVersion }</div>
-				{(currentVersion !== latestVersion) ?
-					<div>
-						<a
-							target="_blank"
-							rel="noreferrer"
-							href={`https://github.com/FeralAI/GP2040/releases/${latestVersion}`}
-						>
-							Get latest version
-						</a>
-					</div>
-				: null}
+			<div className="card">
+				<div className="card-header">
+					<strong>Version</strong>
+				</div>
+				<div className="card-body">
+					<div className="card-text">Current Version: { currentVersion }</div>
+					<div className="card-text">Latest Version: { latestVersion }</div>
+					{(latestVersion && currentVersion !== latestVersion) ?
+						<div className="mt-3">
+							<a
+								target="_blank"
+								rel="noreferrer"
+								href={`https://github.com/FeralAI/GP2040/releases/${latestVersion}`}
+								className="btn btn-primary"
+							>
+								Get Latest Version
+							</a>
+						</div>
+					: null}
+				</div>
 			</div>
 		</div>
 	);

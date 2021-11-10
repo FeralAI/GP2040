@@ -47,10 +47,7 @@ void FlashPROM::start()
 	}
 
 	if (reset)
-	{
-		memset(cache, 0, EEPROM_SIZE_BYTES);
-		commit();
-	}
+		this->reset();
 }
 
 /* We don't have an actual EEPROM, so we need to be extra careful about minimizing writes. Instead
@@ -68,4 +65,10 @@ void FlashPROM::commit()
 	}
 
 	flashWriteAlarm = add_alarm_in_ms(EEPROM_WRITE_WAIT, writeToFlash, cache, true);
+}
+
+void FlashPROM::reset()
+{
+	memset(cache, 0, EEPROM_SIZE_BYTES);
+	commit();
 }

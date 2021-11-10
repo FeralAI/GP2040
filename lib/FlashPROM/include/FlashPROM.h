@@ -22,6 +22,7 @@ class FlashPROM
 	public:
 		void start();
 		void commit();
+		void reset();
 
 		template<typename T>
 		T &get(uint16_t const index, T &value)

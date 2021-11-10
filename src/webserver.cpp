@@ -5,7 +5,9 @@
 #include <string.h>
 
 #include "pico/stdlib.h"
+#include "hardware/watchdog.h"
 #include "ArduinoJson/ArduinoJson.h"
+#include "FlashPROM.h"
 #include "httpd/fs.h"
 #include "httpd/fscustom.h"
 #include "httpd/fsdata.h"
@@ -20,6 +22,7 @@
 
 #define PATH_CGI_ACTION "/cgi/action"
 
+#define API_RESET_SETTINGS "/api/resetSettings"
 #define API_GET_GAMEPAD_OPTIONS "/api/getGamepadOptions"
 #define API_SET_GAMEPAD_OPTIONS "/api/setGamepadOptions"
 #define API_GET_PIN_MAPPINGS "/api/getPinMappings"
@@ -32,7 +35,7 @@ using namespace std;
 
 extern struct fsdata_file file__index_html[];
 
-const static vector<string> spaPaths = { "/pin-mapping", "/settings" };
+const static vector<string> spaPaths = { "/pin-mapping", "/settings", "/reset-settings" };
 const static vector<string> excludePaths = { "/css", "/images", "/js", "/static" };
 static Gamepad *gamepad;
 static char *http_post_uri;
@@ -87,6 +90,15 @@ int set_file_data(struct fs_file *file, string data)
 /*************************
  * API methods
  *************************/
+
+string resetSettings()
+{
+	// EEPROM.reset();
+	watchdog_reboot(0, SRAM_END, 10);
+	DynamicJsonDocument doc(LWIP_HTTPD_POST_MAX_PAYLOAD_LEN);
+	doc["success"] = true;
+	return serialize_json(doc);
+}
 
 string getGamepadOptions()
 {
@@ -274,6 +286,8 @@ int fs_open_custom(struct fs_file *file, const char *name)
 			return set_file_data(file, getGamepadOptions());
 		if (!memcmp(name, API_GET_PIN_MAPPINGS, sizeof(API_GET_PIN_MAPPINGS)))
 			return set_file_data(file, getPinMappings());
+		if (!memcmp(name, API_RESET_SETTINGS, sizeof(API_RESET_SETTINGS)))
+			return set_file_data(file, resetSettings());
 	}
 
 	bool isExclude = false;

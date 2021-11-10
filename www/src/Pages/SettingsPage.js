@@ -67,38 +67,40 @@ export default function SettingsPage() {
 	};
 
 	return (
-		<div>
-			<Form noValidate validated={validated} onSubmit={handleSubmit}>
-				<header>
-					<h1>Settings</h1>
-				</header>
-				<Form.Group className="row mb-3">
-					<Form.Label>Input Mode</Form.Label>
-					<div className="col-sm-4">
-						<Form.Select className="form-select-sm" onChange={inputModeChanged}>
-							{InputModes.map((o, i) => <option key={`button-inputMode-option-${i}`} value={o.value}>{o.label}</option>)}
-						</Form.Select>
-					</div>
-				</Form.Group>
-				<Form.Group className="row mb-3">
-					<Form.Label>D-Pad Mode</Form.Label>
-					<div className="col-sm-4">
-						<Form.Select className="form-select-sm" onChange={dpadModeChanged}>
-							{DpadModes.map((o, i) => <option key={`button-inputMode-option-${i}`} value={o.value}>{o.label}</option>)}
-						</Form.Select>
-					</div>
-				</Form.Group>
-				<Form.Group className="row mb-3">
-					<Form.Label>SOCD Mode</Form.Label>
-					<div className="col-sm-4">
-						<Form.Select className="form-select-sm" onChange={socdModeChanged}>
-							{SOCDModes.map((o, i) => <option key={`button-inputMode-option-${i}`} value={o.value}>{o.label}</option>)}
-						</Form.Select>
-					</div>
-				</Form.Group>
-				<Button type="submit">Save</Button>
-				{saveMessage ? <span className="alert">{saveMessage}</span> : null}
-			</Form>
+		<div className="card">
+			<div className="card-header">
+				<strong>Settings</strong>
+			</div>
+			<div className="card-body">
+				<Form noValidate validated={validated} onSubmit={handleSubmit}>
+					<Form.Group className="row mb-3">
+						<Form.Label>Input Mode</Form.Label>
+						<div className="col-sm-3">
+							<Form.Select className="form-select-sm" onChange={inputModeChanged}>
+								{InputModes.map((o, i) => <option key={`button-inputMode-option-${i}`} value={o.value}>{o.label}</option>)}
+							</Form.Select>
+						</div>
+					</Form.Group>
+					<Form.Group className="row mb-3">
+						<Form.Label>D-Pad Mode</Form.Label>
+						<div className="col-sm-3">
+							<Form.Select className="form-select-sm" onChange={dpadModeChanged}>
+								{DpadModes.map((o, i) => <option key={`button-inputMode-option-${i}`} value={o.value}>{o.label}</option>)}
+							</Form.Select>
+						</div>
+					</Form.Group>
+					<Form.Group className="row mb-3">
+						<Form.Label>SOCD Mode</Form.Label>
+						<div className="col-sm-3">
+							<Form.Select className="form-select-sm" onChange={socdModeChanged}>
+								{SOCDModes.map((o, i) => <option key={`button-inputMode-option-${i}`} value={o.value}>{o.label}</option>)}
+							</Form.Select>
+						</div>
+					</Form.Group>
+					<Button type="submit">Save</Button>
+					{saveMessage ? <span className="alert">{saveMessage}</span> : null}
+				</Form>
+			</div>
 		</div>
 	);
 }

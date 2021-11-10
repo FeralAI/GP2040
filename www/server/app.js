@@ -33,6 +33,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.get('/api/resetSettings', (req, res) => {
+	console.log('/api/resetSettings');
+	return res.send({ success: true });
+});
+
 app.get('/api/getGamepadOptions', (req, res) => {
 	console.log('/api/getGamepadOptions');
 	return res.send({

@@ -23,6 +23,12 @@ export const baseButtonMappings = {
 	A2:    { pin: -1, error: null },
 };
 
+async function resetSettings() {
+	return axios.get(`${baseUrl}/api/resetSettings`)
+		.then((response) => response.data)
+		.catch(console.error);
+}
+
 async function getGamepadOptions() {
 	return axios.get(`${baseUrl}/api/getGamepadOptions`)
 		.then((response) => response.data)
@@ -69,6 +75,7 @@ async function setPinMappings(mappings) {
 }
 
 const WebApi = {
+	resetSettings,
 	getGamepadOptions,
 	setGamepadOptions,
 	getPinMappings,

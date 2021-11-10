@@ -5,6 +5,7 @@ import './App.scss';
 import Navbar from './Components/Navbar'
 import HomePage from './Pages/HomePage'
 import PinMappingPage from "./Pages/PinMapping";
+import ResetSettingsPage from './Pages/ResetSettingsPage';
 import SettingsPage from './Pages/SettingsPage';
 
 function App() {
@@ -21,6 +22,9 @@ function App() {
 					</Route>
 					<Route path="/pin-mapping">
 						<PinMappingPage />
+					</Route>
+					<Route path="/reset-settings">
+						<ResetSettingsPage />
 					</Route>
 				</Switch>
 			</div>
