@@ -93,8 +93,8 @@ int set_file_data(struct fs_file *file, string data)
 
 string resetSettings()
 {
-	// EEPROM.reset();
-	watchdog_reboot(0, SRAM_END, 10);
+	EEPROM.reset();
+	watchdog_reboot(0, SRAM_END, 2000);
 	DynamicJsonDocument doc(LWIP_HTTPD_POST_MAX_PAYLOAD_LEN);
 	doc["success"] = true;
 	return serialize_json(doc);

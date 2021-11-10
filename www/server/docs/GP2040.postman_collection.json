@@ -42,6 +42,24 @@
 			"response": []
 		},
 		{
+			"name": "/api/resetSettings",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/resetSettings",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"resetSettings"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "/api/setGamepadOptions",
 			"request": {
 				"method": "POST",
