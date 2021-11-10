@@ -42,8 +42,8 @@ app.get('/api/getGamepadOptions', (req, res) => {
 	console.log('/api/getGamepadOptions');
 	return res.send({
 		dpadMode: 0,
-		inputMode: 0,
-		socdMode: 0,
+		inputMode: 1,
+		socdMode: 2,
 	});
 });
 
