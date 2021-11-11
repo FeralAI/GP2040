@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { Formik, useFormikContext } from 'formik';
 import * as yup from 'yup';
+import Section from '../Components/Section';
 import WebApi from '../Services/WebApi';
 
 const INPUT_MODES = [
@@ -59,55 +60,50 @@ export default function SettingsPage() {
 	};
 
 	return (
-		<div className="card">
-			<div className="card-header">
-				<strong>Settings</strong>
-			</div>
-			<div className="card-body">
-				<Formik validationSchema={schema} onSubmit={onSuccess} initialValues={{}}>
-					{({
-						handleSubmit,
-						handleChange,
-						handleBlur,
-						values,
-						touched,
-						errors,
-					}) => (
-						<Form noValidate onSubmit={handleSubmit}>
-							<Form.Group className="row mb-3">
-								<Form.Label>Input Mode</Form.Label>
-								<div className="col-sm-3">
-									<Form.Select name="inputMode" className="form-select-sm" value={values.inputMode} onChange={handleChange} isInvalid={errors.inputMode}>
-										{INPUT_MODES.map((o, i) => <option key={`button-inputMode-option-${i}`} value={o.value}>{o.label}</option>)}
-									</Form.Select>
-									<Form.Control.Feedback type="invalid">{errors.inputMode}</Form.Control.Feedback>
-								</div>
-							</Form.Group>
-							<Form.Group className="row mb-3">
-								<Form.Label>D-Pad Mode</Form.Label>
-								<div className="col-sm-3">
-									<Form.Select name="dpadMode" className="form-select-sm" value={values.dpadMode} onChange={handleChange} isInvalid={errors.dpadMode}>
-										{DPAD_MODES.map((o, i) => <option key={`button-dpadMode-option-${i}`} value={o.value}>{o.label}</option>)}
-									</Form.Select>
-									<Form.Control.Feedback type="invalid">{errors.dpadMode}</Form.Control.Feedback>
-								</div>
-							</Form.Group>
-							<Form.Group className="row mb-3">
-								<Form.Label>SOCD Mode</Form.Label>
-								<div className="col-sm-3">
-									<Form.Select name="socdMode" className="form-select-sm" value={values.socdMode} onChange={handleChange} isInvalid={errors.socdMode}>
-										{SOCD_MODES.map((o, i) => <option key={`button-socdMode-option-${i}`} value={o.value}>{o.label}</option>)}
-									</Form.Select>
-									<Form.Control.Feedback type="invalid">{errors.socdMode}</Form.Control.Feedback>
-								</div>
-							</Form.Group>
-							<Button type="submit">Save</Button>
-							{saveMessage ? <span className="alert">{saveMessage}</span> : null}
-							<FormContext />
-						</Form>
-					)}
-				</Formik>
-			</div>
-		</div>
+		<Section title="Settings">
+			<Formik validationSchema={schema} onSubmit={onSuccess} initialValues={{}}>
+				{({
+					handleSubmit,
+					handleChange,
+					handleBlur,
+					values,
+					touched,
+					errors,
+				}) => (
+					<Form noValidate onSubmit={handleSubmit}>
+						<Form.Group className="row mb-3">
+							<Form.Label>Input Mode</Form.Label>
+							<div className="col-sm-3">
+								<Form.Select name="inputMode" className="form-select-sm" value={values.inputMode} onChange={handleChange} isInvalid={errors.inputMode}>
+									{INPUT_MODES.map((o, i) => <option key={`button-inputMode-option-${i}`} value={o.value}>{o.label}</option>)}
+								</Form.Select>
+								<Form.Control.Feedback type="invalid">{errors.inputMode}</Form.Control.Feedback>
+							</div>
+						</Form.Group>
+						<Form.Group className="row mb-3">
+							<Form.Label>D-Pad Mode</Form.Label>
+							<div className="col-sm-3">
+								<Form.Select name="dpadMode" className="form-select-sm" value={values.dpadMode} onChange={handleChange} isInvalid={errors.dpadMode}>
+									{DPAD_MODES.map((o, i) => <option key={`button-dpadMode-option-${i}`} value={o.value}>{o.label}</option>)}
+								</Form.Select>
+								<Form.Control.Feedback type="invalid">{errors.dpadMode}</Form.Control.Feedback>
+							</div>
+						</Form.Group>
+						<Form.Group className="row mb-3">
+							<Form.Label>SOCD Mode</Form.Label>
+							<div className="col-sm-3">
+								<Form.Select name="socdMode" className="form-select-sm" value={values.socdMode} onChange={handleChange} isInvalid={errors.socdMode}>
+									{SOCD_MODES.map((o, i) => <option key={`button-socdMode-option-${i}`} value={o.value}>{o.label}</option>)}
+								</Form.Select>
+								<Form.Control.Feedback type="invalid">{errors.socdMode}</Form.Control.Feedback>
+							</div>
+						</Form.Group>
+						<Button type="submit">Save</Button>
+						{saveMessage ? <span className="alert">{saveMessage}</span> : null}
+						<FormContext />
+					</Form>
+				)}
+			</Formik>
+		</Section>
 	);
 }

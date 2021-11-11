@@ -1,4 +1,5 @@
 import React from 'react';
+import DangerSection from '../Components/DangerSection';
 import WebApi from '../Services/WebApi';
 
 export default function ResetSettingsPage() {
@@ -17,18 +18,13 @@ export default function ResetSettingsPage() {
 	};
 
 	return (
-		<div className="card border-danger">
-			<div className="card-header text-white bg-danger">
-				<strong>Reset Settings</strong>
-			</div>
-			<div className="card-body bg-transparent">
-				<p className="card-text">
-					This option resets all saved configurations on your controller. Use this option as a
-					last resort or when trying to diagnose odd issues with your controller.
-				</p>
-				<p className="alert alert-warning">This process will automatically reset the controller.</p>
-				<button className="btn btn-danger" onClick={resetSettings}>Reset Settings</button>
-			</div>
-		</div>
+		<DangerSection title="Reset Settings">
+			<p className="card-text">
+				This option resets all saved configurations on your controller. Use this option as a
+				last resort or when trying to diagnose odd issues with your controller.
+			</p>
+			<p className="card-text">This process will automatically reset the controller.</p>
+			<button className="btn btn-danger" onClick={resetSettings}>Reset Settings</button>
+		</DangerSection>
 	);
 }

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink } from "react-router-dom";
 import { Button, Form } from 'react-bootstrap';
+import Section from '../Components/Section';
 import WebApi, { baseButtonMappings } from '../Services/WebApi';
 import boards from '../Data/Boards.json'
 import buttons from '../Data/Buttons.json'
@@ -88,56 +89,51 @@ export default function PinMappingPage() {
 	};
 
 	return (
-		<div className="card">
-			<div className="card-header">
-				<strong>Pin Mapping</strong>
-			</div>
-			<div className="card-body">
-				<Form noValidate validated={validated} onSubmit={handleSubmit}>
-					<p>Use the form below to reconfigure your button-to-pin mapping.</p>
-					<div className="alert alert-warning">
-						Mapping buttons to pins that aren't connected or available can leave the device in non-functional state. To clear the
-						the invalid configuration go to the <NavLink exact={true} to="/reset-settings">Reset Settings</NavLink> page.
-					</div>
-					<Form.Group className="select-button-labels-container">
-						<Form.Label>Labels</Form.Label>
-						<Form.Select className="select-button-labels form-select-sm" onChange={buttonLabelsChanged}>
-							{BUTTON_LABELS.map((o, i) => <option key={`button-label-option-${i}`} value={o.value}>{o.label}</option>)}
-						</Form.Select>
-					</Form.Group>
-					<table className="table table-sm pin-mapping-table">
-						<thead className="table">
-							<tr>
-								<th className="table-header-button-label">{selectedButtonLabels.label}</th>
-								<th>Pin</th>
+		<Section title="Pin Mapping">
+			<Form noValidate validated={validated} onSubmit={handleSubmit}>
+				<p>Use the form below to reconfigure your button-to-pin mapping.</p>
+				<div className="alert alert-warning">
+					Mapping buttons to pins that aren't connected or available can leave the device in non-functional state. To clear the
+					the invalid configuration go to the <NavLink exact={true} to="/reset-settings">Reset Settings</NavLink> page.
+				</div>
+				<Form.Group className="select-button-labels-container">
+					<Form.Label>Labels</Form.Label>
+					<Form.Select className="select-button-labels form-select-sm" onChange={buttonLabelsChanged}>
+						{BUTTON_LABELS.map((o, i) => <option key={`button-label-option-${i}`} value={o.value}>{o.label}</option>)}
+					</Form.Select>
+				</Form.Group>
+				<table className="table table-sm pin-mapping-table">
+					<thead className="table">
+						<tr>
+							<th className="table-header-button-label">{selectedButtonLabels.label}</th>
+							<th>Pin</th>
+						</tr>
+					</thead>
+					<tbody>
+						{Object.keys(buttons)?.map((button, i) =>
+							<tr key={`button-map-${i}`} className={validated && !!buttonMappings[button].error ? "table-danger" : ""}>
+								<td>{buttons[button][selectedButtonLabels.value]}</td>
+								<td>
+									<Form.Control
+										type="number"
+										className="pin-input form-control-sm"
+										value={buttonMappings[button].pin}
+										min={boards[selectedBoard].minPin}
+										max={boards[selectedBoard].maxPin}
+										isInvalid={!!buttonMappings[button].error}
+										required={requiredButtons.filter(b => b === button).length}
+										onChange={(e) => handlePinChange(e, button)}
+									></Form.Control>
+									{boards[selectedBoard]?.min}
+									<Form.Control.Feedback type="invalid">{buttonMappings[button].error}</Form.Control.Feedback>
+								</td>
 							</tr>
-						</thead>
-						<tbody>
-							{Object.keys(buttons)?.map((button, i) =>
-								<tr key={`button-map-${i}`} className={validated && !!buttonMappings[button].error ? "table-danger" : ""}>
-									<td>{buttons[button][selectedButtonLabels.value]}</td>
-									<td>
-										<Form.Control
-											type="number"
-											className="pin-input form-control-sm"
-											value={buttonMappings[button].pin}
-											min={boards[selectedBoard].minPin}
-											max={boards[selectedBoard].maxPin}
-											isInvalid={!!buttonMappings[button].error}
-											required={requiredButtons.filter(b => b === button).length}
-											onChange={(e) => handlePinChange(e, button)}
-										></Form.Control>
-										{boards[selectedBoard]?.min}
-										<Form.Control.Feedback type="invalid">{buttonMappings[button].error}</Form.Control.Feedback>
-									</td>
-								</tr>
-							)}
-						</tbody>
-					</table>
-					<Button type="submit">Save</Button>
-					{saveMessage ? <span className="alert">{saveMessage}</span> : null}
-				</Form>
-			</div>
-		</div>
+						)}
+					</tbody>
+				</table>
+				<Button type="submit">Save</Button>
+				{saveMessage ? <span className="alert">{saveMessage}</span> : null}
+			</Form>
+		</Section>
 	);
 }
