@@ -7,6 +7,7 @@ import HomePage from './Pages/HomePage'
 import PinMappingPage from "./Pages/PinMapping";
 import ResetSettingsPage from './Pages/ResetSettingsPage';
 import SettingsPage from './Pages/SettingsPage';
+import LEDConfigPage from './Pages/LEDConfigPage';
 
 function App() {
 	return (
@@ -25,6 +26,9 @@ function App() {
 					</Route>
 					<Route path="/reset-settings">
 						<ResetSettingsPage />
+					</Route>
+					<Route path="/led-config">
+						<LEDConfigPage />
 					</Route>
 				</Switch>
 			</div>

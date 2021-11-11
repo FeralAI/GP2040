@@ -54,7 +54,7 @@ void GamepadStorage::save()
 GamepadOptions GamepadStorage::getGamepadOptions()
 {
 	GamepadOptions options;
-	EEPROM.get(0, options);
+	EEPROM.get(GAMEPAD_STORAGE_INDEX, options);
 	if (!options.isSet)
 	{
 		options.inputMode = InputMode::INPUT_MODE_XINPUT;
@@ -72,7 +72,7 @@ GamepadOptions GamepadStorage::getGamepadOptions()
 void GamepadStorage::setGamepadOptions(GamepadOptions options)
 {
 	options.isSet = true;
-	EEPROM.set(0, options);
+	EEPROM.set(GAMEPAD_STORAGE_INDEX, options);
 }
 
 /* Animation stuffs */
@@ -83,18 +83,16 @@ void GamepadStorage::setGamepadOptions(GamepadOptions options)
 #include "AnimationStorage.hpp"
 #include "AnimationStation/src/Effects/StaticColor.hpp"
 
-#define STORAGE_LEDS_INDEX (STORAGE_FIRST_AVAILBLE_INDEX)         // 1 byte
-
 AnimationOptions AnimationStorage::getAnimationOptions()
 {
 	AnimationOptions options;
-	EEPROM.get(STORAGE_LEDS_INDEX, options);
+	EEPROM.get(ANIMATION_STORAGE_INDEX, options);
 	return options;
 }
 
 void AnimationStorage::setAnimationOptions(AnimationOptions options)
 {
-	EEPROM.set(STORAGE_LEDS_INDEX, options);
+	EEPROM.set(ANIMATION_STORAGE_INDEX, options);
 }
 
 void AnimationStorage::setup(AnimationStation *as)

@@ -1,3 +1,8 @@
+/*
+ * SPDX-License-Identifier: MIT
+ * SPDX-FileCopyrightText: Copyright (c) 2021 Jason Skuby (mytechtoybox.com)
+ */
+
 #ifndef STORAGE_H_
 #define STORAGE_H_
 
@@ -5,8 +10,10 @@
 #include "NeoPico.hpp"
 #include "enums.h"
 
-#define BOARD_STORAGE_INDEX 1024
-#define LED_STORAGE_INDEX 1536
+#define GAMEPAD_STORAGE_INDEX      0
+#define BOARD_STORAGE_INDEX     1024
+#define LED_STORAGE_INDEX       1536
+#define ANIMATION_STORAGE_INDEX 2048
 
 struct BoardOptions
 {

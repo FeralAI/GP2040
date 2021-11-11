@@ -47,6 +47,35 @@ app.get('/api/getGamepadOptions', (req, res) => {
 	});
 });
 
+app.get('/api/getLedOptions', (req, res) => {
+	console.log('/api/getLedOptions');
+	return res.send({
+		brightnessMax: 255,
+		brightnessSteps: 5,
+		ledFormat: 0,
+		ledLayout: 1,
+		ledsPerPixel: 2,
+		dpadUp: 0,
+		dpadDown: 1,
+		dpadLeft: 2,
+		dpadRight: 3,
+		buttonB1: 4,
+		buttonB2: 5,
+		buttonB3: 6,
+		buttonB4: 7,
+		buttonL1: 8,
+		buttonR1: 9,
+		buttonL2: 10,
+		buttonR2: 11,
+		buttonS1: null,
+		buttonS2: null,
+		buttonL3: null,
+		buttonR3: null,
+		buttonA1: null,
+		buttonA2: null,
+	});
+});
+
 app.get('/api/getPinMappings', (req, res) => {
 	console.log('/api/getPinMappings');
 	let mappings = { ...baseButtonMappings };
@@ -60,6 +89,11 @@ app.get('/api/getPinMappings', (req, res) => {
 
 app.post('/api/setGamepadOptions', (req, res) => {
 	console.log('/api/setGamepadOptions');
+	return res.send(req.body);
+});
+
+app.post('/api/setLedOptions', (req, res) => {
+	console.log('/api/setLedOptions');
 	return res.send(req.body);
 });
 

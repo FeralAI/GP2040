@@ -47,6 +47,24 @@ async function setGamepadOptions(options) {
 		});
 }
 
+async function getLedOptions() {
+	return axios.get(`${baseUrl}/api/getLedOptions`)
+		.then((response) => response.data)
+		.catch(console.error);
+}
+
+async function setLedOptions(options) {
+	return axios.post(`${baseUrl}/api/setLedOptions`, options)
+		.then((response) => {
+			console.log(response.data);
+			return true;
+		})
+		.catch((err) => {
+			console.error(err);
+			return false;
+		});
+}
+
 async function getPinMappings() {
 	return axios.get(`${baseUrl}/api/getPinMappings`)
 		.then((response) => {
@@ -78,6 +96,8 @@ const WebApi = {
 	resetSettings,
 	getGamepadOptions,
 	setGamepadOptions,
+	getLedOptions,
+	setLedOptions,
 	getPinMappings,
 	setPinMappings,
 };
