@@ -21,6 +21,13 @@ function Navbar(props) {
 							<NavLink exact={true} className="nav-link" activeClassName="active" to="/settings">Settings</NavLink >
 						</li>
 						<li className="nav-item dropdown">
+							<a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Configuration</a>
+							<ul className="dropdown-menu">
+								<li><NavLink exact={true} className="dropdown-item" activeClassName="active" to="/pin-mapping">Pin Mapping</NavLink ></li>
+								<li><NavLink exact={true} className="dropdown-item" activeClassName="active" to="/led-config">LED Configuration</NavLink ></li>
+							</ul>
+						</li>
+						<li className="nav-item dropdown">
 							<a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Links</a>
 							<ul className="dropdown-menu">
 								<li><a className="dropdown-item" target="_blank" rel="noreferrer" href="https://feralai.github.io/GP2040/">Documentation</a></li>
@@ -30,7 +37,6 @@ function Navbar(props) {
 						<li className="nav-item dropdown">
 							<a className="nav-link dropdown-toggle btn-danger danger-zone" href="#" role="button" data-bs-toggle="dropdown">DANGER ZONE</a>
 							<ul className="dropdown-menu">
-								<li><NavLink exact={true} className="dropdown-item" activeClassName="active" to="/pin-mapping">Pin Mapping</NavLink ></li>
 								<li><NavLink exact={true} className="dropdown-item" activeClassName="active" to="/reset-settings">Reset Settings</NavLink ></li>
 							</ul>
 						</li>

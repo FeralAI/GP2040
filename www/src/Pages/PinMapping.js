@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink } from "react-router-dom";
 import { Button, Form } from 'react-bootstrap';
-
 import WebApi, { baseButtonMappings } from '../Services/WebApi';
 import boards from '../Data/Boards.json'
 import buttons from '../Data/Buttons.json'
-
 import './PinMappings.scss';
 
-const buttonLabelOptions = [
+const BUTTON_LABELS = [
 	{ label: 'GP2040', value: 'gp2040' },
 	{ label: 'Arcade', value: 'arcade' },
 	{ label: 'XInput', value: 'xinput' },
@@ -25,7 +23,7 @@ export default function PinMappingPage() {
 	const [buttonMappings, setButtonMappings] = useState(baseButtonMappings);
 	const [selectedController] = useState(process.env.REACT_APP_GP2040_CONTROLLER);
 	const [selectedBoard] = useState(process.env.REACT_APP_GP2040_BOARD);
-	const [selectedButtonLabels, setSelectedButtonLabels] = useState(buttonLabelOptions[0]);
+	const [selectedButtonLabels, setSelectedButtonLabels] = useState(BUTTON_LABELS[0]);
 
 	useEffect(() => {
 		async function fetchData() {
@@ -36,7 +34,7 @@ export default function PinMappingPage() {
 	}, [setButtonMappings, selectedController]);
 
 	const buttonLabelsChanged = (e) => {
-		setSelectedButtonLabels(buttonLabelOptions.filter(o => o.value === e.target.value)[0]);
+		setSelectedButtonLabels(BUTTON_LABELS.filter(o => o.value === e.target.value)[0]);
 	};
 
 	const handlePinChange = (e, prop) => {
@@ -104,7 +102,7 @@ export default function PinMappingPage() {
 					<Form.Group className="select-button-labels-container">
 						<Form.Label>Labels</Form.Label>
 						<Form.Select className="select-button-labels form-select-sm" onChange={buttonLabelsChanged}>
-							{buttonLabelOptions.map((o, i) => <option key={`button-label-option-${i}`} value={o.value}>{o.label}</option>)}
+							{BUTTON_LABELS.map((o, i) => <option key={`button-label-option-${i}`} value={o.value}>{o.label}</option>)}
 						</Form.Select>
 					</Form.Group>
 					<table className="table table-sm pin-mapping-table">
@@ -136,7 +134,6 @@ export default function PinMappingPage() {
 							)}
 						</tbody>
 					</table>
-
 					<Button type="submit">Save</Button>
 					{saveMessage ? <span className="alert">{saveMessage}</span> : null}
 				</Form>
