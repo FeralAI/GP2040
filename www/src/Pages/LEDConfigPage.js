@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Form } from 'react-bootstrap';
+import { Button, Form, Row } from 'react-bootstrap';
 import { Formik, useFormikContext } from 'formik';
 import * as yup from 'yup';
 import Section from '../Components/Section';
 import DraggableListGroup from '../Components/DraggableListGroup';
+import FormControl from '../Components/FormControl';
+import FormSelect from '../Components/FormSelect';
 import buttons from '../Data/Buttons.json';
 import WebApi from '../Services/WebApi';
 
@@ -17,7 +19,7 @@ const LED_FORMATS = [
 ];
 
 const LED_LAYOUTS = [
-	{ label: '8-button Arcade Stick', value: 0 },
+	{ label: '8-Button Layout', value: 0 },
 	{ label: 'Hit Box Layout', value: 1 },
 	{ label: 'WASD Layout', value: 2 },
 ];
@@ -72,86 +74,80 @@ export default function LEDConfigPage() {
 					errors,
 				}) => (
 					<Form noValidate onSubmit={handleSubmit}>
-						<Form.Group className="row mb-3">
-							<Form.Label>Max Brightness (0-255)</Form.Label>
-							<div className="col-sm-4">
-								<Form.Control
-									type="number"
-									name="brightnessMax"
-									value={values.brightnessMax}
-									onChange={handleChange}
-									isInvalid={errors.brightnessMax}
-									min={0}
-									max={255}
-								/>
-								<Form.Control.Feedback type="invalid">{errors.brightnessMax}</Form.Control.Feedback>
-							</div>
-						</Form.Group>
-						<Form.Group className="row mb-3">
-							<Form.Label>Brightness Steps (1-10)</Form.Label>
-							<div className="col-sm-4">
-								<Form.Control
-									type="number"
-									name="brightnessSteps"
-									value={values.brightnessSteps}
-									onChange={handleChange}
-									isInvalid={errors.brightnessSteps}
-									min={1}
-									max={10}
-								/>
-								<Form.Control.Feedback type="invalid">{errors.brightnessSteps}</Form.Control.Feedback>
-							</div>
-						</Form.Group>
-						<Form.Group className="row mb-3">
-							<Form.Label>LED Format</Form.Label>
-							<div className="col-sm-4">
-								<Form.Select
-									name="ledFormat"
-									className="form-select-sm"
-									value={values.ledFormat}
-									onChange={handleChange}
-									isInvalid={errors.ledFormat}
+						<Row>
+							<FormSelect
+								label="LED Format"
+								name="ledFormat"
+								className="form-select-sm"
+								groupClassName="col-sm-4 mb-3"
+								value={values.ledFormat}
+								error={errors.ledFormat}
+								isInvalid={errors.ledFormat}
+								onChange={handleChange}
 								>
-									{LED_FORMATS.map((o, i) => <option key={`ledFormat-option-${i}`} value={o.value}>{o.label}</option>)}
-								</Form.Select>
-								<Form.Control.Feedback type="invalid">{errors.ledFormat}</Form.Control.Feedback>
-							</div>
-						</Form.Group>
-						<Form.Group className="row mb-3">
-							<Form.Label>LED Layout</Form.Label>
-							<div className="col-sm-4">
-								<Form.Select
-									name="ledLayout"
-									className="form-select-sm"
-									value={values.ledLayout}
-									onChange={handleChange}
-									isInvalid={errors.ledLayout}
-								>
-									{LED_LAYOUTS.map((o, i) => <option key={`ledLayout-option-${i}`} value={o.value}>{o.label}</option>)}
-								</Form.Select>
-								<Form.Control.Feedback type="invalid">{errors.ledLayout}</Form.Control.Feedback>
-							</div>
-						</Form.Group>
-						<Form.Group className="row mb-3">
-							<Form.Label>LEDs Per Pixel</Form.Label>
-							<div className="col-sm-4">
-								<Form.Control
-									type="number"
-									name="ledsPerPixel"
-									value={values.ledsPerPixel}
-									onChange={handleChange}
-									isInvalid={errors.ledsPerPixel}
-									min={1}
-								/>
-								<Form.Control.Feedback type="invalid">{errors.ledsPerPixel}</Form.Control.Feedback>
-							</div>
-						</Form.Group>
+								{LED_FORMATS.map((o, i) => <option key={`ledFormat-option-${i}`} value={o.value}>{o.label}</option>)}
+							</FormSelect>
+							<FormSelect
+								label="LED Layout"
+								name="ledLayout"
+								className="form-select-sm"
+								groupClassName="col-sm-4 mb-3"
+								value={values.ledLayout}
+								error={errors.ledLayout}
+								isInvalid={errors.ledLayout}
+								onChange={handleChange}
+							>
+								{LED_LAYOUTS.map((o, i) => <option key={`ledLayout-option-${i}`} value={o.value}>{o.label}</option>)}
+							</FormSelect>
+							<FormControl type="number"
+								label="LEDs Per Pixel"
+								name="ledsPerPixel"
+								className="form-control-sm"
+								groupClassName="col-sm-4 mb-3"
+								value={values.ledsPerPixel}
+								error={errors.ledsPerPixel}
+								isInvalid={errors.ledsPerPixel}
+								onChange={handleChange}
+								min={1}
+							/>
+						</Row>
+						<Row>
+							<FormControl type="number"
+								label="Max Brightness"
+								name="brightnessMax"
+								className="form-control-sm"
+								groupClassName="col-sm-4 mb-3"
+								value={values.brightnessMax}
+								error={errors.brightnessMax}
+								isInvalid={errors.brightnessMax}
+								onChange={handleChange}
+								min={0}
+								max={255}
+							/>
+							<FormControl type="number"
+								label="Brightness Steps"
+								name="brightnessSteps"
+								className="form-control-sm"
+								groupClassName="col-sm-4 mb-3"
+								value={values.brightnessSteps}
+								error={errors.brightnessSteps}
+								isInvalid={errors.brightnessSteps}
+								onChange={handleChange}
+								min={1}
+								max={10}
+							/>
+						</Row>
 						<div>
 							<strong>LED Button Order</strong>
 							<p className="card-text">
-								Here you can define the order of your LED buttons. This is required for certain LED animations and static theme support.
+								Here you can define the which buttons have RGB LEDs, and in what order they run from the control board.
+								This is required for certain LED animations and static theme support.
 							</p>
-							<DraggableListGroup groupName="test" titles={['Available Buttons', 'Assigned Buttons']} dataSources={[dataSource, []]} />
+							<DraggableListGroup
+								groupName="test"
+								titles={['Available Buttons', 'Assigned Buttons']}
+								dataSources={[dataSource, []]}
+							/>
 						</div>
 						<Button type="submit">Save</Button>
 						{saveMessage ? <span className="alert">{saveMessage}</span> : null}
