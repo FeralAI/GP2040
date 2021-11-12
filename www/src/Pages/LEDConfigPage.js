@@ -78,17 +78,17 @@ export default function LEDConfigPage() {
 	};
 
 	return (
-		<Section title="LED Configuration">
-			<Formik validationSchema={schema} onSubmit={console.log} initialValues={defaultValue}>
-				{({
-					handleSubmit,
-					handleChange,
-					handleBlur,
-					values,
-					touched,
-					errors,
-				}) => (
-					<Form noValidate onSubmit={handleSubmit}>
+		<Formik validationSchema={schema} onSubmit={console.log} initialValues={defaultValue}>
+			{({
+				handleSubmit,
+				handleChange,
+				handleBlur,
+				values,
+				touched,
+				errors,
+			}) => (
+				<Form noValidate onSubmit={handleSubmit}>
+					<Section title="LED Configuration">
 						<Row>
 							<FormSelect
 								label="LED Format"
@@ -152,32 +152,31 @@ export default function LEDConfigPage() {
 								max={10}
 							/>
 						</Row>
-						<div>
-							<strong>LED Button Order</strong>
-							<p className="card-text">
-								Here you can define the which buttons have RGB LEDs, and in what order they run from the control board.
-								This is required for certain LED animations and static theme support.
-							</p>
-							<p className="card-text">
-								Drag and drop list items to assign and reorder the RGB LEDs.
-							</p>
-							<DraggableListGroup
-								groupName="test"
-								titles={['Available Buttons', 'Assigned Buttons']}
-								dataSources={[ledButtonOptions, []]}
-								onChange={ledOrderChanged}
-							/>
-						</div>
-						<Button type="submit">Save</Button>
-						{saveMessage ? <span className="alert">{saveMessage}</span> : null}
-						<FormContext
-							buttonLabels={buttonLabels}
-							ledButtonOptions={ledButtonOptions}
-							setLedButtonOptions={setLedButtonOptions}
+					</Section>
+					<Section title="LED Button Order">
+						<p className="card-text">
+							Here you can define the which buttons have RGB LEDs, and in what order they run from the control board.
+							This is required for certain LED animations and static theme support.
+						</p>
+						<p className="card-text">
+							Drag and drop list items to assign and reorder the RGB LEDs.
+						</p>
+						<DraggableListGroup
+							groupName="test"
+							titles={['Available Buttons', 'Assigned Buttons']}
+							dataSources={[ledButtonOptions, []]}
+							onChange={ledOrderChanged}
 						/>
-					</Form>
-				)}
-			</Formik>
-		</Section>
+					</Section>
+					<Button type="submit">Save</Button>
+					{saveMessage ? <span className="alert">{saveMessage}</span> : null}
+					<FormContext
+						buttonLabels={buttonLabels}
+						ledButtonOptions={ledButtonOptions}
+						setLedButtonOptions={setLedButtonOptions}
+					/>
+				</Form>
+			)}
+		</Formik>
 	);
 }

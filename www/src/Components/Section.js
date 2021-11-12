@@ -1,4 +1,5 @@
 import React from 'react';
+import './Section.scss';
 
 const Section = ({ children, title, ...props }) => {
 	return (
