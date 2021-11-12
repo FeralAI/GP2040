@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import './DraggableListGroup.scss'
 
@@ -27,6 +27,11 @@ const move = (source, destination, droppableSource, droppableDestination) => {
 const DraggableListGroup = ({ groupName, titles, dataSources, onChange, ...props }) => {
 	const [droppableIds] = useState(dataSources.map((v, i) => `${groupName}-${i}`));
 	const [listData, setListData] = useState(dataSources.reduce((p, n) => ({ ...p, [`${groupName}-${dataSources.indexOf(n)}`]: n }), {}));
+
+	useEffect(() => {
+		if (onChange)
+			onChange(Object.keys(listData).reduce((p, n) => { p.push(listData[n]); return p; }, []));
+	}, [listData]);
 
 	const onDragEnd = result => {
 		const { source, destination } = result;
@@ -74,8 +79,8 @@ const DraggableListGroup = ({ groupName, titles, dataSources, onChange, ...props
 								>
 									{listData[droppableId].map((item, l) => (
 										<Draggable
-											key={item.label}
-											draggableId={item.label}
+											key={item.id}
+											draggableId={item.id}
 											index={l}
 										>
 											{(draggableProvided, draggableSnapshot) => (

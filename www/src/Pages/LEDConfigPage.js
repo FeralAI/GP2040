@@ -1,15 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Button, Form, Row } from 'react-bootstrap';
 import { Formik, useFormikContext } from 'formik';
 import * as yup from 'yup';
+import { AppContext } from '../Contexts/AppContext';
 import Section from '../Components/Section';
 import DraggableListGroup from '../Components/DraggableListGroup';
 import FormControl from '../Components/FormControl';
 import FormSelect from '../Components/FormSelect';
-import buttons from '../Data/Buttons.json';
+import BUTTONS from '../Data/Buttons.json';
 import WebApi from '../Services/WebApi';
-
-const dataSource = Object.keys(buttons).map(p => ({ label: p, value: null }));
 
 const LED_FORMATS = [
 	{ label: 'GRB', value: 0 },
@@ -32,16 +31,7 @@ const schema = yup.object().shape({
 	ledsPerPixel   : yup.number().required().positive().integer().min(1).label('LEDs Per Pixel'),
 });
 
-const defaultValue = {
-	brightnessMax: 255,
-	brightnessSteps: 5,
-	ledFormat: 0,
-	ledLayout: 0,
-	ledsPerPixel: 2,
-	ledButtonMap: [],
-};
-
-const FormContext = () => {
+const FormContext = ({ buttonLabels }) => {
 	const { values, setValues } = useFormikContext();
 
 	useEffect(() => {
@@ -49,7 +39,7 @@ const FormContext = () => {
 			setValues(await WebApi.getLedOptions());
 		}
 		fetchData();
-	}, [setValues]);
+	}, []);
 
 	useEffect(() => {
 		if (!!values.ledFormat)
@@ -60,7 +50,32 @@ const FormContext = () => {
 };
 
 export default function LEDConfigPage() {
-	const [saveMessage, setSaveMessage] = useState('');
+	const { buttonLabels } = useContext(AppContext);
+	const [ledButtonOptions, setLedButtonOptions] = useState(Object
+		.keys(BUTTONS[buttonLabels])
+		.filter(p => p !== 'label' && p !== 'value')
+		.map(p => ({ id: p, label: BUTTONS[buttonLabels][p], value: null }))
+	);
+	const [saveMessage] = useState('');
+	const defaultValue = {
+		brightnessMax: 255,
+		brightnessSteps: 5,
+		ledFormat: 0,
+		ledLayout: 0,
+		ledsPerPixel: 2,
+	};
+
+	useEffect(() => {
+		const newButtonOptions = [...ledButtonOptions];
+		for (let option of newButtonOptions)
+			option.label = BUTTONS[buttonLabels][option.id];
+
+		setLedButtonOptions(newButtonOptions);
+	}, [buttonLabels, setLedButtonOptions]);
+
+	const ledOrderChanged = (value) => {
+		console.log(value);
+	};
 
 	return (
 		<Section title="LED Configuration">
@@ -143,15 +158,23 @@ export default function LEDConfigPage() {
 								Here you can define the which buttons have RGB LEDs, and in what order they run from the control board.
 								This is required for certain LED animations and static theme support.
 							</p>
+							<p className="card-text">
+								Drag and drop list items to assign and reorder the RGB LEDs.
+							</p>
 							<DraggableListGroup
 								groupName="test"
 								titles={['Available Buttons', 'Assigned Buttons']}
-								dataSources={[dataSource, []]}
+								dataSources={[ledButtonOptions, []]}
+								onChange={ledOrderChanged}
 							/>
 						</div>
 						<Button type="submit">Save</Button>
 						{saveMessage ? <span className="alert">{saveMessage}</span> : null}
-						<FormContext />
+						<FormContext
+							buttonLabels={buttonLabels}
+							ledButtonOptions={ledButtonOptions}
+							setLedButtonOptions={setLedButtonOptions}
+						/>
 					</Form>
 				)}
 			</Formik>

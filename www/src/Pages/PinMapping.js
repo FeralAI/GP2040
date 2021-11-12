@@ -1,30 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { NavLink } from "react-router-dom";
 import { Button, Form } from 'react-bootstrap';
+import { AppContext } from '../Contexts/AppContext';
 import Section from '../Components/Section';
 import WebApi, { baseButtonMappings } from '../Services/WebApi';
-import boards from '../Data/Boards.json'
-import buttons from '../Data/Buttons.json'
+import boards from '../Data/Boards.json';
+import BUTTONS from '../Data/Buttons.json';
 import './PinMappings.scss';
-
-const BUTTON_LABELS = [
-	{ label: 'GP2040', value: 'gp2040' },
-	{ label: 'Arcade', value: 'arcade' },
-	{ label: 'XInput', value: 'xinput' },
-	{ label: 'Nintendo Switch', value: 'switch' },
-	{ label: 'PS3', value: 'ps3' },
-	{ label: 'DirectInput', value: 'dinput' },
-];
 
 const requiredButtons = ['B1', 'B2', 'B3', 'S2'];
 
 export default function PinMappingPage() {
+	const { buttonLabels } = useContext(AppContext);
 	const [validated, setValidated] = useState(false);
 	const [saveMessage, setSaveMessage] = useState('');
 	const [buttonMappings, setButtonMappings] = useState(baseButtonMappings);
 	const [selectedController] = useState(process.env.REACT_APP_GP2040_CONTROLLER);
 	const [selectedBoard] = useState(process.env.REACT_APP_GP2040_BOARD);
-	const [selectedButtonLabels, setSelectedButtonLabels] = useState(BUTTON_LABELS[0]);
 
 	useEffect(() => {
 		async function fetchData() {
@@ -33,10 +25,6 @@ export default function PinMappingPage() {
 
 		fetchData();
 	}, [setButtonMappings, selectedController]);
-
-	const buttonLabelsChanged = (e) => {
-		setSelectedButtonLabels(BUTTON_LABELS.filter(o => o.value === e.target.value)[0]);
-	};
 
 	const handlePinChange = (e, prop) => {
 		const newMappings = {...buttonMappings};
@@ -96,23 +84,17 @@ export default function PinMappingPage() {
 					Mapping buttons to pins that aren't connected or available can leave the device in non-functional state. To clear the
 					the invalid configuration go to the <NavLink exact={true} to="/reset-settings">Reset Settings</NavLink> page.
 				</div>
-				<Form.Group className="select-button-labels-container">
-					<Form.Label>Labels</Form.Label>
-					<Form.Select className="select-button-labels form-select-sm" onChange={buttonLabelsChanged}>
-						{BUTTON_LABELS.map((o, i) => <option key={`button-label-option-${i}`} value={o.value}>{o.label}</option>)}
-					</Form.Select>
-				</Form.Group>
 				<table className="table table-sm pin-mapping-table">
 					<thead className="table">
 						<tr>
-							<th className="table-header-button-label">{selectedButtonLabels.label}</th>
+							<th className="table-header-button-label">{BUTTONS[buttonLabels].label}</th>
 							<th>Pin</th>
 						</tr>
 					</thead>
 					<tbody>
-						{Object.keys(buttons)?.map((button, i) =>
+						{Object.keys(BUTTONS[buttonLabels])?.filter(p => p !== 'label' && p !== 'value').map((button, i) =>
 							<tr key={`button-map-${i}`} className={validated && !!buttonMappings[button].error ? "table-danger" : ""}>
-								<td>{buttons[button][selectedButtonLabels.value]}</td>
+								<td>{BUTTONS[buttonLabels][button]}</td>
 								<td>
 									<Form.Control
 										type="number"

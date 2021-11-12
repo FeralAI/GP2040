@@ -3,8 +3,18 @@
 	margin: -6px 8px 0 12px;
 }
 
-.nav-item * {
+.nav-link, .nav-item * {
 	font-size: 0.875rem;
+}
+
+.navbar-tools {
+	position: absolute;
+	top: 12px;
+	right: 10px;
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
+	align-items: center;
 }
 
 .danger-zone {

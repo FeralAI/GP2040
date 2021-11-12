@@ -55,6 +55,26 @@ app.get('/api/getLedOptions', (req, res) => {
 		ledFormat: 0,
 		ledLayout: 1,
 		ledsPerPixel: 2,
+		ledButtonMap: {
+			Up: 3,
+			Down: 1,
+			Left: 0,
+			Right: 2,
+			B1: 8,
+			B2: 9,
+			B3: 4,
+			B4: 5,
+			L1: 7,
+			R1: 6,
+			L2: 11,
+			R2: 10,
+			S1: null,
+			S2: null,
+			L3: null,
+			R3: null,
+			A1: null,
+			A2: null,
+		},
 	});
 });
 
