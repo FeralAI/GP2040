@@ -11,6 +11,6 @@ typedef enum
 	LED_LAYOUT_ARCADE_BUTTONS,
 	LED_LAYOUT_ARCADE_HITBOX,
 	LED_LAYOUT_ARCADE_WASD,
-} LedLayout;
+} LEDLayout;
 
 #endif

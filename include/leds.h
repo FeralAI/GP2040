@@ -81,8 +81,8 @@
 
 void configureAnimations(AnimationStation *as);
 AnimationHotkey animationHotkeys(Gamepad *gamepad);
-PixelMatrix createLedButtonLayout(LedLayout layout, int ledsPerPixel);
-PixelMatrix createLedButtonLayout(LedLayout layout, std::vector<uint8_t> *positions);
+PixelMatrix createLedButtonLayout(LEDLayout layout, int ledsPerPixel);
+PixelMatrix createLedButtonLayout(LEDLayout layout, std::vector<uint8_t> *positions);
 
 extern PixelMatrix matrix;
 

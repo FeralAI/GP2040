@@ -40,11 +40,13 @@ struct BoardOptions
 
 struct LEDOptions
 {
+	bool enableLEDs;
+
 	uint8_t ledBrightnessMaximum;
 	uint8_t ledBrightnessSteps;
 	LEDFormat ledFormat;
-	LedLayout ledLayout;
-	uint8_t ledsPerPixel;
+	LEDLayout ledLayout;
+	uint8_t ledsPerButton;
 
 	uint8_t ledDpadUp;
 	uint8_t ledDpadDown;

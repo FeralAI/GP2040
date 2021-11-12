@@ -246,7 +246,7 @@ PixelMatrix createLedLayoutArcadeWasd(std::vector<uint8_t> *positions)
 	return PixelMatrix(pixels);
 }
 
-PixelMatrix createLedButtonLayout(LedLayout layout, int ledsPerPixel)
+PixelMatrix createLedButtonLayout(LEDLayout layout, int ledsPerPixel)
 {
 	std::vector<uint8_t> positions[LED_BUTTON_COUNT];
 	for (int i = 0; i != LED_BUTTON_COUNT; i++)
@@ -259,7 +259,7 @@ PixelMatrix createLedButtonLayout(LedLayout layout, int ledsPerPixel)
 	return createLedButtonLayout(layout, positions);
 }
 
-PixelMatrix createLedButtonLayout(LedLayout layout, std::vector<uint8_t> *positions)
+PixelMatrix createLedButtonLayout(LEDLayout layout, std::vector<uint8_t> *positions)
 {
 	switch (layout)
 	{
