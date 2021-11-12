@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import './App.scss';
 
-import Navbar from './Components/Navbar'
+import Navigation from './Components/Navigation'
 import HomePage from './Pages/HomePage'
 import PinMappingPage from "./Pages/PinMapping";
 import ResetSettingsPage from './Pages/ResetSettingsPage';
@@ -12,7 +12,7 @@ import LEDConfigPage from './Pages/LEDConfigPage';
 function App() {
 	return (
 		<Router>
-			<Navbar />
+			<Navigation />
 			<div className="container-fluid body-content">
 				<Switch>
 					<Route exact path="/">
