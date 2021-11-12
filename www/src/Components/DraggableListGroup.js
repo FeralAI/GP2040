@@ -25,13 +25,18 @@ const move = (source, destination, droppableSource, droppableDestination) => {
 };
 
 const DraggableListGroup = ({ groupName, titles, dataSources, onChange, ...props }) => {
-	const [droppableIds] = useState(dataSources.map((v, i) => `${groupName}-${i}`));
-	const [listData, setListData] = useState(dataSources.reduce((p, n) => ({ ...p, [`${groupName}-${dataSources.indexOf(n)}`]: n }), {}));
+	const [droppableIds, setDroppableIds] = useState([]);
+	const [listData, setListData] = useState({});
 
 	useEffect(() => {
 		if (onChange)
 			onChange(Object.keys(listData).reduce((p, n) => { p.push(listData[n]); return p; }, []));
 	}, [listData]);
+
+	useEffect(() => {
+		setDroppableIds(dataSources.map((v, i) => `${groupName}-${i}`));
+		setListData(dataSources.reduce((p, n) => ({ ...p, [`${groupName}-${dataSources.indexOf(n)}`]: n }), {}));
+	}, [dataSources, setDroppableIds, setListData]);
 
 	const onDragEnd = result => {
 		const { source, destination } = result;
