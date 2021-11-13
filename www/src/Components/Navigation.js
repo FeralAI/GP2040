@@ -21,23 +21,23 @@ const Navigation = (props) => {
 				<img src="images/logo.png" className="title-logo" alt="logo" />{' '}GP2040
 			</Navbar.Brand>
 			<Navbar.Collapse id="basic-navbar-nav">
-				<Nav as="ul">
+				<Nav as="ul" className="me-auto">
 					<Nav.Item as="li">
-						<NavLink exact={true} className="nav-link" activeClassName="active" to="/">Home</NavLink>
+						<Nav.Link as={NavLink} exact={true} className="nav-link" activeClassName="active" to="/">Home</Nav.Link>
 					</Nav.Item>
 					<Nav.Item as="li">
-						<NavLink exact={true} className="nav-link" activeClassName="active" to="/settings">Settings</NavLink>
+						<Nav.Link as={NavLink} exact={true} className="nav-link" activeClassName="active" to="/settings">Settings</Nav.Link>
 					</Nav.Item>
 					<NavDropdown as="li" title="Configuration">
-						<NavLink exact={true} className="dropdown-item" activeClassName="active" to="/pin-mapping">Pin Mapping</NavLink>
-						<NavLink exact={true} className="dropdown-item" activeClassName="active" to="/led-config">LED Configuration</NavLink>
+						<NavDropdown.Item as={NavLink} to="/pin-mapping">Pin Mapping</NavDropdown.Item>
+						<NavDropdown.Item as={NavLink} to="/led-config">LED Configuration</NavDropdown.Item>
 					</NavDropdown>
 					<NavDropdown as="li" title="Links">
-						<a className="dropdown-item" target="_blank" rel="noreferrer" href="https://feralai.github.io/GP2040/">Documentation</a>
-						<a className="dropdown-item" target="_blank" rel="noreferrer" href="https://github.com/FeralAI/GP2040/">Github</a>
+						<NavDropdown.Item as={NavLink} to="https://feralai.github.io/GP2040/">Documentation</NavDropdown.Item>
+						<NavDropdown.Item as={NavLink} to="https://github.com/FeralAI/GP2040/">Github</NavDropdown.Item>
 					</NavDropdown>
 					<NavDropdown as="li" title="DANGER ZONE" className="btn-danger danger-zone">
-						<NavLink exact={true} className="dropdown-item" activeClassName="active" to="/reset-settings">Reset Settings</NavLink>
+						<NavDropdown.Item as={NavLink} to="/reset-settings">Reset Settings</NavDropdown.Item>
 					</NavDropdown>
 				</Nav>
 			</Navbar.Collapse>
