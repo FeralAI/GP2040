@@ -21,18 +21,22 @@ const Navigation = (props) => {
 				<img src="images/logo.png" className="title-logo" alt="logo" />{' '}GP2040
 			</Navbar.Brand>
 			<Navbar.Collapse id="basic-navbar-nav">
-				<Nav>
-					<NavLink exact={true} className="nav-link" activeClassName="active" to="/">Home</NavLink>
-					<NavLink exact={true} className="nav-link" activeClassName="active" to="/settings">Settings</NavLink>
-					<NavDropdown title="Configuration">
+				<Nav as="ul">
+					<Nav.Item as="li">
+						<NavLink exact={true} className="nav-link" activeClassName="active" to="/">Home</NavLink>
+					</Nav.Item>
+					<Nav.Item as="li">
+						<NavLink exact={true} className="nav-link" activeClassName="active" to="/settings">Settings</NavLink>
+					</Nav.Item>
+					<NavDropdown as="li" title="Configuration">
 						<NavLink exact={true} className="dropdown-item" activeClassName="active" to="/pin-mapping">Pin Mapping</NavLink>
 						<NavLink exact={true} className="dropdown-item" activeClassName="active" to="/led-config">LED Configuration</NavLink>
 					</NavDropdown>
-					<NavDropdown title="Links">
+					<NavDropdown as="li" title="Links">
 						<a className="dropdown-item" target="_blank" rel="noreferrer" href="https://feralai.github.io/GP2040/">Documentation</a>
 						<a className="dropdown-item" target="_blank" rel="noreferrer" href="https://github.com/FeralAI/GP2040/">Github</a>
 					</NavDropdown>
-					<NavDropdown title="DANGER ZONE" className="btn-danger danger-zone">
+					<NavDropdown as="li" title="DANGER ZONE" className="btn-danger danger-zone">
 						<NavLink exact={true} className="dropdown-item" activeClassName="active" to="/reset-settings">Reset Settings</NavLink>
 					</NavDropdown>
 				</Nav>
