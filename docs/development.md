@@ -1,14 +1,37 @@
 # GP2040 Development
 
-The project is built using the PlatformIO VS Code plugin along with the [Wiz-IO Raspberry Pi Pico](https://github.com/Wiz-IO/wizio-pico) platform package, using the baremetal (Pico SDK) configuration. There is an external dependency on the [MPG](https://github.com/FeralAI/MPG) C++ gamepad library for handling input state, providing extra features like Left/Right stick emulation and SOCD cleaning, and converting the generic gamepad state to the appropriate USB report.
+GP2040 is written in C++ and set up as a [PlatformIO](https://platformio.org/) project, using the [Wiz-IO Raspberry Pi Pico](https://github.com/Wiz-IO/wizio-pico) platform package in the `baremetal` (Pico SDK) configuration.
 
-There are two simple options for building GP2040 for your board. You can either edit an existing board definition, or create your own and configure PlatformIO to build it.
+## Environment Setup
+
+The recommended setup is to develop using the [PlatformIO IDE](https://platformio.org/platformio-ide), which is an extension to the excellent [Visual Studio Code (VS Code)](https://code.visualstudio.com/) editor. If a dedicated IDE for embedded development isn't your thing, you can easily build the project using the [PlatformIO CLI](https://platformio.org/install/cli) instead. This section will cover using the PlatformIO IDE.
+
+1. Use Git to clone the [GP2040 repository](https://github.com/FeralAI/GP2040.git), or [download the latest version](https://github.com/FeralAI/GP2040/archive/refs/heads/main.zip) and extract it.
+1. Follow the [installation instructions for the PlatformIO IDE](https://platformio.org/install/ide?install=vscode).
+1. Open VS Code and you should be greeted with the PlatformIO Home screen.
+1. Select the PlatformIO tab in the activity bar (bug icon), then go to `PIO Home > Platforms`.
+1. On the Platforms tab click the `Advanced Installation` button, then type `https://github.com/Wiz-IO/wizio-pico` and click `Install`.
+1. Open the `GP2040` (`GP2040-main` if from zip) folder in VS Code and it should automatically get picked up as a Platform IO project.
+1. Click on the VS Code Explorer tab (or Ctrl+Shift+E) and expand the folders and files in your project.
+
+PlatformIO will download any dependencies not already included with the project.
 
 ## Configuration
 
-Several example configurations are located in the repository **[configs](https://github.com/FeralAI/GP2040/tree/main/configs)** folder. This document will outline setting up a new build configuration.
+There are two simple options for building GP2040 for your board. You can either edit an existing board definition, or create your own and configure PlatformIO to build it. Several example configurations are located in the repository **[configs](https://github.com/FeralAI/GP2040/tree/main/configs)** folder. This document will outline setting up a new build configuration.
 
-### Build Configuration
+### Board Configuration Folder
+
+Each subfolder in [`configs`](https://github.com/FeralAI/GP2040/tree/main/configs) contains a separate PlatformIO build configuration, which consists of the following:
+
+| Name | Required? | Description |
+| ----------- | --------- | ----------- |
+| `BoardConfig.h` | Yes | The configuration file used when building GP2040 for a specific controller/board. Contains initial pin mappings, LED configuration, etc. |
+| `env.ini` | Yes | A partial PlatformIO project configuration file which defines the build parameters for this board. All `env.ini` files in subfolders of `configs` will be parsed and selectable when loading the project in the PlatformIO IDE.
+| `README.md` | No | Provides information related to this board configuration. Not required for the build process, but suggested for pull requests of new board configurations. |
+| `assets/` | No | Folder for containing assets included in the `README.md`. Not required for the build process.
+
+### Build Configuration (`env.ini`)
 
 1. Create a new folder in `configs` for your board, e.g. `configs/NewBoard`.
 1. Create `configs/NewBoard/env.ini` using the following template:
@@ -34,9 +57,16 @@ Several example configurations are located in the repository **[configs](https:/
 
 This will create a new PlatformIO build environment named `new-board`. Select the new environment from the VS Code status bar menu. You may need to restart VS Code in order for PlatformIO to pick up on the `env.ini` changes.
 
-### Board Configuration
+### Board Configuration (`BoardConfig.h`)
 
-Create `configs/NewBoard/BoardConfig.h` and add your pin configuration and options:
+The following board options are available in the `BoardConfig.h` file:
+
+| Name             | Description                  | Required? |
+| ---------------- | ---------------------------- | --------- |
+| **PIN_DPAD_*X***<br>**PIN_BUTTON_*X*** | The GPIO pin for the button. Replace the *`X`* with GP2040 button or D-pad direction. | Yes |
+| **DEFAULT_SOCD_MODE** | Defines the default SOCD mode to use, defaults to `SOCD_MODE_NEUTRAL`.<br>Available options are:<br>`SOCD_MODE_NEUTRAL`<br>`SOCD_MODE_UP_PRIORITY`<br>`SOCD_MODE_SECOND_INPUT_PRIORITY` | No |
+
+Create `configs/NewBoard/BoardConfig.h` and add your pin configuration and options. An example `BoardConfig.h` file:
 
 ```cpp
 // BoardConfig.h
@@ -65,14 +95,7 @@ Create `configs/NewBoard/BoardConfig.h` and add your pin configuration and optio
 #define DEFAULT_SOCD_MODE SOCD_MODE_NEUTRAL
 ```
 
-The following board options are available in the `BoardConfig.h` file:
-
-| Name             | Description                  | Required? |
-| ---------------- | ---------------------------- | --------- |
-| **PIN_DPAD_*X***<br>**PIN_BUTTON_*X*** | The GPIO pin for the button. Replace the *`X`* with GP2040 button or D-pad direction. | Yes |
-| **DEFAULT_SOCD_MODE** | Defines the default SOCD mode to use, defaults to `SOCD_MODE_NEUTRAL`.<br>Available options are:<br>`SOCD_MODE_NEUTRAL`<br>`SOCD_MODE_UP_PRIORITY`<br>`SOCD_MODE_SECOND_INPUT_PRIORITY` | No |
-
-### RGB LEDs
+#### RGB LEDs
 
 GP2040 supports per-button WS2812 and similar RGB LEDs.
 
@@ -122,7 +145,7 @@ An example RGB LED setup in the `BoardConfig.h` file:
 #define LEDS_BUTTON_L2   11
 ```
 
-### Player LEDs
+#### Player LEDs
 
 GP2040 supports PWM and RGB player LEDs (PLEDs) and can be configured in the `BoardConfig.h` file.
 
