@@ -6,14 +6,16 @@
 #ifndef LEDS_H_
 #define LEDS_H_
 
+#include "BoardConfig.h"
 #include <vector>
 #include "AnimationStation.hpp"
-#include "BoardConfig.h"
 #include "gamepad.h"
 #include "enums.h"
 #include "gp2040.h"
 
-#define LED_BUTTON_COUNT 12
+#ifndef LED_LAYOUT
+#define LED_LAYOUT LED_LAYOUT_ARCADE_BUTTONS
+#endif
 
 #ifndef LEDS_BRIGHTNESS
 #define LEDS_BRIGHTNESS 75
@@ -29,6 +31,14 @@
 
 #ifndef LEDS_STATIC_COLOR_COLOR
 #define LEDS_STATIC_COLOR_COLOR ColorRed
+#endif
+
+#ifndef LED_BRIGHTNESS_MAXIMUM
+#define LED_BRIGHTNESS_MAXIMUM 128
+#endif
+
+#ifndef LED_BRIGHTNESS_STEPS
+#define LED_BRIGHTNESS_STEPS 5
 #endif
 
 #ifndef LEDS_DPAD_LEFT
@@ -47,6 +57,14 @@
 #define LEDS_DPAD_UP    -1
 #endif
 
+#ifndef LEDS_BUTTON_B1
+#define LEDS_BUTTON_B1  -1
+#endif
+
+#ifndef LEDS_BUTTON_B2
+#define LEDS_BUTTON_B2  -1
+#endif
+
 #ifndef LEDS_BUTTON_B3
 #define LEDS_BUTTON_B3  -1
 #endif
@@ -63,20 +81,36 @@
 #define LEDS_BUTTON_L1  -1
 #endif
 
-#ifndef LEDS_BUTTON_B1
-#define LEDS_BUTTON_B1  -1
-#endif
-
-#ifndef LEDS_BUTTON_B2
-#define LEDS_BUTTON_B2  -1
-#endif
-
 #ifndef LEDS_BUTTON_L2
 #define LEDS_BUTTON_L2  -1
 #endif
 
 #ifndef LEDS_BUTTON_R2
 #define LEDS_BUTTON_R2  -1
+#endif
+
+#ifndef LEDS_BUTTON_S1
+#define LEDS_BUTTON_S1  -1
+#endif
+
+#ifndef LEDS_BUTTON_S2
+#define LEDS_BUTTON_S2  -1
+#endif
+
+#ifndef LEDS_BUTTON_L3
+#define LEDS_BUTTON_L3  -1
+#endif
+
+#ifndef LEDS_BUTTON_R3
+#define LEDS_BUTTON_R3  -1
+#endif
+
+#ifndef LEDS_BUTTON_A1
+#define LEDS_BUTTON_A1  -1
+#endif
+
+#ifndef LEDS_BUTTON_A2
+#define LEDS_BUTTON_A2  -1
 #endif
 
 void configureAnimations(AnimationStation *as);

@@ -17,30 +17,20 @@
 #include "gp2040.h"
 #include "usb_driver.h"
 #include "gamepad.h"
-#include "webserver.h"
-
-#ifdef BOARD_LEDS_PIN
 #include "leds.h"
-LEDModule ledModule;
-#endif
-
-#ifdef PLED_TYPE
 #include "pleds.h"
-PLEDModule pledModule(PLED_TYPE);
-#endif
+#include "webserver.h"
 
 uint32_t getMillis() { return to_ms_since_boot(get_absolute_time()); }
 
 static Gamepad gamepad(GAMEPAD_DEBOUNCE_MILLIS);
+LEDModule ledModule;
+PLEDModule pledModule(PLED_TYPE);
 queue_t gamepadQueue;
 std::vector<GPModule*> modules =
 {
-#ifdef BOARD_LEDS_PIN
 	&ledModule,
-#endif
-#ifdef PLED_TYPE
 	&pledModule,
-#endif
 };
 
 void setup();
@@ -125,10 +115,9 @@ void loop()
 
 	memset(featureData, 0, sizeof(featureData));
 	receive_report(featureData);
-#ifdef PLED_TYPE
 	if (featureData[0])
 		queue_try_add(&pledModule.featureQueue, featureData);
-#endif
+
 	tud_task();
 
 	if (queue_is_empty(&gamepadQueue))

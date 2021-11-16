@@ -28,6 +28,9 @@
 #ifndef PLED4_PIN
 #define PLED4_PIN -1
 #endif
+#ifndef PLED_TYPE
+#define PLED_TYPE PLED_TYPE_PWM
+#endif
 
 #define PLED_MASK_ALL ((1U << PLED1_PIN) | (1U << PLED2_PIN) | (1U << PLED3_PIN) | (1U << PLED4_PIN))
 

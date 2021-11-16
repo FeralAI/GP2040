@@ -7,9 +7,6 @@
 #define LED_THEMES_H_
 
 #include "BoardConfig.h"
-
-#ifdef BOARD_LEDS_PIN
-
 #include <vector>
 #include <MPG.h>
 #include "AnimationStation.hpp"
@@ -178,7 +175,5 @@ static std::map<uint32_t, RGB> themeXbox(
 		{ GAMEPAD_MASK_L2, ColorAqua },
 	}
 );
-
-#endif
 
 #endif

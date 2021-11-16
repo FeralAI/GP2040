@@ -5,8 +5,6 @@
 
 #include "BoardConfig.h"
 
-#ifdef PLED_TYPE
-
 #include <vector>
 #include "pico/stdlib.h"
 #include "hardware/pwm.h"
@@ -15,14 +13,15 @@
 #include "pleds.h"
 #include "xinput_driver.h"
 
-const uint8_t PLED_PINS[] = {PLED1_PIN, PLED2_PIN, PLED3_PIN, PLED4_PIN};
+const int PLED_PINS[] = {PLED1_PIN, PLED2_PIN, PLED3_PIN, PLED4_PIN};
 InputMode inputMode;
 uint32_t rgbPLEDValues[4];
 
 void setRGBPLEDs(uint32_t *frame)
 {
 	for (int i = 0; i < PLED_COUNT; i++)
-		frame[PLED_PINS[i]] = rgbPLEDValues[i];
+		if (PLED_PINS[i] > -1)
+			frame[PLED_PINS[i]] = rgbPLEDValues[i];
 }
 
 PLEDAnimationState getXInputAnimation(uint8_t *data)
@@ -94,11 +93,14 @@ void PWMPlayerLEDs::setup()
 
 	for (int i = 0; i < PLED_COUNT; i++)
 	{
-		gpio_set_function(PLED_PINS[i], GPIO_FUNC_PWM);
-		uint sliceNum = pwm_gpio_to_slice_num(PLED_PINS[i]);
-		uint channelNum = pwm_gpio_to_channel(PLED_PINS[i]);
-		sliceNums.push_back(sliceNum);
-		pwm_set_chan_level(sliceNum, channelNum, PLED_MAX_LEVEL);
+		if (PLED_PINS[i] > -1)
+		{
+			gpio_set_function(PLED_PINS[i], GPIO_FUNC_PWM);
+			uint sliceNum = pwm_gpio_to_slice_num(PLED_PINS[i]);
+			uint channelNum = pwm_gpio_to_channel(PLED_PINS[i]);
+			sliceNums.push_back(sliceNum);
+			pwm_set_chan_level(sliceNum, channelNum, PLED_MAX_LEVEL);
+		}
 	}
 
 	for (auto sliceNum : sliceNums)
@@ -108,7 +110,8 @@ void PWMPlayerLEDs::setup()
 void PWMPlayerLEDs::display()
 {
 	for (int i = 0; i < PLED_COUNT; i++)
-		pwm_set_gpio_level(PLED_PINS[i], ledLevels[i]);
+		if (PLED_PINS[i] > -1)
+			pwm_set_gpio_level(PLED_PINS[i], ledLevels[i]);
 }
 
 void RGBPlayerLEDs::setup()
@@ -170,6 +173,3 @@ void PLEDModule::process(Gamepad *gamepad)
 			pleds->animate(animationState);
 	}
 }
-
-#endif
-

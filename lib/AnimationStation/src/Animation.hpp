@@ -94,7 +94,7 @@ static const std::vector<RGB> colors = {
 class Animation {
 public:
   Animation(PixelMatrix &matrix);
-  void UpdatePixels(std::vector<Pixel> pixels);
+  void UpdatePixels(std::vector<Pixel> &pixels);
   void ClearPixels();
   virtual ~Animation(){};
 
@@ -110,7 +110,7 @@ protected:
 button press changes. Rather than adjusting the matrix to represent a subset of pixels,
 we provide a subset of pixels to use as a filter. */
   PixelMatrix *matrix;
-  std::vector<Pixel> pixels;
+  std::vector<Pixel> *pixels;
   bool filtered = false;
 };
 

@@ -5,12 +5,12 @@ LEDFormat Animation::format;
 Animation::Animation(PixelMatrix &matrix) : matrix(&matrix) {
 }
 
-void Animation::UpdatePixels(std::vector<Pixel> pixels) {
-  this->pixels = pixels;
+void Animation::UpdatePixels(std::vector<Pixel> &pixels) {
+  this->pixels = &pixels;
 }
 
 void Animation::ClearPixels() {
-  this->pixels.clear();
+  this->pixels->clear();
 }
 
 /* Some of these animations are filtered to specific pixels, such as button press animations.
@@ -20,8 +20,8 @@ bool Animation::notInFilter(Pixel pixel) {
     return false;
   }
 
-  for (size_t i = 0; i < this->pixels.size(); i++) {
-    if (pixel == this->pixels[i]) {
+  for (size_t i = 0; i < this->pixels->size(); i++) {
+    if (pixel == this->pixels->at(i)) {
       return false;
     }
   }

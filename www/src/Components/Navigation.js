@@ -16,28 +16,24 @@ const Navigation = (props) => {
 	};
 
 	return (
-		<Navbar bg="dark" variant="dark" expand="md" fixed="top">
+		<Navbar collapseOnSelect bg="dark" variant="dark" expand="md" fixed="top">
 			<Navbar.Brand href="/">
 				<img src="images/logo.png" className="title-logo" alt="logo" />{' '}GP2040
 			</Navbar.Brand>
 			<Navbar.Collapse id="basic-navbar-nav">
-				<Nav as="ul" className="me-auto">
-					<Nav.Item as="li">
-						<Nav.Link as={NavLink} exact={true} className="nav-link" activeClassName="active" to="/">Home</Nav.Link>
-					</Nav.Item>
-					<Nav.Item as="li">
-						<Nav.Link as={NavLink} exact={true} className="nav-link" activeClassName="active" to="/settings">Settings</Nav.Link>
-					</Nav.Item>
-					<NavDropdown as="li" title="Configuration">
-						<NavDropdown.Item as={NavLink} to="/pin-mapping">Pin Mapping</NavDropdown.Item>
-						<NavDropdown.Item as={NavLink} to="/led-config">LED Configuration</NavDropdown.Item>
+				<Nav className="me-auto">
+					<Nav.Link as={NavLink} exact={true} to="/">Home</Nav.Link>
+					<Nav.Link as={NavLink} exact={true} to="/settings">Settings</Nav.Link>
+					<NavDropdown title="Configuration">
+						<NavDropdown.Item as={NavLink} exact={true} to="/pin-mapping">Pin Mapping</NavDropdown.Item>
+						<NavDropdown.Item as={NavLink} exact={true} to="/led-config">LED Configuration</NavDropdown.Item>
 					</NavDropdown>
-					<NavDropdown as="li" title="Links">
+					<NavDropdown title="Links">
 						<NavDropdown.Item as={NavLink} to="https://feralai.github.io/GP2040/">Documentation</NavDropdown.Item>
 						<NavDropdown.Item as={NavLink} to="https://github.com/FeralAI/GP2040/">Github</NavDropdown.Item>
 					</NavDropdown>
-					<NavDropdown as="li" title="DANGER ZONE" className="btn-danger danger-zone">
-						<NavDropdown.Item as={NavLink} to="/reset-settings">Reset Settings</NavDropdown.Item>
+					<NavDropdown title="DANGER ZONE" className="btn-danger danger-zone">
+						<NavDropdown.Item as={NavLink} exact={true} to="/reset-settings">Reset Settings</NavDropdown.Item>
 					</NavDropdown>
 				</Nav>
 			</Navbar.Collapse>
@@ -50,7 +46,7 @@ const Navigation = (props) => {
 				>
 					{Object.keys(BUTTONS).map((b, i) =>
 						<option key={`button-label-option-${i}`} value={BUTTONS[b].value}>{BUTTONS[b].label}</option>
-						)}
+					)}
 				</FormSelect>
 				<Navbar.Toggle aria-controls="basic-navbar-nav" />
 			</div>

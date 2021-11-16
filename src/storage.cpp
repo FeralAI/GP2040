@@ -77,8 +77,6 @@ void GamepadStorage::setGamepadOptions(GamepadOptions options)
 
 /* Animation stuffs */
 
-#ifdef BOARD_LEDS_PIN
-
 #include "leds.h"
 #include "AnimationStorage.hpp"
 #include "AnimationStation/src/Effects/StaticColor.hpp"
@@ -122,4 +120,3 @@ void AnimationStorage::save()
 	if (dirty)
 		EEPROM.commit();
 }
-#endif
