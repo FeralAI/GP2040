@@ -62,7 +62,7 @@ public:
 	queue_t featureQueue;
 protected:
 	PLEDType type;
-	PlayerLEDs *pleds;
+	PlayerLEDs *pleds = nullptr;
 	PLEDAnimationState animationState;
 };
 

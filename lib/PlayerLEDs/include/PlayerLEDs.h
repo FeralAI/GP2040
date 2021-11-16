@@ -8,10 +8,15 @@
 #define PLED_MAX_BRIGHTNESS 0xFF
 #define PLED_MAX_LEVEL 0xFFFF
 
+#ifndef PLED_TYPE
+#define PLED_TYPE PLED_TYPE_NONE
+#endif
+
 typedef enum
 {
-	PLED_TYPE_PWM,
-	PLED_TYPE_RGB,
+	PLED_TYPE_NONE = -1,
+	PLED_TYPE_PWM = 0,
+	PLED_TYPE_RGB = 1,
 } PLEDType;
 
 typedef enum

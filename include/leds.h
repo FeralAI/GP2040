@@ -9,9 +9,22 @@
 #include "BoardConfig.h"
 #include <vector>
 #include "AnimationStation.hpp"
+#include "NeoPico.hpp"
 #include "gamepad.h"
 #include "enums.h"
 #include "gp2040.h"
+
+#ifndef BOARD_LEDS_PIN
+#define BOARD_LEDS_PIN -1
+#endif
+
+#ifndef LED_FORMAT
+#define LED_FORMAT LED_FORMAT_GRB
+#endif
+
+#ifndef LEDS_PER_PIXEL
+#define LEDS_PER_PIXEL 1
+#endif
 
 #ifndef LED_LAYOUT
 #define LED_LAYOUT LED_LAYOUT_ARCADE_BUTTONS

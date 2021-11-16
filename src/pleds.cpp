@@ -147,12 +147,14 @@ void PLEDModule::setup()
 			break;
 	}
 
-	pleds->setup();
+	if (pleds != nullptr)
+		pleds->setup();
 }
 
 void PLEDModule::loop()
 {
-	pleds->display();
+	if (pleds != nullptr)
+		pleds->display();
 }
 
 void PLEDModule::process(Gamepad *gamepad)
@@ -169,7 +171,7 @@ void PLEDModule::process(Gamepad *gamepad)
 				break;
 		}
 
-		if (animationState.animation != PLED_ANIM_NONE)
+		if (pleds != nullptr && animationState.animation != PLED_ANIM_NONE)
 			pleds->animate(animationState);
 	}
 }

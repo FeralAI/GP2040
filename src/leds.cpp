@@ -231,7 +231,7 @@ void LEDModule::setup()
 	ledOptions = getLEDOptions();
 	if (!ledOptions.useUserDefinedLEDs)
 	{
-		ledOptions.dataPin = (int)BOARD_LEDS_PIN;
+		ledOptions.dataPin = BOARD_LEDS_PIN;
 		ledOptions.ledFormat = LED_FORMAT;
 		ledOptions.ledLayout = LED_LAYOUT;
 		ledOptions.ledsPerButton = LEDS_PER_PIXEL;
