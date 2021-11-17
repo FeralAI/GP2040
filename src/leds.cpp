@@ -303,14 +303,13 @@ void LEDModule::loop()
 		return;
 
 	AnimationHotkey action;
-	uint32_t buttonState;
-
 	if (queue_try_remove(&baseAnimationQueue, &action))
 	{
 		as.HandleEvent(action);
 		queue_try_add(&animationSaveQueue, 0);
 	}
 
+	uint32_t buttonState;
 	if (queue_try_remove(&buttonAnimationQueue, &buttonState))
 	{
 		vector<Pixel> pressed;
