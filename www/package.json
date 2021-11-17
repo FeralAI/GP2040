@@ -19,7 +19,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "dev": "concurrently --kill-others \"nodemon --exec node ./server/app.js\" \"react-scripts start\"",
+    "dev": "concurrently --kill-others \"npm run dev-server\" \"npm start\"",
+    "dev-server": "nodemon --exec node ./server/app.js",
     "build": "react-scripts build",
     "eject": "react-scripts eject"
   },
@@ -45,6 +46,8 @@
   },
   "devDependencies": {
     "concurrently": "^6.3.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
     "nodemon": "^2.0.15"
   }
 }
