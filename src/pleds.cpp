@@ -3,9 +3,8 @@
  * SPDX-FileCopyrightText: Copyright (c) 2021 Jason Skuby (mytechtoybox.com)
  */
 
-#include "BoardConfig.h"
-
 #include <vector>
+#include "pico/util/queue.h"
 #include "pico/stdlib.h"
 #include "hardware/pwm.h"
 #include "GamepadEnums.h"
@@ -127,7 +126,7 @@ void RGBPlayerLEDs::display()
 			for (int i = 0; i < PLED_COUNT; i++) {
 				float level = (static_cast<float>(PLED_MAX_LEVEL - ledLevels[i]) / static_cast<float>(PLED_MAX_LEVEL));
 				float brightness = as.GetBrightnessX() * level;
-				rgbPLEDValues[i] = ((RGB)ColorGreen).value(neopico.GetFormat(), brightness);
+				rgbPLEDValues[i] = ((RGB)ColorGreen).value(neopico->GetFormat(), brightness);
 			}
 			break;
 	}

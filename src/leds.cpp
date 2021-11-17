@@ -3,7 +3,6 @@
  * SPDX-FileCopyrightText: Copyright (c) 2021 Jason Skuby (mytechtoybox.com)
  */
 
-#include "BoardConfig.h"
 #include <string>
 #include <map>
 #include "pico/util/queue.h"
@@ -15,6 +14,7 @@
 #include "PlayerLEDs.h"
 #include "gp2040.h"
 #include "leds.h"
+#include "pleds.h"
 #include "storage.h"
 #include "themes.h"
 
