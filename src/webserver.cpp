@@ -21,7 +21,7 @@
 #include "lwip/mem.h"
 #include "rndis/rndis.h"
 
-#include "webserver.h"
+#include "gamepad.h"
 #include "storage.h"
 #include "leds.h"
 #include "GamepadStorage.h"
@@ -42,25 +42,15 @@
 using namespace std;
 
 extern struct fsdata_file file__index_html[];
+extern Gamepad gamepad;
 
 const static vector<string> spaPaths = { "/led-config", "/pin-mapping", "/settings", "/reset-settings" };
 const static vector<string> excludePaths = { "/css", "/images", "/js", "/static" };
-static Gamepad *gamepad;
 static char *http_post_uri;
 static char http_post_payload[LWIP_HTTPD_POST_MAX_PAYLOAD_LEN];
 static uint16_t http_post_payload_len = 0;
 static bool is_post = false;
 static DynamicJsonDocument doc(LWIP_HTTPD_POST_MAX_PAYLOAD_LEN);
-
-void webserver(Gamepad *instance)
-{
-	gamepad = instance;
-	rndis_init();
-	while (1)
-	{
-		rndis_task();
-	}
-}
 
 /*************************
  * Helper methods
@@ -124,10 +114,10 @@ string setGamepadOptions()
 {
 	DynamicJsonDocument doc = get_post_data();
 
-	gamepad->options.dpadMode  = doc["dpadMode"];
-	gamepad->options.inputMode = doc["inputMode"];
-	gamepad->options.socdMode  = doc["socdMode"];
-	gamepad->save();
+	gamepad.options.dpadMode  = doc["dpadMode"];
+	gamepad.options.inputMode = doc["inputMode"];
+	gamepad.options.socdMode  = doc["socdMode"];
+	gamepad.save();
 
 	return serialize_json(doc);
 }
@@ -165,24 +155,24 @@ string getLedOptions()
 	if (ledModule.ledOptions.indexA2 == -1)    ledButtonMap["A2"]    = nullptr;  else ledButtonMap["A2"]    = ledModule.ledOptions.indexA2;
 
 	auto usedPins = doc.createNestedArray("usedPins");
-	usedPins.add(gamepad->mapDpadUp->pin);
-	usedPins.add(gamepad->mapDpadDown->pin);
-	usedPins.add(gamepad->mapDpadLeft->pin);
-	usedPins.add(gamepad->mapDpadRight->pin);
-	usedPins.add(gamepad->mapButtonB1->pin);
-	usedPins.add(gamepad->mapButtonB2->pin);
-	usedPins.add(gamepad->mapButtonB3->pin);
-	usedPins.add(gamepad->mapButtonB4->pin);
-	usedPins.add(gamepad->mapButtonL1->pin);
-	usedPins.add(gamepad->mapButtonR1->pin);
-	usedPins.add(gamepad->mapButtonL2->pin);
-	usedPins.add(gamepad->mapButtonR2->pin);
-	usedPins.add(gamepad->mapButtonS1->pin);
-	usedPins.add(gamepad->mapButtonS2->pin);
-	usedPins.add(gamepad->mapButtonL3->pin);
-	usedPins.add(gamepad->mapButtonR3->pin);
-	usedPins.add(gamepad->mapButtonA1->pin);
-	usedPins.add(gamepad->mapButtonA2->pin);
+	usedPins.add(gamepad.mapDpadUp->pin);
+	usedPins.add(gamepad.mapDpadDown->pin);
+	usedPins.add(gamepad.mapDpadLeft->pin);
+	usedPins.add(gamepad.mapDpadRight->pin);
+	usedPins.add(gamepad.mapButtonB1->pin);
+	usedPins.add(gamepad.mapButtonB2->pin);
+	usedPins.add(gamepad.mapButtonB3->pin);
+	usedPins.add(gamepad.mapButtonB4->pin);
+	usedPins.add(gamepad.mapButtonL1->pin);
+	usedPins.add(gamepad.mapButtonR1->pin);
+	usedPins.add(gamepad.mapButtonL2->pin);
+	usedPins.add(gamepad.mapButtonR2->pin);
+	usedPins.add(gamepad.mapButtonS1->pin);
+	usedPins.add(gamepad.mapButtonS2->pin);
+	usedPins.add(gamepad.mapButtonL3->pin);
+	usedPins.add(gamepad.mapButtonR3->pin);
+	usedPins.add(gamepad.mapButtonA1->pin);
+	usedPins.add(gamepad.mapButtonA2->pin);
 
 	return serialize_json(doc);
 }
@@ -228,24 +218,24 @@ string getPinMappings()
 {
 	doc.clear();
 
-	doc["Up"]    = gamepad->mapDpadUp->pin;
-	doc["Down"]  = gamepad->mapDpadDown->pin;
-	doc["Left"]  = gamepad->mapDpadLeft->pin;
-	doc["Right"] = gamepad->mapDpadRight->pin;
-	doc["B1"]    = gamepad->mapButtonB1->pin;
-	doc["B2"]    = gamepad->mapButtonB2->pin;
-	doc["B3"]    = gamepad->mapButtonB3->pin;
-	doc["B4"]    = gamepad->mapButtonB4->pin;
-	doc["L1"]    = gamepad->mapButtonL1->pin;
-	doc["R1"]    = gamepad->mapButtonR1->pin;
-	doc["L2"]    = gamepad->mapButtonL2->pin;
-	doc["R2"]    = gamepad->mapButtonR2->pin;
-	doc["S1"]    = gamepad->mapButtonS1->pin;
-	doc["S2"]    = gamepad->mapButtonS2->pin;
-	doc["L3"]    = gamepad->mapButtonL3->pin;
-	doc["R3"]    = gamepad->mapButtonR3->pin;
-	doc["A1"]    = gamepad->mapButtonA1->pin;
-	doc["A2"]    = gamepad->mapButtonA2->pin;
+	doc["Up"]    = gamepad.mapDpadUp->pin;
+	doc["Down"]  = gamepad.mapDpadDown->pin;
+	doc["Left"]  = gamepad.mapDpadLeft->pin;
+	doc["Right"] = gamepad.mapDpadRight->pin;
+	doc["B1"]    = gamepad.mapButtonB1->pin;
+	doc["B2"]    = gamepad.mapButtonB2->pin;
+	doc["B3"]    = gamepad.mapButtonB3->pin;
+	doc["B4"]    = gamepad.mapButtonB4->pin;
+	doc["L1"]    = gamepad.mapButtonL1->pin;
+	doc["R1"]    = gamepad.mapButtonR1->pin;
+	doc["L2"]    = gamepad.mapButtonL2->pin;
+	doc["R2"]    = gamepad.mapButtonR2->pin;
+	doc["S1"]    = gamepad.mapButtonS1->pin;
+	doc["S2"]    = gamepad.mapButtonS2->pin;
+	doc["L3"]    = gamepad.mapButtonL3->pin;
+	doc["R3"]    = gamepad.mapButtonR3->pin;
+	doc["A1"]    = gamepad.mapButtonA1->pin;
+	doc["A2"]    = gamepad.mapButtonA2->pin;
 
 	return serialize_json(doc);
 }
@@ -278,24 +268,24 @@ string setPinMappings()
 	setBoardOptions(options);
 	GamepadStore.save();
 
-	gamepad->mapDpadUp->setPin(options.pinDpadUp);
-	gamepad->mapDpadDown->setPin(options.pinDpadDown);
-	gamepad->mapDpadLeft->setPin(options.pinDpadLeft);
-	gamepad->mapDpadRight->setPin(options.pinDpadRight);
-	gamepad->mapButtonB1->setPin(options.pinButtonB1);
-	gamepad->mapButtonB2->setPin(options.pinButtonB2);
-	gamepad->mapButtonB3->setPin(options.pinButtonB3);
-	gamepad->mapButtonB4->setPin(options.pinButtonB4);
-	gamepad->mapButtonL1->setPin(options.pinButtonL1);
-	gamepad->mapButtonR1->setPin(options.pinButtonR1);
-	gamepad->mapButtonL2->setPin(options.pinButtonL2);
-	gamepad->mapButtonR2->setPin(options.pinButtonR2);
-	gamepad->mapButtonS1->setPin(options.pinButtonS1);
-	gamepad->mapButtonS2->setPin(options.pinButtonS2);
-	gamepad->mapButtonL3->setPin(options.pinButtonL3);
-	gamepad->mapButtonR3->setPin(options.pinButtonR3);
-	gamepad->mapButtonA1->setPin(options.pinButtonA1);
-	gamepad->mapButtonA2->setPin(options.pinButtonA2);
+	gamepad.mapDpadUp->setPin(options.pinDpadUp);
+	gamepad.mapDpadDown->setPin(options.pinDpadDown);
+	gamepad.mapDpadLeft->setPin(options.pinDpadLeft);
+	gamepad.mapDpadRight->setPin(options.pinDpadRight);
+	gamepad.mapButtonB1->setPin(options.pinButtonB1);
+	gamepad.mapButtonB2->setPin(options.pinButtonB2);
+	gamepad.mapButtonB3->setPin(options.pinButtonB3);
+	gamepad.mapButtonB4->setPin(options.pinButtonB4);
+	gamepad.mapButtonL1->setPin(options.pinButtonL1);
+	gamepad.mapButtonR1->setPin(options.pinButtonR1);
+	gamepad.mapButtonL2->setPin(options.pinButtonL2);
+	gamepad.mapButtonR2->setPin(options.pinButtonR2);
+	gamepad.mapButtonS1->setPin(options.pinButtonS1);
+	gamepad.mapButtonS2->setPin(options.pinButtonS2);
+	gamepad.mapButtonL3->setPin(options.pinButtonL3);
+	gamepad.mapButtonR3->setPin(options.pinButtonR3);
+	gamepad.mapButtonA1->setPin(options.pinButtonA1);
+	gamepad.mapButtonA2->setPin(options.pinButtonA2);
 
 	return serialize_json(doc);
 }

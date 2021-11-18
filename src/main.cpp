@@ -14,16 +14,16 @@
 #include "pico/util/queue.h"
 #include "tusb.h"
 
-#include "gp2040.h"
+#include "rndis/rndis.h"
 #include "usb_driver.h"
+#include "gp2040.h"
 #include "gamepad.h"
 #include "leds.h"
 #include "pleds.h"
-#include "webserver.h"
 
 uint32_t getMillis() { return to_ms_since_boot(get_absolute_time()); }
 
-static Gamepad gamepad(GAMEPAD_DEBOUNCE_MILLIS);
+Gamepad gamepad(GAMEPAD_DEBOUNCE_MILLIS);
 static InputMode inputMode;
 LEDModule ledModule;
 PLEDModule pledModule(PLED_TYPE);
@@ -37,6 +37,7 @@ std::vector<GPModule*> modules =
 void setup();
 void loop();
 void core1();
+void webserver();
 
 int main()
 {
@@ -45,15 +46,15 @@ int main()
 
 	if (inputMode == INPUT_MODE_CONFIG)
 	{
-		webserver(&gamepad);
+		webserver();
 	}
 	else
 	{
 		while (1)
 			loop();
-
-		return 0;
 	}
+
+	return 0;
 }
 
 void setup()
@@ -73,7 +74,6 @@ void setup()
 		inputMode = INPUT_MODE_XINPUT;
 	else if (gamepad.pressedF1() && gamepad.pressedUp())
 		reset_usb_boot(0, 0);
-
 
 	bool configMode = inputMode == INPUT_MODE_CONFIG;
 	if (inputMode != gamepad.options.inputMode && !configMode)
@@ -143,5 +143,27 @@ void core1()
 
 		for (auto module : modules)
 			module->loop();
+	}
+}
+
+void webserver()
+{
+	static Gamepad snapshot;
+
+	rndis_init();
+	while (1)
+	{
+		gamepad.read();
+#if GAMEPAD_DEBOUNCE_MILLIS > 0
+		gamepad.debounce();
+#endif
+		gamepad.hotkey();
+		gamepad.process();
+		if (queue_is_empty(&gamepadQueue))
+		{
+			memcpy(&snapshot, &gamepad, sizeof(Gamepad));
+			queue_try_add(&gamepadQueue, &snapshot);
+		}
+		rndis_task();
 	}
 }
