@@ -55,12 +55,12 @@ app.get('/api/getLedOptions', (req, res) => {
 			usedPins.push(parseInt(controllers['pico'][prop]));
 
 	return res.send({
-		brightnessMax: 255,
+		brightnessMaximum: 255,
 		brightnessSteps: 5,
 		dataPin: 15,
 		ledFormat: 0,
 		ledLayout: 1,
-		ledsPerPixel: 2,
+		ledsPerButton: 2,
 		ledButtonMap: {
 			Up: 3,
 			Down: 1,

@@ -25,24 +25,24 @@ const LED_LAYOUTS = [
 ];
 
 const defaultValue = {
-	brightnessMax: 255,
+	brightnessMaximum: 255,
 	brightnessSteps: 5,
 	dataPin: -1,
 	ledFormat: 0,
 	ledLayout: 0,
-	ledsPerPixel: 2,
+	ledsPerButton: 2,
 };
 
 let usedPins = [];
 
 const schema = yup.object().shape({
-	brightnessMax  : yup.number().required().positive().integer().min(0).max(255).label('Max Brightness'),
-	brightnessSteps: yup.number().required().positive().integer().min(1).max(10).label('Brightness Steps'),
+	brightnessMaximum : yup.number().required().positive().integer().min(0).max(255).label('Max Brightness'),
+	brightnessSteps   : yup.number().required().positive().integer().min(1).max(10).label('Brightness Steps'),
 	// eslint-disable-next-line no-template-curly-in-string
-	dataPin        : yup.number().required().min(-1).max(29).test('', '${originalValue} is already assigned!', (value) => usedPins.indexOf(value) === -1).label('Data Pin'),
-	ledFormat      : yup.number().required().positive().integer().min(0).max(3).label('LED Format'),
-	ledLayout      : yup.number().required().positive().integer().min(0).max(2).label('LED Layout'),
-	ledsPerPixel   : yup.number().required().positive().integer().min(1).label('LEDs Per Pixel'),
+	dataPin           : yup.number().required().min(-1).max(29).test('', '${originalValue} is already assigned!', (value) => usedPins.indexOf(value) === -1).label('Data Pin'),
+	ledFormat         : yup.number().required().positive().integer().min(0).max(3).label('LED Format'),
+	ledLayout         : yup.number().required().positive().integer().min(0).max(2).label('LED Layout'),
+	ledsPerButton      : yup.number().required().positive().integer().min(1).label('LEDs Per Pixel'),
 });
 
 const getLedButtons = (buttonLabels, map, excludeNulls) => {
@@ -180,24 +180,24 @@ export default function LEDConfigPage() {
 						</Row>
 						<Row>
 							<FormControl type="number"
-								label="LEDs Per Pixel"
-								name="ledsPerPixel"
+								label="LEDs Per Button"
+								name="ledsPerButton"
 								className="form-control-sm"
 								groupClassName="col-sm-4 mb-3"
-								value={values.ledsPerPixel}
-								error={errors.ledsPerPixel}
-								isInvalid={errors.ledsPerPixel}
+								value={values.ledsPerButton}
+								error={errors.ledsPerButton}
+								isInvalid={errors.ledsPerButton}
 								onChange={handleChange}
 								min={1}
 							/>
 							<FormControl type="number"
 								label="Max Brightness"
-								name="brightnessMax"
+								name="brightnessMaximum"
 								className="form-control-sm"
 								groupClassName="col-sm-4 mb-3"
-								value={values.brightnessMax}
-								error={errors.brightnessMax}
-								isInvalid={errors.brightnessMax}
+								value={values.brightnessMaximum}
+								error={errors.brightnessMaximum}
+								isInvalid={errors.brightnessMaximum}
 								onChange={handleChange}
 								min={0}
 								max={255}
