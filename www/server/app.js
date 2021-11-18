@@ -49,9 +49,15 @@ app.get('/api/getGamepadOptions', (req, res) => {
 
 app.get('/api/getLedOptions', (req, res) => {
 	console.log('/api/getLedOptions');
+	let usedPins = [];
+	for (let prop of Object.keys(controllers['pico']))
+		if (!isNaN(parseInt(controllers['pico'][prop])))
+			usedPins.push(parseInt(controllers['pico'][prop]));
+
 	return res.send({
 		brightnessMax: 255,
 		brightnessSteps: 5,
+		dataPin: 15,
 		ledFormat: 0,
 		ledLayout: 1,
 		ledsPerPixel: 2,
@@ -75,6 +81,7 @@ app.get('/api/getLedOptions', (req, res) => {
 			A1: null,
 			A2: null,
 		},
+		usedPins,
 	});
 });
 

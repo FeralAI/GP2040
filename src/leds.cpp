@@ -26,7 +26,6 @@ extern void setRGBPLEDs(uint32_t *frame);
 uint8_t ledCount;
 PixelMatrix matrix;
 NeoPico *neopico;
-LEDOptions ledOptions;
 AnimationStation as;
 queue_t baseAnimationQueue;
 queue_t buttonAnimationQueue;
@@ -45,7 +44,7 @@ inline vector<uint8_t> *getLEDPositions(string button, vector<vector<uint8_t>> *
 /**
  * @brief Create an LED layout using a 2x4 matrix.
  */
-PixelMatrix createLedLayoutArcadeButtons(vector<vector<uint8_t>> *positions)
+vector<vector<Pixel>> createLedLayoutArcadeButtons(vector<vector<uint8_t>> *positions)
 {
 	vector<vector<Pixel>> pixels =
 	{
@@ -67,15 +66,13 @@ PixelMatrix createLedLayoutArcadeButtons(vector<vector<uint8_t>> *positions)
 		},
 	};
 
-	PixelMatrix matrix;
-	matrix.setup(pixels);
-	return matrix;
+	return pixels;
 }
 
 /**
  * @brief Create an LED layout using a 3x8 matrix.
  */
-PixelMatrix createLedLayoutArcadeHitbox(vector<vector<uint8_t>> *positions)
+vector<vector<Pixel>> createLedLayoutArcadeHitbox(vector<vector<uint8_t>> *positions)
 {
 	vector<vector<Pixel>> pixels =
 	{
@@ -120,15 +117,13 @@ PixelMatrix createLedLayoutArcadeHitbox(vector<vector<uint8_t>> *positions)
 		},
 	};
 
-	PixelMatrix matrix;
-	matrix.setup(pixels);
-	return matrix;
+	return pixels;
 }
 
 /**
  * @brief Create an LED layout using a 2x7 matrix.
  */
-PixelMatrix createLedLayoutArcadeWasd(vector<vector<uint8_t>> *positions)
+vector<vector<Pixel>> createLedLayoutArcadeWasd(vector<vector<uint8_t>> *positions)
 {
 	vector<vector<Pixel>> pixels =
 	{
@@ -162,12 +157,10 @@ PixelMatrix createLedLayoutArcadeWasd(vector<vector<uint8_t>> *positions)
 		},
 	};
 
-	PixelMatrix matrix;
-	matrix.setup(pixels);
-	return matrix;
+	return pixels;
 }
 
-PixelMatrix createLedButtonLayout(LEDLayout layout, vector<vector<uint8_t>> *positions)
+vector<vector<Pixel>> createLedButtonLayout(LEDLayout layout, vector<vector<uint8_t>> *positions)
 {
 	switch (layout)
 	{
@@ -182,7 +175,7 @@ PixelMatrix createLedButtonLayout(LEDLayout layout, vector<vector<uint8_t>> *pos
 	}
 }
 
-PixelMatrix createLedButtonLayout(LEDLayout layout, uint8_t ledsPerPixel, uint8_t ledButtonCount)
+vector<vector<Pixel>> createLedButtonLayout(LEDLayout layout, uint8_t ledsPerPixel, uint8_t ledButtonCount)
 {
 	vector<vector<uint8_t>> positions(ledButtonCount);
 	for (int i = 0; i != ledButtonCount; i++)
@@ -197,24 +190,25 @@ PixelMatrix createLedButtonLayout(LEDLayout layout, uint8_t ledsPerPixel, uint8_
 
 uint8_t setupButtonPositions()
 {
-	buttonPositions.emplace(BUTTON_LABEL_UP, ledOptions.indexUp);
-	buttonPositions.emplace(BUTTON_LABEL_DOWN, ledOptions.indexDown);
-	buttonPositions.emplace(BUTTON_LABEL_LEFT, ledOptions.indexLeft);
-	buttonPositions.emplace(BUTTON_LABEL_RIGHT, ledOptions.indexRight);
-	buttonPositions.emplace(BUTTON_LABEL_B1, ledOptions.indexB1);
-	buttonPositions.emplace(BUTTON_LABEL_B2, ledOptions.indexB2);
-	buttonPositions.emplace(BUTTON_LABEL_B3, ledOptions.indexB3);
-	buttonPositions.emplace(BUTTON_LABEL_B4, ledOptions.indexB4);
-	buttonPositions.emplace(BUTTON_LABEL_L1, ledOptions.indexL1);
-	buttonPositions.emplace(BUTTON_LABEL_R1, ledOptions.indexR1);
-	buttonPositions.emplace(BUTTON_LABEL_L2, ledOptions.indexL2);
-	buttonPositions.emplace(BUTTON_LABEL_R2, ledOptions.indexR2);
-	buttonPositions.emplace(BUTTON_LABEL_S1, ledOptions.indexS1);
-	buttonPositions.emplace(BUTTON_LABEL_S2, ledOptions.indexS2);
-	buttonPositions.emplace(BUTTON_LABEL_L3, ledOptions.indexL3);
-	buttonPositions.emplace(BUTTON_LABEL_R3, ledOptions.indexR3);
-	buttonPositions.emplace(BUTTON_LABEL_A1, ledOptions.indexA1);
-	buttonPositions.emplace(BUTTON_LABEL_A2, ledOptions.indexA2);
+	buttonPositions.clear();
+	buttonPositions.emplace(BUTTON_LABEL_UP, ledModule.ledOptions.indexUp);
+	buttonPositions.emplace(BUTTON_LABEL_DOWN, ledModule.ledOptions.indexDown);
+	buttonPositions.emplace(BUTTON_LABEL_LEFT, ledModule.ledOptions.indexLeft);
+	buttonPositions.emplace(BUTTON_LABEL_RIGHT, ledModule.ledOptions.indexRight);
+	buttonPositions.emplace(BUTTON_LABEL_B1, ledModule.ledOptions.indexB1);
+	buttonPositions.emplace(BUTTON_LABEL_B2, ledModule.ledOptions.indexB2);
+	buttonPositions.emplace(BUTTON_LABEL_B3, ledModule.ledOptions.indexB3);
+	buttonPositions.emplace(BUTTON_LABEL_B4, ledModule.ledOptions.indexB4);
+	buttonPositions.emplace(BUTTON_LABEL_L1, ledModule.ledOptions.indexL1);
+	buttonPositions.emplace(BUTTON_LABEL_R1, ledModule.ledOptions.indexR1);
+	buttonPositions.emplace(BUTTON_LABEL_L2, ledModule.ledOptions.indexL2);
+	buttonPositions.emplace(BUTTON_LABEL_R2, ledModule.ledOptions.indexR2);
+	buttonPositions.emplace(BUTTON_LABEL_S1, ledModule.ledOptions.indexS1);
+	buttonPositions.emplace(BUTTON_LABEL_S2, ledModule.ledOptions.indexS2);
+	buttonPositions.emplace(BUTTON_LABEL_L3, ledModule.ledOptions.indexL3);
+	buttonPositions.emplace(BUTTON_LABEL_R3, ledModule.ledOptions.indexR3);
+	buttonPositions.emplace(BUTTON_LABEL_A1, ledModule.ledOptions.indexA1);
+	buttonPositions.emplace(BUTTON_LABEL_A2, ledModule.ledOptions.indexA2);
 
 	uint8_t buttonCount = 0;
 	for (auto const buttonPosition : buttonPositions)
@@ -224,6 +218,22 @@ uint8_t setupButtonPositions()
 	}
 
 	return buttonCount;
+}
+
+void configureLEDs(LEDOptions ledOptions)
+{
+	uint8_t buttonCount = setupButtonPositions();
+	vector<vector<Pixel>> pixels = createLedButtonLayout(ledOptions.ledLayout, ledOptions.ledsPerButton, buttonCount);
+	matrix.setup(pixels, ledOptions.ledsPerButton);
+	ledCount = matrix.getLedCount();
+	if (PLED_TYPE == PLED_TYPE_RGB && PLED_COUNT > 0)
+		ledCount += PLED_COUNT;
+
+	delete neopico;
+	neopico = new NeoPico(ledOptions.dataPin, ledCount, ledOptions.ledFormat);
+
+	as.SetMatrix(matrix);
+	AnimationStore.setup(&as);
 }
 
 void LEDModule::setup()
@@ -261,15 +271,7 @@ void LEDModule::setup()
 	queue_init(&buttonAnimationQueue, sizeof(uint32_t), 1);
 	queue_init(&animationSaveQueue, sizeof(int), 1);
 
-	uint8_t buttonCount = setupButtonPositions();
-	matrix = createLedButtonLayout(ledOptions.ledLayout, ledOptions.ledsPerButton, buttonCount);
-	ledCount = matrix.getLedCount();
-	if (PLED_TYPE == PLED_TYPE_RGB && PLED_COUNT > 0)
-		ledCount += PLED_COUNT;
-	neopico = new NeoPico(ledOptions.dataPin, ledCount, ledOptions.ledFormat);
-
-	as.SetMatrix(matrix);
-	AnimationStore.setup(&as);
+	configureLEDs(ledOptions);
 
 	StaticTheme::AddTheme(themeStaticRainbow);
 	StaticTheme::AddTheme(themeGuiltyGearTypeA);

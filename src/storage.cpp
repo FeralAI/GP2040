@@ -4,10 +4,12 @@
  */
 
 #include "BoardConfig.h"
-#include "storage.h"
 #include <GamepadStorage.h>
+#include "AnimationStorage.hpp"
+#include "AnimationStation/src/Effects/StaticColor.hpp"
 #include "FlashPROM.h"
 #include "Animation.hpp"
+#include "storage.h"
 #include "enums.h"
 #include "leds.h"
 
@@ -77,10 +79,6 @@ void GamepadStorage::setGamepadOptions(GamepadOptions options)
 
 /* Animation stuffs */
 
-#include "leds.h"
-#include "AnimationStorage.hpp"
-#include "AnimationStation/src/Effects/StaticColor.hpp"
-
 AnimationOptions AnimationStorage::getAnimationOptions()
 {
 	AnimationOptions options;
@@ -102,7 +100,7 @@ void AnimationStorage::setup(AnimationStation *as)
 	Animation::format = LED_FORMAT_GRB;
 #endif
 	AnimationStation::SetOptions(getAnimationOptions());
-	AnimationStation::ConfigureBrightness(LED_BRIGHTNESS_MAXIMUM, LED_BRIGHTNESS_STEPS);
+	AnimationStation::ConfigureBrightness(ledModule.ledOptions.brightnessMaximum, ledModule.ledOptions.brightnessSteps);
 	as->SetMode(AnimationStation::options.baseAnimationIndex);
 }
 

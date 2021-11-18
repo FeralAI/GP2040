@@ -60,16 +60,16 @@ export default function SettingsPage() {
 	};
 
 	return (
-		<Section title="Settings">
-			<Formik validationSchema={schema} onSubmit={onSuccess} initialValues={{}}>
-				{({
-					handleSubmit,
-					handleChange,
-					handleBlur,
-					values,
-					touched,
-					errors,
-				}) => (
+		<Formik validationSchema={schema} onSubmit={onSuccess} initialValues={{}}>
+			{({
+				handleSubmit,
+				handleChange,
+				handleBlur,
+				values,
+				touched,
+				errors,
+			}) => (
+				<Section title="Settings">
 					<Form noValidate onSubmit={handleSubmit}>
 						<Form.Group className="row mb-3">
 							<Form.Label>Input Mode</Form.Label>
@@ -102,8 +102,8 @@ export default function SettingsPage() {
 						{saveMessage ? <span className="alert">{saveMessage}</span> : null}
 						<FormContext />
 					</Form>
-				)}
-			</Formik>
-		</Section>
+				</Section>
+			)}
+		</Formik>
 	);
 }

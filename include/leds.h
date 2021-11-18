@@ -128,10 +128,9 @@
 
 void configureAnimations(AnimationStation *as);
 AnimationHotkey animationHotkeys(Gamepad *gamepad);
+void configureLEDs(LEDOptions ledOptions);
 PixelMatrix createLedButtonLayout(LEDLayout layout, int ledsPerPixel);
 PixelMatrix createLedButtonLayout(LEDLayout layout, std::vector<uint8_t> *positions);
-
-extern PixelMatrix matrix;
 
 class LEDModule : public GPModule {
 public:
@@ -140,6 +139,9 @@ public:
   void process(Gamepad *gamepad);
   void trySave();
 	uint32_t frame[100];
+	LEDOptions ledOptions;
 };
+
+extern LEDModule ledModule;
 
 #endif

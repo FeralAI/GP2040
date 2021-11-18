@@ -24,6 +24,7 @@
 uint32_t getMillis() { return to_ms_since_boot(get_absolute_time()); }
 
 static Gamepad gamepad(GAMEPAD_DEBOUNCE_MILLIS);
+static InputMode inputMode;
 LEDModule ledModule;
 PLEDModule pledModule(PLED_TYPE);
 queue_t gamepadQueue;
@@ -42,7 +43,7 @@ int main()
 	setup();
 	multicore_launch_core1(core1);
 
-	if (gamepad.options.inputMode == INPUT_MODE_CONFIG)
+	if (inputMode == INPUT_MODE_CONFIG)
 	{
 		webserver(&gamepad);
 	}
@@ -61,27 +62,24 @@ void setup()
 
 	// Check for input mode override
 	gamepad.read();
-	InputMode newInputMode = gamepad.options.inputMode;
+	inputMode = gamepad.options.inputMode;
 	if (gamepad.pressedS2())
-		newInputMode = INPUT_MODE_CONFIG;
+		inputMode = INPUT_MODE_CONFIG;
 	else if (gamepad.pressedB3())
-		newInputMode = INPUT_MODE_HID;
+		inputMode = INPUT_MODE_HID;
 	else if (gamepad.pressedB1())
-		newInputMode = INPUT_MODE_SWITCH;
+		inputMode = INPUT_MODE_SWITCH;
 	else if (gamepad.pressedB2())
-		newInputMode = INPUT_MODE_XINPUT;
+		inputMode = INPUT_MODE_XINPUT;
 	else if (gamepad.pressedF1() && gamepad.pressedUp())
 		reset_usb_boot(0, 0);
 
-	bool configMode = newInputMode == INPUT_MODE_CONFIG;
-	if (newInputMode != gamepad.options.inputMode && !configMode)
+
+	bool configMode = inputMode == INPUT_MODE_CONFIG;
+	if (inputMode != gamepad.options.inputMode && !configMode)
 	{
-		gamepad.options.inputMode = newInputMode;
+		gamepad.options.inputMode = inputMode;
 		gamepad.save();
-	}
-	else
-	{
-		gamepad.options.inputMode = newInputMode;
 	}
 
 	queue_init(&gamepadQueue, sizeof(Gamepad), 1);
@@ -89,7 +87,7 @@ void setup()
 	for (auto module : modules)
 		module->setup();
 
-	initialize_driver(gamepad.options.inputMode);
+	initialize_driver(inputMode);
 }
 
 void loop()

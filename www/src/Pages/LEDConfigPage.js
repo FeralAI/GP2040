@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Button, Form, Row } from 'react-bootstrap';
 import { Formik, useFormikContext } from 'formik';
-import { without } from 'lodash';
+import { orderBy } from 'lodash';
 import * as yup from 'yup';
 import { AppContext } from '../Contexts/AppContext';
 import Section from '../Components/Section';
@@ -27,27 +27,33 @@ const LED_LAYOUTS = [
 const defaultValue = {
 	brightnessMax: 255,
 	brightnessSteps: 5,
+	dataPin: -1,
 	ledFormat: 0,
 	ledLayout: 0,
 	ledsPerPixel: 2,
 };
 
+let usedPins = [];
+
 const schema = yup.object().shape({
 	brightnessMax  : yup.number().required().positive().integer().min(0).max(255).label('Max Brightness'),
 	brightnessSteps: yup.number().required().positive().integer().min(1).max(10).label('Brightness Steps'),
+	// eslint-disable-next-line no-template-curly-in-string
+	dataPin        : yup.number().required().min(-1).max(29).test('', '${originalValue} is already assigned!', (value) => usedPins.indexOf(value) === -1).label('Data Pin'),
 	ledFormat      : yup.number().required().positive().integer().min(0).max(3).label('LED Format'),
 	ledLayout      : yup.number().required().positive().integer().min(0).max(2).label('LED Layout'),
 	ledsPerPixel   : yup.number().required().positive().integer().min(1).label('LEDs Per Pixel'),
 });
 
 const getLedButtons = (buttonLabels, map, excludeNulls) => {
-	const buttons = Object
-		.keys(BUTTONS[buttonLabels])
-		.filter(p => p !== 'label' && p !== 'value')
-		.filter(p => excludeNulls ? map[p] > -1 : true)
-		.map(p => ({ id: p, label: BUTTONS[buttonLabels][p], value: map[p] }));
-
-	return buttons;
+	return orderBy(
+		Object
+			.keys(BUTTONS[buttonLabels])
+			.filter(p => p !== 'label' && p !== 'value')
+			.filter(p => excludeNulls ? map[p] > -1 : true)
+			.map(p => ({ id: p, label: BUTTONS[buttonLabels][p], value: map[p] })),
+		"value"
+	);
 }
 
 const getLedMap = (buttonLabels, ledButtons, excludeNulls) => {
@@ -87,6 +93,7 @@ const FormContext = ({ buttonLabels, ledButtonMap, ledFormat, setDataSources }) 
 				getLedButtons(buttonLabels, available, true),
 				getLedButtons(buttonLabels, assigned, true),
 			];
+			usedPins = data.usedPins;
 			setDataSources(dataSources);
 			setValues(data);
 		}
@@ -107,7 +114,7 @@ const FormContext = ({ buttonLabels, ledButtonMap, ledFormat, setDataSources }) 
 
 export default function LEDConfigPage() {
 	const { buttonLabels } = useContext(AppContext);
-	const [saveMessage] = useState('');
+	const [saveMessage, setSaveMessage] = useState('');
 	const [ledButtonMap, setLedButtonMap] = useState([]);
 	const [dataSources, setDataSources] = useState([[], []]);
 
@@ -116,8 +123,13 @@ export default function LEDConfigPage() {
 			setLedButtonMap(getLedMap(buttonLabels, ledOrderArrays[1]));
 	};
 
+	const onSuccess = async (values) => {
+		const success = WebApi.setLedOptions(values);
+		setSaveMessage(success ? 'Saved!' : 'Unable to Save');
+	};
+
 	return (
-		<Formik validationSchema={schema} onSubmit={console.log} initialValues={defaultValue}>
+		<Formik validationSchema={schema} onSubmit={onSuccess} initialValues={defaultValue}>
 			{({
 				handleSubmit,
 				handleChange,
@@ -129,6 +141,18 @@ export default function LEDConfigPage() {
 				<Form noValidate onSubmit={handleSubmit}>
 					<Section title="LED Configuration">
 						<Row>
+							<FormControl type="number"
+								label="Data Pin (-1 for disabled)"
+								name="dataPin"
+								className="form-control-sm"
+								groupClassName="col-sm-4 mb-3"
+								value={values.dataPin}
+								error={errors.dataPin}
+								isInvalid={errors.dataPin}
+								onChange={handleChange}
+								min={-1}
+								max={29}
+							/>
 							<FormSelect
 								label="LED Format"
 								name="ledFormat"
@@ -153,6 +177,8 @@ export default function LEDConfigPage() {
 							>
 								{LED_LAYOUTS.map((o, i) => <option key={`ledLayout-option-${i}`} value={o.value}>{o.label}</option>)}
 							</FormSelect>
+						</Row>
+						<Row>
 							<FormControl type="number"
 								label="LEDs Per Pixel"
 								name="ledsPerPixel"
@@ -164,8 +190,6 @@ export default function LEDConfigPage() {
 								onChange={handleChange}
 								min={1}
 							/>
-						</Row>
-						<Row>
 							<FormControl type="number"
 								label="Max Brightness"
 								name="brightnessMax"
@@ -211,7 +235,6 @@ export default function LEDConfigPage() {
 					{saveMessage ? <span className="alert">{saveMessage}</span> : null}
 					<FormContext {...{
 						buttonLabels,
-						getLedButtons,
 						ledButtonMap,
 						setDataSources,
 						ledFormat: values.ledFormat

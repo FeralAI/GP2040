@@ -64,4 +64,6 @@ protected:
 	PLEDAnimationState animationState;
 };
 
+extern PLEDModule pledModule;
+
 #endif

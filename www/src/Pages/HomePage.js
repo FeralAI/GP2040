@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { orderBy } from 'lodash';
 
+import Section from '../Components/Section';
+
 const currentVersion = process.env.REACT_APP_CURRENT_VERSION;
 
 export default function HomePage() {
@@ -20,10 +22,7 @@ export default function HomePage() {
 		<div>
 			<h1>Welcome to the GP2040 Web Configurator!</h1>
 			<p>Please select a menu option to proceed.</p>
-			<div className="card">
-				<div className="card-header">
-					<strong>Version</strong>
-				</div>
+			<Section title="Firmware Version">
 				<div className="card-body">
 					<div className="card-text">Current Version: { currentVersion }</div>
 					<div className="card-text">Latest Version: { latestVersion }</div>
@@ -40,7 +39,7 @@ export default function HomePage() {
 						</div>
 					: null}
 				</div>
-			</div>
+			</Section>
 		</div>
 	);
 }
