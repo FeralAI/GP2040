@@ -58,6 +58,7 @@
 #define LWIP_HTTPD_SUPPORT_POST         1
 #define LWIP_HTTPD_SUPPORT_V09          0
 #define LWIP_HTTPD_SUPPORT_11_KEEPALIVE 0 // Causes lockups with CGI requests
+#define LWIP_HTTPD_ABORT_ON_CLOSE_MEM_ERROR 1
 
 #define LWIP_SINGLE_NETIF               1
 

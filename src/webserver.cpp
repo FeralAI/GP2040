@@ -50,7 +50,6 @@ static char *http_post_uri;
 static char http_post_payload[LWIP_HTTPD_POST_MAX_PAYLOAD_LEN];
 static uint16_t http_post_payload_len = 0;
 static bool is_post = false;
-static DynamicJsonDocument doc(LWIP_HTTPD_POST_MAX_PAYLOAD_LEN);
 
 /*************************
  * Helper methods
@@ -76,9 +75,10 @@ inline string serialize_json(DynamicJsonDocument &doc)
 
 int set_file_data(struct fs_file *file, string data)
 {
-	file->data = (const char *)data.c_str();
+	file->data = data.c_str();
 	file->len = data.size();
 	file->index = file->len;
+	file->is_custom_file = 1;
 	file->http_header_included = 0;
 	file->pextension = NULL;
 
@@ -100,7 +100,7 @@ string resetSettings()
 
 string getGamepadOptions()
 {
-	doc.clear();
+	DynamicJsonDocument doc(LWIP_HTTPD_POST_MAX_PAYLOAD_LEN);
 
 	GamepadOptions options = GamepadStore.getGamepadOptions();
 	doc["dpadMode"]  = options.dpadMode;
@@ -124,7 +124,7 @@ string setGamepadOptions()
 
 string getLedOptions()
 {
-	doc.clear();
+	DynamicJsonDocument doc(LWIP_HTTPD_POST_MAX_PAYLOAD_LEN);
 
 	doc["dataPin"]           = ledModule.ledOptions.dataPin;
 	doc["ledFormat"]         = ledModule.ledOptions.ledFormat;
@@ -209,14 +209,14 @@ string setLedOptions()
 
 	setLEDOptions(ledModule.ledOptions);
 	GamepadStore.save();
-	configureLEDs(ledModule.ledOptions);
+	ledModule.configureLEDs();
 
 	return serialize_json(doc);
 }
 
 string getPinMappings()
 {
-	doc.clear();
+	DynamicJsonDocument doc(LWIP_HTTPD_POST_MAX_PAYLOAD_LEN);
 
 	doc["Up"]    = gamepad.mapDpadUp->pin;
 	doc["Down"]  = gamepad.mapDpadDown->pin;
@@ -304,12 +304,12 @@ err_t httpd_post_begin(void *connection, const char *uri, const char *http_reque
 	LWIP_UNUSED_ARG(content_len);
 	LWIP_UNUSED_ARG(response_uri);
 	LWIP_UNUSED_ARG(response_uri_len);
+	LWIP_UNUSED_ARG(post_auto_wnd);
 
 	if (!uri || (uri[0] == '\0') || memcmp(uri, "/api", 4))
 		return ERR_ARG;
 
 	http_post_uri = (char *)uri;
-	// *post_auto_wnd = 1;
 	is_post = true;
 	return ERR_OK;
 }
@@ -317,6 +317,8 @@ err_t httpd_post_begin(void *connection, const char *uri, const char *http_reque
 // LWIP callback on HTTP POST to for receiving payload
 err_t httpd_post_receive_data(void *connection, struct pbuf *p)
 {
+	LWIP_UNUSED_ARG(connection);
+
 	struct pbuf *q = p;
 
 	int count;
@@ -341,13 +343,12 @@ err_t httpd_post_receive_data(void *connection, struct pbuf *p)
 		q = q->next;
 	}
 
-	pbuf_free (p);//  release pbuf
+	pbuf_free(p);//  release pbuf
 
 	// If the buffer overflows, error out
 	if (http_post_payload_full_flag)
 		return ERR_BUF;
 
-	get_post_data();
 	return ERR_OK;
 }
 

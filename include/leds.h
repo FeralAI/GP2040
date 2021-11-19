@@ -1,7 +1,7 @@
 /*
- * SPDX-License-Identifier: MIT
- * SPDX-FileCopyrightText: Copyright (c) 2021 Jason Skuby (mytechtoybox.com)
- */
+* SPDX-License-Identifier: MIT
+* SPDX-FileCopyrightText: Copyright (c) 2021 Jason Skuby (mytechtoybox.com)
+*/
 
 #ifndef LEDS_H_
 #define LEDS_H_
@@ -134,10 +134,11 @@ PixelMatrix createLedButtonLayout(LEDLayout layout, std::vector<uint8_t> *positi
 
 class LEDModule : public GPModule {
 public:
-  void setup();
-  void loop();
-  void process(Gamepad *gamepad);
-  void trySave();
+	void setup();
+	void loop();
+	void process(Gamepad *gamepad);
+	void trySave();
+	void configureLEDs();
 	uint32_t frame[100];
 	LEDOptions ledOptions;
 };

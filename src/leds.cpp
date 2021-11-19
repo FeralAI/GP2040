@@ -220,8 +220,9 @@ uint8_t setupButtonPositions()
 	return buttonCount;
 }
 
-void configureLEDs(LEDOptions ledOptions)
+void LEDModule::configureLEDs()
 {
+	nextRunTime = make_timeout_time_ms(10000); // Set crazy timeout to prevent loop from running while we reconfigure
 	uint8_t buttonCount = setupButtonPositions();
 	vector<vector<Pixel>> pixels = createLedButtonLayout(ledOptions.ledLayout, ledOptions.ledsPerButton, buttonCount);
 	matrix.setup(pixels, ledOptions.ledsPerButton);
@@ -232,8 +233,17 @@ void configureLEDs(LEDOptions ledOptions)
 	delete neopico;
 	neopico = new NeoPico(ledOptions.dataPin, ledCount, ledOptions.ledFormat);
 
+	queue_free(&baseAnimationQueue);
+	queue_free(&buttonAnimationQueue);
+	queue_free(&animationSaveQueue);
+
+	queue_init(&baseAnimationQueue, sizeof(AnimationHotkey), 1);
+	queue_init(&buttonAnimationQueue, sizeof(uint32_t), 1);
+	queue_init(&animationSaveQueue, sizeof(int), 1);
+
 	as.SetMatrix(matrix);
 	AnimationStore.setup(&as);
+	nextRunTime = make_timeout_time_ms(0); // Reset timeout
 }
 
 void LEDModule::setup()
@@ -267,11 +277,7 @@ void LEDModule::setup()
 		ledOptions.indexA2 = LEDS_BUTTON_A2;
 	}
 
-	queue_init(&baseAnimationQueue, sizeof(AnimationHotkey), 1);
-	queue_init(&buttonAnimationQueue, sizeof(uint32_t), 1);
-	queue_init(&animationSaveQueue, sizeof(int), 1);
-
-	configureLEDs(ledOptions);
+	configureLEDs();
 
 	StaticTheme::AddTheme(themeStaticRainbow);
 	StaticTheme::AddTheme(themeGuiltyGearTypeA);
