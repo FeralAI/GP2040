@@ -319,20 +319,18 @@ err_t httpd_post_receive_data(void *connection, struct pbuf *p)
 {
 	LWIP_UNUSED_ARG(connection);
 
-	struct pbuf *q = p;
-
 	int count;
 	uint32_t http_post_payload_full_flag = 0;
 
 	// Cache the received data to http_post_payload
 	http_post_payload_len = 0;
 	memset(http_post_payload, 0, LWIP_HTTPD_POST_MAX_PAYLOAD_LEN);
-	while (q != NULL)
+	while (p != NULL)
 	{
-		if (http_post_payload_len + q->len <= LWIP_HTTPD_POST_MAX_PAYLOAD_LEN)
+		if (http_post_payload_len + p->len <= LWIP_HTTPD_POST_MAX_PAYLOAD_LEN)
 		{
-			MEMCPY(http_post_payload + http_post_payload_len, q->payload, q->len);
-			http_post_payload_len += q->len;
+			MEMCPY(http_post_payload + http_post_payload_len, p->payload, p->len);
+			http_post_payload_len += p->len;
 		}
 		else // Buffer overflow Set overflow flag
 		{
@@ -340,10 +338,11 @@ err_t httpd_post_receive_data(void *connection, struct pbuf *p)
 			break;
 		}
 
-		q = q->next;
+		p = p->next;
 	}
 
-	pbuf_free(p);//  release pbuf
+	// Need to release memory here or will leak
+	pbuf_free(p);
 
 	// If the buffer overflows, error out
 	if (http_post_payload_full_flag)
