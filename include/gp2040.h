@@ -35,11 +35,13 @@ const string BUTTON_LABEL_A2 = "A2";
 class GPModule
 {
 public:
-	virtual void setup();
-	virtual void loop();
-	virtual void process(Gamepad *gamepad);
+	virtual void setup() = 0;
+	virtual void loop() = 0;
+	virtual void process(Gamepad *gamepad) = 0;
 	absolute_time_t nextRunTime;
 	const uint32_t intervalMS = 10;
+protected:
+	bool enabled = true;
 };
 
 #endif

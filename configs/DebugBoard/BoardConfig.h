@@ -15,6 +15,8 @@
 #define DEBUG_BOARD_CONFIG_H_
 
 #include <GamepadEnums.h>
+#include "hardware/i2c.h"
+#include "OneBitDisplay/OneBitDisplay.h"
 #include "enums.h"
 #include "NeoPico.hpp"
 #include "PlayerLEDs.h"
@@ -68,5 +70,8 @@
 #define PLED2_PIN 11
 #define PLED3_PIN 18
 #define PLED4_PIN 13
+
+#define I2C_SDA_PIN 0
+#define I2C_SCL_PIN 1
 
 #endif

@@ -20,6 +20,7 @@
 #include "gamepad.h"
 #include "leds.h"
 #include "pleds.h"
+#include "display.h"
 
 uint32_t getMillis() { return to_ms_since_boot(get_absolute_time()); }
 
@@ -27,11 +28,13 @@ Gamepad gamepad(GAMEPAD_DEBOUNCE_MILLIS);
 static InputMode inputMode;
 LEDModule ledModule;
 PLEDModule pledModule(PLED_TYPE);
+DisplayModule displayModule;
 queue_t gamepadQueue;
 std::vector<GPModule*> modules =
 {
 	&ledModule,
 	&pledModule,
+	&displayModule,
 };
 
 void setup();
