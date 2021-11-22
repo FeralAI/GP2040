@@ -19,6 +19,8 @@
 #include "NeoPico.hpp"
 #include "PlayerLEDs.h"
 
+// Remaining pins (0, 1 reserved for I2C): 16
+
 #define PIN_DPAD_UP    4
 #define PIN_DPAD_DOWN  5
 #define PIN_DPAD_LEFT  2
@@ -61,10 +63,10 @@
 #define LEDS_BUTTON_R2   10
 #define LEDS_BUTTON_L2   11
 
-// #define PLED_TYPE PLED_TYPE_PWM
-// #define PLED1_PIN 10
-// #define PLED2_PIN 11
-// #define PLED3_PIN 12
-// #define PLED4_PIN 13
+#define PLED_TYPE PLED_TYPE_PWM
+#define PLED1_PIN 20
+#define PLED2_PIN 11
+#define PLED3_PIN 18
+#define PLED4_PIN 13
 
 #endif
