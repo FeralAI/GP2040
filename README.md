@@ -54,3 +54,4 @@ If you would like to discuss features, issues or anything else related to GP2040
 * Ha Thach's excellent [TinyUSB library](https://github.com/hathach/tinyusb) examples
 * fluffymadness's [tinyusb-xinput](https://github.com/fluffymadness/tinyusb-xinput) sample
 * Kevin Boone's [blog post on using RP2040 flash memory as emulated EEPROM](https://kevinboone.me/picoflash.html)
+* [bitbank2](https://github.com/bitbank2) for the [OneBitDisplay](https://github.com/bitbank2/OneBitDisplay) and [BitBang_I2C](https://github.com/bitbank2/BitBang_I2C) libraries, which were ported for use with the Pico SDK
