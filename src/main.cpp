@@ -28,14 +28,14 @@ Gamepad gamepad(GAMEPAD_DEBOUNCE_MILLIS);
 static InputMode inputMode;
 queue_t gamepadQueue;
 
+DisplayModule displayModule;
 LEDModule ledModule;
 PLEDModule pledModule(PLED_TYPE);
-DisplayModule displayModule;
 std::vector<GPModule*> modules =
 {
+	&displayModule,
 	&ledModule,
 	&pledModule,
-	&displayModule,
 };
 
 void setup();

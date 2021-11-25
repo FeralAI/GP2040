@@ -351,8 +351,10 @@ void LEDModule::loop()
 
 	as.Animate();
 	as.ApplyBrightness(frame);
+
 	if (PLED_TYPE == PLED_TYPE_RGB)
-		setRGBPLEDs(frame);
+		setRGBPLEDs(frame); // PLEDs have their own brightness values, call this after as.ApplyBrightness()
+
 	neopico->SetFrame(frame);
 	neopico->Show();
 
