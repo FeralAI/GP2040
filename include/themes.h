@@ -10,13 +10,14 @@
 #include <vector>
 #include <MPG.h>
 #include "AnimationStation.hpp"
+#include "enums.h"
 
 static std::map<uint32_t, RGB> themeStaticRainbow(
 	{
 		{ GAMEPAD_MASK_DL, ColorRed },
 		{ GAMEPAD_MASK_DD, ColorOrange },
 		{ GAMEPAD_MASK_DR, ColorYellow },
-		{ GAMEPAD_MASK_DU, (LED_LAYOUT == LED_LAYOUT_ARCADE_HITBOX) ? ColorGreen : ColorOrange },
+		{ GAMEPAD_MASK_DU, (LED_LAYOUT == BUTTON_LAYOUT_HITBOX) ? ColorGreen : ColorOrange },
 		{ GAMEPAD_MASK_B3, ColorGreen },
 		{ GAMEPAD_MASK_B1, ColorGreen },
 		{ GAMEPAD_MASK_B4, ColorAqua },

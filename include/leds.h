@@ -18,16 +18,16 @@
 #define BOARD_LEDS_PIN -1
 #endif
 
+#ifndef BUTTON_LAYOUT
+#define BUTTON_LAYOUT BUTTON_LAYOUT_ARCADE
+#endif
+
 #ifndef LED_FORMAT
 #define LED_FORMAT LED_FORMAT_GRB
 #endif
 
 #ifndef LEDS_PER_PIXEL
 #define LEDS_PER_PIXEL 1
-#endif
-
-#ifndef LED_LAYOUT
-#define LED_LAYOUT LED_LAYOUT_ARCADE_BUTTONS
 #endif
 
 #ifndef LEDS_BRIGHTNESS
@@ -129,8 +129,8 @@
 void configureAnimations(AnimationStation *as);
 AnimationHotkey animationHotkeys(Gamepad *gamepad);
 void configureLEDs(LEDOptions ledOptions);
-PixelMatrix createLedButtonLayout(LEDLayout layout, int ledsPerPixel);
-PixelMatrix createLedButtonLayout(LEDLayout layout, std::vector<uint8_t> *positions);
+PixelMatrix createLedButtonLayout(ButtonLayout layout, int ledsPerPixel);
+PixelMatrix createLedButtonLayout(ButtonLayout layout, std::vector<uint8_t> *positions);
 
 class LEDModule : public GPModule {
 public:

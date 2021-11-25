@@ -10,6 +10,14 @@
 #include "gp2040.h"
 #include "gamepad.h"
 
+#ifndef BUTTON_LAYOUT
+#define BUTTON_LAYOUT BUTTON_LAYOUT_ARCADE
+#endif
+
+#ifndef HAS_I2C_DISPLAY
+#define HAS_I2C_DISPLAY 0
+#endif
+
 #ifndef DISPLAY_I2C_ADDR
 #define DISPLAY_I2C_ADDR 0x3C
 #endif

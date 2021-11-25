@@ -27,7 +27,7 @@ Each subfolder in [`configs`](https://github.com/FeralAI/GP2040/tree/main/config
 | Name | Required? | Description |
 | ----------- | --------- | ----------- |
 | `BoardConfig.h` | Yes | The configuration file used when building GP2040 for a specific controller/board. Contains initial pin mappings, LED configuration, etc. |
-| `env.ini` | Yes | A partial PlatformIO project configuration file which defines the build parameters for this board. All `env.ini` files in subfolders of `configs` will be parsed and selectable when loading the project in the PlatformIO IDE.
+| `env.ini` | Yes | A partial PlatformIO project configuration file which defines the build parameters for this board. All `env.ini` files in subfolders of `configs` will be parsed and selectable when loading the project in the PlatformIO IDE (may require a restart to pick up the new build config).
 | `README.md` | No | Provides information related to this board configuration. Not required for the build process, but suggested for pull requests of new board configurations. |
 | `assets/` | No | Folder for containing assets included in the `README.md`. Not required for the build process.
 
@@ -64,7 +64,8 @@ The following board options are available in the `BoardConfig.h` file:
 | Name             | Description                  | Required? |
 | ---------------- | ---------------------------- | --------- |
 | **PIN_DPAD_*X***<br>**PIN_BUTTON_*X*** | The GPIO pin for the button. Replace the *`X`* with GP2040 button or D-pad direction. | Yes |
-| **DEFAULT_SOCD_MODE** | Defines the default SOCD mode to use, defaults to `SOCD_MODE_NEUTRAL`.<br>Available options are:<br>`SOCD_MODE_NEUTRAL`<br>`SOCD_MODE_UP_PRIORITY`<br>`SOCD_MODE_SECOND_INPUT_PRIORITY` | No |
+| **DEFAULT_SOCD_MODE** | The default SOCD mode to use, defaults to `SOCD_MODE_NEUTRAL`.<br>Available options are:<br>`SOCD_MODE_NEUTRAL`<br>`SOCD_MODE_UP_PRIORITY`<br>`SOCD_MODE_SECOND_INPUT_PRIORITY` | No |
+| **BUTTON_LAYOUT** | The layout of controls/buttons for use with per-button LEDs and external displays.<br>Available options are:<br>`BUTTON_LAYOUT_HITBOX`<br>`BUTTON_LAYOUT_HITBOX`<br>`BUTTON_LAYOUT_WASD` | Yes |
 
 Create `configs/NewBoard/BoardConfig.h` and add your pin configuration and options. An example `BoardConfig.h` file:
 
@@ -104,8 +105,8 @@ The following RGB LED options are available in the `BoardConfig.h` file:
 | Name             | Description                  | Required? |
 | ---------------- | ---------------------------- | --------- |
 | **BOARD_LEDS_PIN** | Data PIN for your LED strand | Yes       |
-| **LED_LAYOUT** | Defines the layout of your LED buttons as a `Pixel` matrix.<br>Available options are:<br>`LED_LAYOUT_ARCADE_BUTTONS`<br>`LED_LAYOUT_ARCADE_HITBOX`<br>`LED_LAYOUT_ARCADE_WASD` | Yes |
-| **LED_FORMAT** | Defines the color data format for the LED chain.<br>Available options are:<br>`LED_FORMAT_GRB`<br>`LED_FORMAT_RGB`<br>`LED_FORMAT_GRBW`<br>`LED_FORMAT_RGBW` | No, default value `LED_FORMAT_GRB` |
+| **BUTTON_LAYOUT** | The layout of controls/buttons for use with per-button LEDs and external displays.<br>Available options are:<br>`BUTTON_LAYOUT_HITBOX`<br>`BUTTON_LAYOUT_HITBOX`<br>`BUTTON_LAYOUT_WASD` | Yes |
+| **LED_FORMAT** | The color data format for the LED chain.<br>Available options are:<br>`LED_FORMAT_GRB`<br>`LED_FORMAT_RGB`<br>`LED_FORMAT_GRBW`<br>`LED_FORMAT_RGBW` | No, default value `LED_FORMAT_GRB` |
 | **LEDS_PER_PIXEL** | The number of LEDs per button. | Yes |
 | **LED_BRIGHTNESS_MAX** | Max brightness value, `uint8_t` 0-255. | Yes |
 | **LED_BRIGHTNESS_STEPS** | The number of brightness steps when using the up/down hotkey. | Yes |
@@ -116,15 +117,16 @@ An example RGB LED setup in the `BoardConfig.h` file:
 ```cpp
 // BoardConfig.h
 
-#include "enums.h"
+#include "gp2040.h"
 #include "NeoPico.hpp"
+
+#define BUTTON_LAYOUT LED_LAYOUT_ARCADE_HITBOX
 
 #define BOARD_LEDS_PIN 22
 
 #define LED_BRIGHTNESS_MAXIMUM 100
 #define LED_BRIGHTNESS_STEPS 5
 #define LED_FORMAT LED_FORMAT_GRB
-#define LED_LAYOUT LED_LAYOUT_ARCADE_HITBOX
 #define LEDS_PER_PIXEL 2
 
 #define LEDS_RAINBOW_CYCLE_TIME 100
@@ -173,6 +175,26 @@ An example PLED setup in the `BoardConfig.h` file:
 #define PLED2_PIN 13
 #define PLED3_PIN 14
 #define PLED4_PIN 15
+```
+
+#### I2C Displays
+
+GP2040 supports 128x64 monochrome displays that run on the SSD1306, SH1106 or SH1107 drivers. The following options are available for displays:
+
+| Name | Description | Required? |
+| - | - | - |
+| **BUTTON_LAYOUT** | The layout of controls/buttons for use with per-button LEDs and external displays.<br>Available options are:<br>`BUTTON_LAYOUT_HITBOX`<br>`BUTTON_LAYOUT_HITBOX`<br>`BUTTON_LAYOUT_WASD` | Yes |
+| **HAS_I2C_DISPLAY** | Flag to indicate the controller contains an I2C display module. | No |
+| **I2C_SDA_PIN** | The GPIO pin for the I2C SDA line. | If `HAS_I2C_DISPLAY` is enabled |
+| **I2C_SCL_PIN** | The GPIO pin for the I2C SCL line. | If `HAS_I2C_DISPLAY` is enabled |
+
+An example I2C display setup in the `BoardConfig.h` file:
+
+```cpp
+#define BUTTON_LAYOUT BUTTON_LAYOUT_WASD
+#define HAS_I2C_DISPLAY 1
+#define I2C_SDA_PIN 0
+#define I2C_SCL_PIN 1
 ```
 
 ## Building

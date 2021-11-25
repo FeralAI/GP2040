@@ -43,7 +43,7 @@ struct LEDOptions
 	bool useUserDefinedLEDs;
 	int dataPin;
 	LEDFormat ledFormat;
-	LEDLayout ledLayout;
+	ButtonLayout ledLayout;
 	uint8_t ledsPerButton;
 	uint8_t brightnessMaximum;
 	uint8_t brightnessSteps;

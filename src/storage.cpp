@@ -10,7 +10,6 @@
 #include "FlashPROM.h"
 #include "Animation.hpp"
 #include "storage.h"
-#include "enums.h"
 #include "leds.h"
 
 /* Board stuffs */

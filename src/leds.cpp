@@ -160,22 +160,22 @@ vector<vector<Pixel>> createLedLayoutArcadeWasd(vector<vector<uint8_t>> *positio
 	return pixels;
 }
 
-vector<vector<Pixel>> createLedButtonLayout(LEDLayout layout, vector<vector<uint8_t>> *positions)
+vector<vector<Pixel>> createLedButtonLayout(ButtonLayout layout, vector<vector<uint8_t>> *positions)
 {
 	switch (layout)
 	{
-		case LED_LAYOUT_ARCADE_BUTTONS:
+		case BUTTON_LAYOUT_ARCADE:
 			return createLedLayoutArcadeButtons(positions);
 
-		case LED_LAYOUT_ARCADE_HITBOX:
+		case BUTTON_LAYOUT_HITBOX:
 			return createLedLayoutArcadeHitbox(positions);
 
-		case LED_LAYOUT_ARCADE_WASD:
+		case BUTTON_LAYOUT_WASD:
 			return createLedLayoutArcadeWasd(positions);
 	}
 }
 
-vector<vector<Pixel>> createLedButtonLayout(LEDLayout layout, uint8_t ledsPerPixel, uint8_t ledButtonCount)
+vector<vector<Pixel>> createLedButtonLayout(ButtonLayout layout, uint8_t ledsPerPixel, uint8_t ledButtonCount)
 {
 	vector<vector<uint8_t>> positions(ledButtonCount);
 	for (int i = 0; i != ledButtonCount; i++)
