@@ -241,8 +241,16 @@ void LEDModule::configureLEDs()
 	queue_init(&buttonAnimationQueue, sizeof(uint32_t), 1);
 	queue_init(&animationSaveQueue, sizeof(int), 1);
 
+#ifdef LED_FORMAT
+	Animation::format = LED_FORMAT;
+#else
+	Animation::format = LED_FORMAT_GRB;
+#endif
+	AnimationStation::ConfigureBrightness(ledOptions.brightnessMaximum, ledOptions.brightnessSteps);
+	AnimationStation::SetOptions(AnimationStore.getAnimationOptions());
+	as.SetMode(AnimationStation::options.baseAnimationIndex);
 	as.SetMatrix(matrix);
-	AnimationStore.setup(&as);
+
 	nextRunTime = make_timeout_time_ms(0); // Reset timeout
 }
 

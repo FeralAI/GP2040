@@ -90,19 +90,6 @@ void AnimationStorage::setAnimationOptions(AnimationOptions options)
 	EEPROM.set(ANIMATION_STORAGE_INDEX, options);
 }
 
-void AnimationStorage::setup(AnimationStation *as)
-{
-	this->as = as;
-#ifdef LED_FORMAT
-	Animation::format = LED_FORMAT;
-#else
-	Animation::format = LED_FORMAT_GRB;
-#endif
-	AnimationStation::SetOptions(getAnimationOptions());
-	AnimationStation::ConfigureBrightness(ledModule.ledOptions.brightnessMaximum, ledModule.ledOptions.brightnessSteps);
-	as->SetMode(AnimationStation::options.baseAnimationIndex);
-}
-
 void AnimationStorage::save()
 {
 	bool dirty = false;
