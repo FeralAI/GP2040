@@ -277,19 +277,23 @@ void LEDModule::setup()
 		ledOptions.indexA2 = LEDS_BUTTON_A2;
 	}
 
-	configureLEDs();
+	enabled = ledOptions.dataPin != -1;
+	if (enabled)
+	{
+		configureLEDs();
 
-	StaticTheme::AddTheme(themeStaticRainbow);
-	StaticTheme::AddTheme(themeGuiltyGearTypeA);
-	StaticTheme::AddTheme(themeGuiltyGearTypeD);
-	StaticTheme::AddTheme(themeGuiltyGearCustom);
-	StaticTheme::AddTheme(themeNeoGeo);
-	StaticTheme::AddTheme(themeNeoGeoCurved);
-	StaticTheme::AddTheme(themeNeoGeoModern);
-	StaticTheme::AddTheme(themeSixButtonFighter);
-	StaticTheme::AddTheme(themeSixButtonFighterPlus);
-	StaticTheme::AddTheme(themeSuperFamicom);
-	StaticTheme::AddTheme(themeXbox);
+		StaticTheme::AddTheme(themeStaticRainbow);
+		StaticTheme::AddTheme(themeGuiltyGearTypeA);
+		StaticTheme::AddTheme(themeGuiltyGearTypeD);
+		StaticTheme::AddTheme(themeGuiltyGearCustom);
+		StaticTheme::AddTheme(themeNeoGeo);
+		StaticTheme::AddTheme(themeNeoGeoCurved);
+		StaticTheme::AddTheme(themeNeoGeoModern);
+		StaticTheme::AddTheme(themeSixButtonFighter);
+		StaticTheme::AddTheme(themeSixButtonFighterPlus);
+		StaticTheme::AddTheme(themeSuperFamicom);
+		StaticTheme::AddTheme(themeXbox);
+	}
 }
 
 void LEDModule::process(Gamepad *gamepad)

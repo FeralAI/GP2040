@@ -7,7 +7,12 @@ uint8_t ucBackBuffer[1024];
 OBDISP obd;
 string statusBar;
 
-void drawHitbox(int startX, int startY, int buttonRadius, int buttonPadding, Gamepad *gamepad)
+inline void clearScreen(int render = 0)
+{
+	obdFill(&obd, 0, render);
+}
+
+inline void drawHitbox(int startX, int startY, int buttonRadius, int buttonPadding, Gamepad *gamepad)
 {
 	const int buttonMargin = buttonPadding + (buttonRadius * 2);
 
@@ -29,7 +34,7 @@ void drawHitbox(int startX, int startY, int buttonRadius, int buttonPadding, Gam
 	obdPreciseEllipse(&obd, startX + (buttonMargin * 5.75), startY + buttonMargin, buttonRadius, buttonRadius, 1, gamepad->pressedL2());
 }
 
-void drawWasdBox(int startX, int startY, int buttonRadius, int buttonPadding, Gamepad *gamepad)
+inline void drawWasdBox(int startX, int startY, int buttonRadius, int buttonPadding, Gamepad *gamepad)
 {
 	const int buttonMargin = buttonPadding + (buttonRadius * 2);
 
@@ -51,7 +56,7 @@ void drawWasdBox(int startX, int startY, int buttonRadius, int buttonPadding, Ga
 	obdPreciseEllipse(&obd, startX + buttonMargin * 6.25, startY + buttonMargin, buttonRadius, buttonRadius, 1, gamepad->pressedL2());
 }
 
-void drawArcadeStick(int startX, int startY, int buttonRadius, int buttonPadding, Gamepad *gamepad)
+inline void drawArcadeStick(int startX, int startY, int buttonRadius, int buttonPadding, Gamepad *gamepad)
 {
 	const int buttonMargin = buttonPadding + (buttonRadius * 2);
 
@@ -71,6 +76,11 @@ void drawArcadeStick(int startX, int startY, int buttonRadius, int buttonPadding
 	obdPreciseEllipse(&obd, startX + buttonMargin * 3.875, startY + buttonMargin - (buttonMargin / 4), buttonRadius, buttonRadius, 1, gamepad->pressedB2());
 	obdPreciseEllipse(&obd, startX + buttonMargin * 4.875, startY + buttonMargin - (buttonMargin / 4), buttonRadius, buttonRadius, 1, gamepad->pressedR2());
 	obdPreciseEllipse(&obd, startX + buttonMargin * 5.875, startY + buttonMargin, buttonRadius, buttonRadius, 1, gamepad->pressedL2());
+}
+
+inline void drawStatusBar()
+{
+	obdWriteString(&obd, 0, 0, 0, (char *)statusBar.c_str(), FONT_6x8, 0, 0);
 }
 
 void setStatusBar(Gamepad *gamepad)
@@ -104,7 +114,7 @@ void setStatusBar(Gamepad *gamepad)
 
 void DisplayModule::setup()
 {
-	enabled = I2C_SDA_PIN != -1 && I2C_SCL_PIN != -1;
+	enabled = HAS_I2C_DISPLAY == 1 && I2C_SDA_PIN != -1 && I2C_SCL_PIN != -1;
 	if (enabled)
 	{
 		obdI2CInit(&obd,
@@ -121,43 +131,37 @@ void DisplayModule::setup()
 
 		sleep_ms(100);
 		obdSetContrast(&obd, 0xFF);
-		obdFill(&obd, 0, 1); // Clear the screen
 		obdSetBackBuffer(&obd, ucBackBuffer);
+		clearScreen(1);
 	}
 }
 
 void DisplayModule::loop()
 {
-
+	// All screen updates should be handled in process() as they need to be display ASAP
 }
 
 void DisplayModule::process(Gamepad *gamepad)
 {
-	const static int buttonRadius = 8;
-	const static int buttonStartX = 8;
-	const static int buttonStartY = 20;
-	const static int buttonPadding = 2;
+	clearScreen();
 
-	if (enabled)
+	setStatusBar(gamepad);
+
+	drawStatusBar();
+	switch (BUTTON_LAYOUT)
 	{
-		obdFill(&obd, 0, 0);
-		setStatusBar(gamepad);
-		obdWriteString(&obd, 0, 0, 0, (char *)statusBar.c_str(), FONT_6x8, 0, 0); // Draw status bar
-		switch (BUTTON_LAYOUT)
-		{
-			case BUTTON_LAYOUT_ARCADE:
-				drawArcadeStick(8, 28, 8, 2, gamepad);
-				break;
+		case BUTTON_LAYOUT_ARCADE:
+			drawArcadeStick(8, 28, 8, 2, gamepad);
+			break;
 
-			case BUTTON_LAYOUT_HITBOX:
-				drawHitbox(8, 20, 8, 2, gamepad);
-				break;
+		case BUTTON_LAYOUT_HITBOX:
+			drawHitbox(8, 20, 8, 2, gamepad);
+			break;
 
-			case BUTTON_LAYOUT_WASD:
-				drawWasdBox(8, 28, 7, 3, gamepad);
-				break;
-		}
-
-		obdDumpBuffer(&obd, NULL);
+		case BUTTON_LAYOUT_WASD:
+			drawWasdBox(8, 28, 7, 3, gamepad);
+			break;
 	}
+
+	obdDumpBuffer(&obd, NULL);
 }

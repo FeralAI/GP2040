@@ -71,8 +71,8 @@
 #define PLED3_PIN 18
 #define PLED4_PIN 13
 
+#define HAS_I2C_DISPLAY 1
 #define I2C_SDA_PIN 0
 #define I2C_SCL_PIN 1
-#define HAS_I2C_DISPLAY 1
 
 #endif

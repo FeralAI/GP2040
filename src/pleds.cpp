@@ -136,18 +136,22 @@ void PLEDModule::setup()
 {
 	queue_init(&featureQueue, PLED_REPORT_SIZE, 20);
 
-	switch (type)
+	enabled = PLED_TYPE != PLED_TYPE_NONE;
+	if (enabled)
 	{
-		case PLED_TYPE_PWM:
-			pleds = new PWMPlayerLEDs();
-			break;
-		case PLED_TYPE_RGB:
-			pleds = new RGBPlayerLEDs();
-			break;
-	}
+		switch (type)
+		{
+			case PLED_TYPE_PWM:
+				pleds = new PWMPlayerLEDs();
+				break;
+			case PLED_TYPE_RGB:
+				pleds = new RGBPlayerLEDs();
+				break;
+		}
 
-	if (pleds != nullptr)
-		pleds->setup();
+		if (pleds != nullptr)
+			pleds->setup();
+	}
 }
 
 void PLEDModule::loop()

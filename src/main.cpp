@@ -90,6 +90,14 @@ void setup()
 	for (auto module : modules)
 		module->setup();
 
+	for (auto it = modules.begin(); it != modules.end();)
+	{
+		if ((*it)->isEnabled())
+			it++;
+		else
+			it = modules.erase(it);
+	}
+
 	initialize_driver(inputMode);
 }
 
@@ -141,11 +149,13 @@ void core1()
 		if (queue_try_remove(&gamepadQueue, &snapshot))
 		{
 			for (auto module : modules)
-				module->process(&snapshot);
+				if (module->isEnabled())
+					module->process(&snapshot);
 		}
 
 		for (auto module : modules)
-			module->loop();
+			if (module->isEnabled())
+				module->loop();
 	}
 }
 
