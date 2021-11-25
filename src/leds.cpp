@@ -253,7 +253,7 @@ void LEDModule::setup()
 	{
 		ledOptions.dataPin = BOARD_LEDS_PIN;
 		ledOptions.ledFormat = LED_FORMAT;
-		ledOptions.ledLayout = LED_LAYOUT;
+		ledOptions.ledLayout = BUTTON_LAYOUT;
 		ledOptions.ledsPerButton = LEDS_PER_PIXEL;
 		ledOptions.brightnessMaximum = LED_BRIGHTNESS_MAXIMUM;
 		ledOptions.brightnessSteps = LED_BRIGHTNESS_STEPS;

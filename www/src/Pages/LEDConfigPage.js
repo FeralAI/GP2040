@@ -18,7 +18,7 @@ const LED_FORMATS = [
 	{ label: 'RGBW', value: 3 },
 ];
 
-const LED_LAYOUTS = [
+const BUTTON_LAYOUTS = [
 	{ label: '8-Button Layout', value: 0 },
 	{ label: 'Hit Box Layout', value: 1 },
 	{ label: 'WASD Layout', value: 2 },
@@ -175,7 +175,7 @@ export default function LEDConfigPage() {
 								isInvalid={errors.ledLayout}
 								onChange={handleChange}
 							>
-								{LED_LAYOUTS.map((o, i) => <option key={`ledLayout-option-${i}`} value={o.value}>{o.label}</option>)}
+								{BUTTON_LAYOUTS.map((o, i) => <option key={`ledLayout-option-${i}`} value={o.value}>{o.label}</option>)}
 							</FormSelect>
 						</Row>
 						<Row>

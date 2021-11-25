@@ -94,6 +94,7 @@ Create `configs/NewBoard/BoardConfig.h` and add your pin configuration and optio
 #define PIN_BUTTON_A2   21
 
 #define DEFAULT_SOCD_MODE SOCD_MODE_NEUTRAL
+#define BUTTON_LAYOUT BUTTON_LAYOUT_ARCADE
 ```
 
 #### RGB LEDs
@@ -104,8 +105,8 @@ The following RGB LED options are available in the `BoardConfig.h` file:
 
 | Name             | Description                  | Required? |
 | ---------------- | ---------------------------- | --------- |
-| **BOARD_LEDS_PIN** | Data PIN for your LED strand | Yes       |
 | **BUTTON_LAYOUT** | The layout of controls/buttons for use with per-button LEDs and external displays.<br>Available options are:<br>`BUTTON_LAYOUT_HITBOX`<br>`BUTTON_LAYOUT_HITBOX`<br>`BUTTON_LAYOUT_WASD` | Yes |
+| **BOARD_LEDS_PIN** | Data PIN for your LED strand | Yes       |
 | **LED_FORMAT** | The color data format for the LED chain.<br>Available options are:<br>`LED_FORMAT_GRB`<br>`LED_FORMAT_RGB`<br>`LED_FORMAT_GRBW`<br>`LED_FORMAT_RGBW` | No, default value `LED_FORMAT_GRB` |
 | **LEDS_PER_PIXEL** | The number of LEDs per button. | Yes |
 | **LED_BRIGHTNESS_MAX** | Max brightness value, `uint8_t` 0-255. | Yes |
@@ -120,7 +121,7 @@ An example RGB LED setup in the `BoardConfig.h` file:
 #include "gp2040.h"
 #include "NeoPico.hpp"
 
-#define BUTTON_LAYOUT LED_LAYOUT_ARCADE_HITBOX
+#define BUTTON_LAYOUT BUTTON_LAYOUT_HITBOX
 
 #define BOARD_LEDS_PIN 22
 
@@ -128,10 +129,6 @@ An example RGB LED setup in the `BoardConfig.h` file:
 #define LED_BRIGHTNESS_STEPS 5
 #define LED_FORMAT LED_FORMAT_GRB
 #define LEDS_PER_PIXEL 2
-
-#define LEDS_RAINBOW_CYCLE_TIME 100
-#define LEDS_CHASE_CYCLE_TIME 50
-#define LEDS_STATIC_COLOR_COLOR ColorRed // Could also use: RGB(255, 0, 0)
 
 #define LEDS_DPAD_LEFT   0
 #define LEDS_DPAD_DOWN   1
