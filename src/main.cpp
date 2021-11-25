@@ -26,10 +26,11 @@ uint32_t getMillis() { return to_ms_since_boot(get_absolute_time()); }
 
 Gamepad gamepad(GAMEPAD_DEBOUNCE_MILLIS);
 static InputMode inputMode;
+queue_t gamepadQueue;
+
 LEDModule ledModule;
 PLEDModule pledModule(PLED_TYPE);
 DisplayModule displayModule;
-queue_t gamepadQueue;
 std::vector<GPModule*> modules =
 {
 	&ledModule,
@@ -78,13 +79,6 @@ void setup()
 	else if (gamepad.pressedF1() && gamepad.pressedUp())
 		reset_usb_boot(0, 0);
 
-	bool configMode = inputMode == INPUT_MODE_CONFIG;
-	if (inputMode != gamepad.options.inputMode && !configMode)
-	{
-		gamepad.options.inputMode = inputMode;
-		gamepad.save();
-	}
-
 	queue_init(&gamepadQueue, sizeof(Gamepad), 1);
 
 	for (auto module : modules)
@@ -96,6 +90,13 @@ void setup()
 			it++;
 		else
 			it = modules.erase(it);
+	}
+
+	bool configMode = inputMode == INPUT_MODE_CONFIG;
+	if (inputMode != gamepad.options.inputMode && !configMode)
+	{
+		gamepad.options.inputMode = inputMode;
+		gamepad.save();
 	}
 
 	initialize_driver(inputMode);

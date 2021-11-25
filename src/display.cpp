@@ -138,7 +138,7 @@ void DisplayModule::setup()
 
 void DisplayModule::loop()
 {
-	// All screen updates should be handled in process() as they need to be display ASAP
+	// All screen updates should be handled in process() as they need to display ASAP
 }
 
 void DisplayModule::process(Gamepad *gamepad)
