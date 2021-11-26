@@ -81,12 +81,12 @@ void setup()
 
 	queue_init(&gamepadQueue, sizeof(Gamepad), 1);
 
-	for (auto module : modules)
-		module->setup();
-
 	for (auto it = modules.begin(); it != modules.end();)
 	{
-		if ((*it)->isEnabled())
+		GPModule *module = (*it);
+		module->setup();
+
+		if (module->isEnabled())
 			it++;
 		else
 			it = modules.erase(it);
@@ -150,13 +150,11 @@ void core1()
 		if (queue_try_remove(&gamepadQueue, &snapshot))
 		{
 			for (auto module : modules)
-				if (module->isEnabled())
-					module->process(&snapshot);
+				module->process(&snapshot);
 		}
 
 		for (auto module : modules)
-			if (module->isEnabled())
-				module->loop();
+			module->loop();
 	}
 }
 
@@ -173,11 +171,13 @@ void webserver()
 #endif
 		gamepad.hotkey();
 		gamepad.process();
+
 		if (queue_is_empty(&gamepadQueue))
 		{
 			memcpy(&snapshot, &gamepad, sizeof(Gamepad));
 			queue_try_add(&gamepadQueue, &snapshot);
 		}
+
 		rndis_task();
 	}
 }

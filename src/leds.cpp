@@ -230,9 +230,6 @@ void LEDModule::configureLEDs()
 	if (PLED_TYPE == PLED_TYPE_RGB && PLED_COUNT > 0)
 		ledCount += PLED_COUNT;
 
-	delete neopico;
-	neopico = new NeoPico(ledOptions.dataPin, ledCount, ledOptions.ledFormat);
-
 	queue_free(&baseAnimationQueue);
 	queue_free(&buttonAnimationQueue);
 	queue_free(&animationSaveQueue);
@@ -241,11 +238,10 @@ void LEDModule::configureLEDs()
 	queue_init(&buttonAnimationQueue, sizeof(uint32_t), 1);
 	queue_init(&animationSaveQueue, sizeof(int), 1);
 
-#ifdef LED_FORMAT
+	delete neopico;
+	neopico = new NeoPico(ledOptions.dataPin, ledCount, ledOptions.ledFormat);
+
 	Animation::format = LED_FORMAT;
-#else
-	Animation::format = LED_FORMAT_GRB;
-#endif
 	AnimationStation::ConfigureBrightness(ledOptions.brightnessMaximum, ledOptions.brightnessSteps);
 	AnimationStation::SetOptions(AnimationStore.getAnimationOptions());
 	as.SetMode(AnimationStation::options.baseAnimationIndex);
@@ -288,8 +284,6 @@ void LEDModule::setup()
 	enabled = ledOptions.dataPin != -1;
 	if (enabled)
 	{
-		configureLEDs();
-
 		StaticTheme::AddTheme(themeStaticRainbow);
 		StaticTheme::AddTheme(themeGuiltyGearTypeA);
 		StaticTheme::AddTheme(themeGuiltyGearTypeD);
@@ -301,14 +295,13 @@ void LEDModule::setup()
 		StaticTheme::AddTheme(themeSixButtonFighterPlus);
 		StaticTheme::AddTheme(themeSuperFamicom);
 		StaticTheme::AddTheme(themeXbox);
+
+		configureLEDs();
 	}
 }
 
 void LEDModule::process(Gamepad *gamepad)
 {
-	// We use queue_try_add here because if core1 explodes everywhere, we don't
-	// care. It's not as important as handling inputs.
-
 	AnimationHotkey action = animationHotkeys(gamepad);
 	if (action != HOTKEY_LEDS_NONE)
 		queue_try_add(&baseAnimationQueue, &action);
