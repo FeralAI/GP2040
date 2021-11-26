@@ -1,5 +1,7 @@
 # GP2040 Web Configurator
 
+Select the button labels to be displayed in the web configurator guide: <label-selector></label-selector>
+
 GP2040 contains a built-in web-based configuration application which can be started up by holding <hotkey v-bind:buttons='["S2"]'></hotkey> when plugging your controller into a PC. Then access <http://192.168.7.1> to begin configuration.
 
 ## Home
