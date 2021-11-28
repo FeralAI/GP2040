@@ -238,10 +238,14 @@ void LEDModule::configureLEDs()
 	queue_init(&buttonAnimationQueue, sizeof(uint32_t), 1);
 	queue_init(&animationSaveQueue, sizeof(int), 1);
 
+	if (neopico != NULL)
+		neopico->Off();
+
 	delete neopico;
 	neopico = new NeoPico(ledOptions.dataPin, ledCount, ledOptions.ledFormat);
+	neopico->Off();
 
-	Animation::format = LED_FORMAT;
+	Animation::format = ledOptions.ledFormat;
 	AnimationStation::ConfigureBrightness(ledOptions.brightnessMaximum, ledOptions.brightnessSteps);
 	AnimationStation::SetOptions(AnimationStore.getAnimationOptions());
 	as.SetMode(AnimationStation::options.baseAnimationIndex);
