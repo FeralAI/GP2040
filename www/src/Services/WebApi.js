@@ -32,7 +32,9 @@ async function resetSettings() {
 async function getDisplayOptions() {
 	return axios.get(`${baseUrl}/api/getDisplayOptions`)
 		.then((response) => {
-			response.data.i2cAddress = response.data.i2cAddress.toString(16);
+			if (response.data.i2cAddress)
+				response.data.i2cAddress = '0x' + response.data.i2cAddress.toString(16);
+
 			return response.data;
 		})
 		.catch(console.error);

@@ -28,11 +28,15 @@ const defaultValues = {
 	invertDisplay: false,
 };
 
+let usedPins = [];
+
 const schema = yup.object().shape({
 	enabled: yup.number().label('Enabled?'),
 	i2cAddress: yup.string().required().label('I2C Address'),
-	sdaPin: yup.number().required().label('SDA Pin'),
-	sclPin: yup.number().required().label('SCL Pin'),
+	// eslint-disable-next-line no-template-curly-in-string
+	sdaPin: yup.number().required().min(-1).max(29).test('', '${originalValue} is already assigned!', (value) => usedPins.indexOf(value) === -1).label('SDA Pin'),
+	// eslint-disable-next-line no-template-curly-in-string
+	sclPin: yup.number().required().min(-1).max(29).test('', '${originalValue} is already assigned!', (value) => usedPins.indexOf(value) === -1).label('SCL Pin'),
 	i2cBlock: yup.number().required().oneOf(I2C_BLOCKS.map(o => o.value)).label('I2C Block'),
 	i2cSpeed: yup.number().required().label('I2C Speed'),
 	flipDisplay: yup.number().label('Flip Display'),
@@ -44,7 +48,9 @@ const FormContext = () => {
 
 	useEffect(() => {
 		async function fetchData() {
-			setValues(await WebApi.getDisplayOptions());
+			const data = await WebApi.getDisplayOptions();
+			usedPins = data.usedPins;
+			setValues(data);
 		}
 		fetchData();
 	}, [setValues]);
