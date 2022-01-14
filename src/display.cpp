@@ -8,10 +8,12 @@
 #include "storage.h"
 #include "pico/stdlib.h"
 #include "OneBitDisplay.h"
+#include <deque>
 
 uint8_t ucBackBuffer[1024];
 OBDISP obd;
 string statusBar;
+std::deque<string> history;
 
 inline void clearScreen(int render = 0)
 {
@@ -89,6 +91,30 @@ inline void drawStatusBar()
 	obdWriteString(&obd, 0, 0, 0, (char *)statusBar.c_str(), FONT_6x8, 0, 0);
 }
 
+inline void drawHistory()
+{
+	std::string ret;
+
+	for (auto it = history.crbegin(); it != history.crend(); ++it) {
+		if (ret.size() < 22) {
+			std::string newRet = ret;
+			if (!newRet.empty())
+				newRet = " " + newRet;
+		
+			newRet = *it + newRet;
+
+			if (newRet.size() < 22) {
+				ret = newRet;
+			}
+			else {
+				break;
+			}
+  		}
+	}
+
+	obdWriteString(&obd, 0, 0, 1, (char *)ret.c_str(), FONT_6x8, 0, 0);
+}
+
 void setStatusBar(Gamepad *gamepad)
 {
 	// Limit to 21 chars with 6x8 font for now
@@ -115,6 +141,76 @@ void setStatusBar(Gamepad *gamepad)
 		case SOCD_MODE_NEUTRAL:               statusBar += "-N"; break;
 		case SOCD_MODE_UP_PRIORITY:           statusBar += "-U"; break;
 		case SOCD_MODE_SECOND_INPUT_PRIORITY: statusBar += "-L"; break;
+	}
+}
+
+void setHistory(Gamepad *gamepad)
+{
+	std::deque<string> pressed;
+
+	if (gamepad->pressedUp()) {
+		pressed.push_back("U");	
+	}
+
+	if (gamepad->pressedDown()) {
+		pressed.push_back("D");	
+	}
+	
+	if (gamepad->pressedLeft()) {
+		pressed.push_back("L");	
+	}
+
+	if (gamepad->pressedRight()) {
+		pressed.push_back("R");	
+	}
+
+	if (gamepad->pressedB1()) {
+		pressed.push_back("1K");	
+	}	
+
+	if (gamepad->pressedB2()) {
+		pressed.push_back("2K");	
+	}	
+	
+	if (gamepad->pressedR2()) {
+		pressed.push_back("3K");	
+	}	
+	
+	if (gamepad->pressedL2()) {
+		pressed.push_back("4K");	
+	}	
+
+	if (gamepad->pressedB3()) {
+		pressed.push_back("1P");	
+	}	
+
+	if (gamepad->pressedB4()) {
+		pressed.push_back("2P");	
+	}	
+	
+	if (gamepad->pressedR1()) {
+		pressed.push_back("3P");	
+	}	
+	
+	if (gamepad->pressedL1()) {
+		pressed.push_back("4P");	
+	}		
+
+	if (pressed.size() > 0) {
+	    std::string newInput;
+	    for(const auto &s : pressed) {
+	        if(!newInput.empty())
+	            newInput += "+";
+	        newInput += s;
+	    }
+
+		if (history.empty() || history.back() != newInput) {
+			history.push_back(newInput);
+		}
+	}
+
+	if (history.size() > 10) {
+		history.pop_front();
 	}
 }
 
@@ -149,24 +245,34 @@ void DisplayModule::loop()
 
 void DisplayModule::process(Gamepad *gamepad)
 {
+	BoardOptions options = getBoardOptions();
+
 	clearScreen();
 
 	setStatusBar(gamepad);
 
 	drawStatusBar();
-	switch (BUTTON_LAYOUT)
-	{
-		case BUTTON_LAYOUT_ARCADE:
-			drawArcadeStick(8, 28, 8, 2, gamepad);
-			break;
 
-		case BUTTON_LAYOUT_HITBOX:
-			drawHitbox(8, 20, 8, 2, gamepad);
-			break;
+	// Display history only for 128x32 displays for now
+	if (options.displaySize == 2) {
+		setHistory(gamepad);
+		drawHistory();
+	}
+	else {	
+		switch (BUTTON_LAYOUT)
+		{
+			case BUTTON_LAYOUT_ARCADE:
+				drawArcadeStick(8, 28, 8, 2, gamepad);
+				break;
 
-		case BUTTON_LAYOUT_WASD:
-			drawWasdBox(8, 28, 7, 3, gamepad);
-			break;
+			case BUTTON_LAYOUT_HITBOX:
+				drawHitbox(8, 20, 8, 2, gamepad);
+				break;
+
+			case BUTTON_LAYOUT_WASD:
+				drawWasdBox(8, 28, 7, 3, gamepad);
+				break;
+		}
 	}
 
 	obdDumpBuffer(&obd, NULL);
