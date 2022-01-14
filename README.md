@@ -36,12 +36,13 @@ Prebuilt `uf2` files are available in the [Releases](https://github.com/FeralAI/
 * [Pico Fighting Board](https://github.com/FeralAI/GP2040-Config-PicoFightingBoard/)
 * [Crush Counter](https://github.com/FeralAI/GP2040/tree/main/configs/CrushCounter) (formerly the [OSFRD](https://github.com/FeralAI/GP2040/tree/main/configs/OSFRD))
 * [DURAL](https://github.com/FeralAI/GP2040/tree/main/configs/DURAL)
+* [Flatbox Rev 4](https://github.com/jfedor2/flatbox/tree/master/hardware-rev4)
 
 Several other working example configurations are located in the [configs](https://github.com/FeralAI/GP2040/tree/main/configs) folder.
 
 The instructions will slightly vary based on your device. These instructions are for a Raspberry Pi Pico.
 
-> If the device has been previously used for something other than GP2040, please flash this file first to clear the on-board storage: [flash_nuke.uf2](docs/downloads/flash_nuke.uf2). After flashing the nuke file, waiting a minute for the clear program to run and the RPI-RP2 drive to reappear.
+> If the device has been previously used for something other than GP2040, please flash this file first to clear the on-board storage: [flash_nuke.uf2](docs/downloads/flash_nuke.uf2). After flashing the nuke file, wait a minute for the clear program to run and the RPI-RP2 drive to reappear.
 
 1. Download the latest `GP2040.uf2` file from the [Releases](https://github.com/FeralAI/GP2040/releases) section for your board (e.g. `GP2040-PiPico.uf2` for the Raspberry Pi Pico).
 1. Unplug your Pico.
@@ -95,6 +96,26 @@ There's no magic here, just some useful libraries working together:
 * TinyUSB library provides virtual network connection over USB via RNDIS
 * lwIP library provides an HTTP server for the embedded React app and the web configuration API
 * ArduinoJson library is used for serialization and deserialization of web API requests
+
+## Contributions
+
+Want to help improve GP2040? There are a bunch of ways to contribute!
+
+### Pull Requests
+
+Pull requests are welcome and encouraged for enhancements, bug fixes and documentation updates.
+
+Please respect the coding style of the file(s) you are working in, and enforce the use of the `.editorconfig` file when present.
+
+### Donations
+
+If you'd like to make a donation to my open source work, you can
+
+<a href="https://github.com/sponsors/FeralAI"><img src="https://github.com/FeralAI/GP2040/raw/main/.github/assets/github-sponsor-dimmed.png" alt="Sponsor Feral AI on Github" style="height: 40px !important;" ></a>
+
+or
+
+<a href="https://www.buymeacoffee.com/feralai" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 40px !important;" ></a>
 
 ## Acknowledgements
 
