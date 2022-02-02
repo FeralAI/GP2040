@@ -17,6 +17,11 @@ const I2C_BLOCKS = [
 	{ label: 'i2c1', value: 1 },
 ];
 
+const SCREEN_SIZES = [
+	{ label: '128x64', value: 3 },
+	{ label: '128x32', value: 2 },
+];
+
 const defaultValues = {
 	enabled: false,
 	sdaPin: -1,
@@ -26,6 +31,7 @@ const defaultValues = {
 	i2cSpeed: 400000,
 	flipDisplay: false,
 	invertDisplay: false,
+	displaySize: 3
 };
 
 let usedPins = [];
@@ -41,6 +47,7 @@ const schema = yup.object().shape({
 	i2cSpeed: yup.number().required().label('I2C Speed'),
 	flipDisplay: yup.number().label('Flip Display'),
 	invertDisplay: yup.number().label('Invert Display'),
+	displaySize: yup.number().oneOf(SCREEN_SIZES.map(o => o.value)).label('Screen Size'),
 });
 
 const FormContext = () => {
@@ -61,9 +68,11 @@ const FormContext = () => {
 		if (!!values.i2cBlock)
 			values.i2cBlock = parseInt(values.i2cBlock);
 		if (!!values.flipDisplay)
-			values.flipDisplay = parseInt(values.flipDisplay);
+			values.flipDisplay = parseInt(values.flipDisplay);			
 		if (!!values.invertDisplay)
 			values.invertDisplay = parseInt(values.invertDisplay);
+		if (!!values.screenSize)
+			values.screenSize = parseInt(values.screenSize);			
 	}, [values, setValues]);
 
 	return null;
@@ -237,6 +246,20 @@ export default function DisplayConfigPage() {
 								{ON_OFF_OPTIONS.map((o, i) => <option key={`invertDisplay-option-${i}`} value={o.value}>{o.label}</option>)}
 							</FormSelect>
 						</Row>
+						<Row className="mb-3">
+							<FormSelect
+								label="Screen Size"
+								name="displaySize"
+								className="form-select-sm"
+								groupClassName="col-sm-3 mb-3"
+								value={values.displaySize}
+								error={errors.displaySize}
+								isInvalid={errors.displaySize}
+								onChange={handleChange}
+							>
+								{SCREEN_SIZES.map((o, i) => <option key={`i2cBlock-option-${i}`} value={o.value}>{o.label}</option>)}
+							</FormSelect>							
+						</Row>						
 						<div className="mt-3">
 							<Button type="submit">Save</Button>
 							{saveMessage ? <span className="alert">{saveMessage}</span> : null}
