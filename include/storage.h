@@ -36,6 +36,10 @@ struct BoardOptions
 	uint8_t pinButtonR3;
 	uint8_t pinButtonA1;
 	uint8_t pinButtonA2;
+	uint8_t pinAnalogLx;
+	uint8_t pinAnalogLy;
+	uint8_t pinAnalogRx;
+	uint8_t pinAnalogRy;
 	ButtonLayout buttonLayout;
 
 	int i2cSDAPin;
@@ -49,6 +53,14 @@ struct BoardOptions
 	bool displayFlip;
 	bool displayInvert;
 	uint32_t checksum;
+
+	const bool hasAnalog()
+	{
+		return pinAnalogLx > -1
+		    || pinAnalogLy > -1
+		    || pinAnalogRx > -1
+		    || pinAnalogRy > -1;
+	}
 };
 
 struct LEDOptions

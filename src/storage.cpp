@@ -10,6 +10,7 @@
 #include "FlashPROM.h"
 #include "Animation.hpp"
 #include "CRC32.h"
+#include "analog.h"
 #include "display.h"
 #include "storage.h"
 #include "leds.h"
@@ -44,6 +45,10 @@ BoardOptions getBoardOptions()
 		options.pinButtonR3       = PIN_BUTTON_R3;
 		options.pinButtonA1       = PIN_BUTTON_A1;
 		options.pinButtonA2       = PIN_BUTTON_A2;
+		options.pinAnalogLx       = PIN_ANALOG_LX;
+		options.pinAnalogLy       = PIN_ANALOG_LY;
+		options.pinAnalogRx       = PIN_ANALOG_RX;
+		options.pinAnalogRy       = PIN_ANALOG_RY;
 		options.buttonLayout      = BUTTON_LAYOUT;
 		options.i2cSDAPin         = I2C_SDA_PIN;
 		options.i2cSCLPin         = I2C_SCL_PIN;

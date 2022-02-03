@@ -4,7 +4,9 @@
  */
 
 #include "pico/stdlib.h"
+#include "hardware/adc.h"
 #include "gamepad.h"
+#include "analog.h"
 #include "display.h"
 #include "storage.h"
 #include "display.h"
@@ -53,11 +55,46 @@ void Gamepad::setup()
 		gpio_pull_up(gamepadMappings[i]->pin);          // Set as PULLUP
 	}
 
-	#ifdef PIN_SETTINGS
+#ifdef PIN_SETTINGS
 		gpio_init(PIN_SETTINGS);             // Initialize pin
 		gpio_set_dir(PIN_SETTINGS, GPIO_IN); // Set as INPUT
 		gpio_pull_up(PIN_SETTINGS);          // Set as PULLUP
-	#endif
+#endif
+
+	if (boardOptions.hasAnalog())
+	{
+		adc_init();
+		// adc_run(true);
+		// adc_irq_set_enabled(false);
+
+		hasLeftAnalogStick = boardOptions.pinAnalogLx > -1 || boardOptions.pinAnalogLy > -1;
+		hasRightAnalogStick = boardOptions.pinAnalogRx > -1 || boardOptions.pinAnalogRy > -1;
+
+		if (boardOptions.pinAnalogLx > -1)
+		{
+			adc_gpio_init(boardOptions.pinAnalogLx);
+			mapAnalogLx = new GamepadButtonMapping(boardOptions.pinAnalogLx, 0);
+			analogMappings.push_back(mapAnalogLx);
+		}
+		if (boardOptions.pinAnalogLy > -1)
+		{
+			adc_gpio_init(boardOptions.pinAnalogLy);
+			mapAnalogLy = new GamepadButtonMapping(boardOptions.pinAnalogLy, 1);
+			analogMappings.push_back(mapAnalogLy);
+		}
+		if (boardOptions.pinAnalogRx > -1)
+		{
+			adc_gpio_init(boardOptions.pinAnalogRx);
+			mapAnalogRx = new GamepadButtonMapping(boardOptions.pinAnalogRx, 2);
+			analogMappings.push_back(mapAnalogRx);
+		}
+		if (boardOptions.pinAnalogRy > -1)
+		{
+			adc_gpio_init(boardOptions.pinAnalogRy);
+			mapAnalogRy = new GamepadButtonMapping(boardOptions.pinAnalogRy, 3);
+			analogMappings.push_back(mapAnalogRy);
+		}
+	}
 }
 
 void Gamepad::read()
@@ -65,11 +102,11 @@ void Gamepad::read()
 	// Need to invert since we're using pullups
 	uint32_t values = ~gpio_get_all();
 
-	#ifdef PIN_SETTINGS
+#ifdef PIN_SETTINGS
 	state.aux = 0
 		| ((values & (1 << PIN_SETTINGS)) ? (1 << 0) : 0)
 	;
-	#endif
+#endif
 
 	state.dpad = 0
 		| ((values & mapDpadUp->pinMask)    ? (options.invertYAxis ? mapDpadDown->buttonMask : mapDpadUp->buttonMask) : 0)
@@ -99,6 +136,22 @@ void Gamepad::read()
 	state.ly = GAMEPAD_JOYSTICK_MID;
 	state.rx = GAMEPAD_JOYSTICK_MID;
 	state.ry = GAMEPAD_JOYSTICK_MID;
+
+	if (analogMappings.size() > 0)
+	{
+		for (GamepadButtonMapping *m : analogMappings)
+		{
+			adc_select_input(m->buttonMask);
+			switch (m->buttonMask)
+			{
+				case 0: state.lx = scaleInternalADCValue(adc_read()); break;
+				case 1: state.ly = scaleInternalADCValue(adc_read()); break;
+				case 2: state.rx = scaleInternalADCValue(adc_read()); break;
+				case 3: state.ry = scaleInternalADCValue(adc_read()); break;
+			}
+		}
+	}
+
 	state.lt = 0;
 	state.rt = 0;
 }

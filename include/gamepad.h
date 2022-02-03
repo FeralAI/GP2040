@@ -2,12 +2,15 @@
 #define _GAMEPAD_H_
 
 #include "BoardConfig.h"
+#include <vector>
 #include <string.h>
 #include <MPGS.h>
 #include "pico/stdlib.h"
 #include "storage.h"
 
 #define GAMEPAD_FEATURE_REPORT_SIZE 32
+
+using namespace std;
 
 struct GamepadButtonMapping
 {
@@ -69,6 +72,12 @@ public:
 	GamepadButtonMapping *mapButtonA1;
 	GamepadButtonMapping *mapButtonA2;
 
+	GamepadButtonMapping *mapAnalogLx;
+	GamepadButtonMapping *mapAnalogLy;
+	GamepadButtonMapping *mapAnalogRx;
+	GamepadButtonMapping *mapAnalogRy;
+
+	vector<GamepadButtonMapping *> analogMappings;
 	GamepadButtonMapping **gamepadMappings;
 };
 
