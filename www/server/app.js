@@ -41,14 +41,13 @@ app.get('/api/resetSettings', (req, res) => {
 app.get('/api/getDisplayOptions', (req, res) => {
 	console.log('/api/getDisplayOptions');
 	return res.send({
-		enabled: 1,
-		sdaPin: 0,
-		sclPin: 1,
-		i2cAddress: '0x3D',
-		i2cBlock: 0,
+		i2cPinMapping: 26,
 		i2cSpeed: 400000,
+		i2cAddress: '3C',
+		displayDriver: 3,
 		flipDisplay: 0,
-		invertDisplay: 1,
+		invertDisplay: 0,
+		usedPins: [],
 	});
 });
 

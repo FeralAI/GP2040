@@ -12,36 +12,64 @@ const ON_OFF_OPTIONS = [
 	{ label: 'Enabled', value: 1 },
 ];
 
-const I2C_BLOCKS = [
-	{ label: 'i2c0', value: 0 },
-	{ label: 'i2c1', value: 1 },
+const I2C_DISPLAY_DRIVERS = [
+	{ label: 'SSD130X (1306, 1309, etc.)', value: 3 },
+	{ label: 'SH1106', value: 4 },
+];
+
+const I2C_PIN_MAPPINGS = [
+	{ label: 'Disabled', value: -1 },
+	{ label: '0/1', value: 0 },
+	{ label: '2/3', value: 2 },
+	{ label: '4/5', value: 4 },
+	{ label: '6/7', value: 6 },
+	{ label: '8/9', value: 8 },
+	{ label: '10/11', value: 10 },
+	{ label: '12/13', value: 12 },
+	{ label: '14/15', value: 14 },
+	{ label: '16/17', value: 16 },
+	{ label: '18/19', value: 18 },
+	{ label: '20/21', value: 20 },
+	{ label: '26/27', value: 26 },
+];
+
+const I2C_SPEEDS = [
+	{ label: '100 kbit/s', value: 100000 },
+	{ label: '400 kbit/s', value: 400000 },
+	{ label: '800 kbit/s', value: 800000 },
 ];
 
 const defaultValues = {
-	enabled: false,
-	sdaPin: -1,
-	sclPin: -1,
-	i2cAddress: '0x3C',
-	i2cBlock: 0,
+	i2cPinMapping: 26,
 	i2cSpeed: 400000,
-	flipDisplay: false,
-	invertDisplay: false,
+	i2cAddress: '3C',
+	displayDriver: 3,
+	flipDisplay: 0,
+	invertDisplay: 0,
 };
 
 let usedPins = [];
 
 const schema = yup.object().shape({
-	enabled: yup.number().label('Enabled?'),
-	i2cAddress: yup.string().required().label('I2C Address'),
 	// eslint-disable-next-line no-template-curly-in-string
-	sdaPin: yup.number().required().min(-1).max(29).test('', '${originalValue} is already assigned!', (value) => usedPins.indexOf(value) === -1).label('SDA Pin'),
-	// eslint-disable-next-line no-template-curly-in-string
-	sclPin: yup.number().required().min(-1).max(29).test('', '${originalValue} is already assigned!', (value) => usedPins.indexOf(value) === -1).label('SCL Pin'),
-	i2cBlock: yup.number().required().oneOf(I2C_BLOCKS.map(o => o.value)).label('I2C Block'),
+	i2cPinMapping: yup.number().required().min(-1).max(26).test('', '${originalValue} is already assigned!', (value) => usedPins.indexOf(value) === -1).label('I2C Pins'),
 	i2cSpeed: yup.number().required().label('I2C Speed'),
+	i2cAddress: yup.string().required().label('I2C Address'),
+	displayDriver: yup.number().min(3).max(4).required().label('Display Driver'),
 	flipDisplay: yup.number().label('Flip Display'),
 	invertDisplay: yup.number().label('Invert Display'),
 });
+
+function fixValues(values) {
+	if (!!values.enabled)
+		values.enabled = parseInt(values.enabled);
+	if (!!values.i2cPinMapping)
+		values.i2cPinMapping = parseInt(values.i2cPinMapping);
+	if (!!values.flipDisplay)
+		values.flipDisplay = parseInt(values.flipDisplay);
+	if (!!values.invertDisplay)
+		values.invertDisplay = parseInt(values.invertDisplay);
+}
 
 const FormContext = () => {
 	const { values, setValues } = useFormikContext();
@@ -49,22 +77,17 @@ const FormContext = () => {
 	useEffect(() => {
 		async function fetchData() {
 			const data = await WebApi.getDisplayOptions();
+			console.log(data);
+			// fixValues(data);
 			usedPins = data.usedPins;
 			setValues(data);
 		}
 		fetchData();
 	}, [setValues]);
 
-	useEffect(() => {
-		if (!!values.enabled)
-			values.enabled = parseInt(values.enabled);
-		if (!!values.i2cBlock)
-			values.i2cBlock = parseInt(values.i2cBlock);
-		if (!!values.flipDisplay)
-			values.flipDisplay = parseInt(values.flipDisplay);
-		if (!!values.invertDisplay)
-			values.invertDisplay = parseInt(values.invertDisplay);
-	}, [values, setValues]);
+	// useEffect(() => {
+	// 	fixValues(values);
+	// }, [values, setValues]);
 
 	return null;
 };
@@ -72,13 +95,13 @@ const FormContext = () => {
 export default function DisplayConfigPage() {
 	const [saveMessage, setSaveMessage] = useState('');
 
-	const onSuccess = async (values) => {
+	const onSubmit = async (values) => {
 		const success = WebApi.setDisplayOptions(values);
 		setSaveMessage(success ? 'Saved!' : 'Unable to Save');
 	};
 
 	return (
-		<Formik validationSchema={schema} onSubmit={onSuccess} initialValues={defaultValues}>
+		<Formik validationSchema={schema} onSubmit={onSubmit} initialValues={defaultValues}>
 			{({
 				handleSubmit,
 				handleChange,
@@ -94,129 +117,67 @@ export default function DisplayConfigPage() {
 					</p>
 					<ul>
 						<li>Monochrome display with 128x64 resolution</li>
-						<li>Uses I2C with a SSD1306, SH1106, SH1107 or other compatible display IC</li>
+						<li>Uses I2C with SSD1306, SH1106 or other compatible display driver IC</li>
 						<li>Supports 3.3v operation</li>
 					</ul>
-					<p>
-						Use these tables to determine which I2C block to select based on the configured SDA and SCL pins:
-					</p>
-					<Row>
-						<Col>
-							<table className="table table-sm mb-4">
-								<thead>
-									<tr>
-										<th>SDA/SCL Pins</th>
-										<th>I2C Block</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr><td>0/1</td><td>i2c0</td></tr>
-									<tr><td>2/3</td><td>i2c1</td></tr>
-									<tr><td>4/5</td><td>i2c0</td></tr>
-									<tr><td>6/7</td><td>i2c1</td></tr>
-									<tr><td>8/9</td><td>i2c0</td></tr>
-									<tr><td>10/11</td><td>i2c1</td></tr>
-								</tbody>
-							</table>
-						</Col>
-						<Col>
-							<table className="table table-sm mb-4">
-								<thead>
-									<tr>
-										<th>SDA/SCL Pins</th>
-										<th>I2C Block</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr><td>12/13</td><td>i2c0</td></tr>
-									<tr><td>14/15</td><td>i2c1</td></tr>
-									<tr><td>16/17</td><td>i2c0</td></tr>
-									<tr><td>18/19</td><td>i2c1</td></tr>
-									<tr><td>20/21</td><td>i2c0</td></tr>
-									<tr><td>26/27</td><td>i2c1</td></tr>
-								</tbody>
-							</table>
-						</Col>
-					</Row>
 					<Form noValidate onSubmit={handleSubmit}>
+						<h5 className="mt-4">I2C Options</h5>
 						<Row>
 							<FormSelect
-								label="Use Display"
-								name="enabled"
+								label="I2C GPIO (SDA/SCL)"
+								name="i2cPinMapping"
 								className="form-select-sm"
-								groupClassName="col-sm-3 mb-3"
-								value={values.enabled}
-								error={errors.enabled}
-								isInvalid={errors.enabled}
+								groupClassName="col-sm-4 mb-3"
+								value={values.i2cPinMapping}
+								error={errors.i2cPinMapping}
+								isInvalid={errors.i2cPinMapping}
 								onChange={handleChange}
 							>
-								{ON_OFF_OPTIONS.map((o, i) => <option key={`enabled-option-${i}`} value={o.value}>{o.label}</option>)}
+								{I2C_PIN_MAPPINGS.map((o, i) => <option key={`i2cPinMapping-option-${i}`} value={o.value}>{o.label}</option>)}
 							</FormSelect>
 							<FormSelect
-								label="I2C Block"
-								name="i2cBlock"
+								label="I2C Speed"
+								name="i2cSpeed"
 								className="form-select-sm"
-								groupClassName="col-sm-3 mb-3"
-								value={values.i2cBlock}
-								error={errors.i2cBlock}
-								isInvalid={errors.i2cBlock}
+								groupClassName="col-sm-4 mb-3"
+								value={values.i2cSpeed}
+								error={errors.i2cSpeed}
+								isInvalid={errors.i2cSpeed}
 								onChange={handleChange}
 							>
-								{I2C_BLOCKS.map((o, i) => <option key={`i2cBlock-option-${i}`} value={o.value}>{o.label}</option>)}
+								{I2C_SPEEDS.map((o, i) => <option key={`i2cSpeed-option-${i}`} value={o.value}>{o.label}</option>)}
 							</FormSelect>
-							<FormControl type="number"
-								label="SDA Pin"
-								name="sdaPin"
-								className="form-control-sm"
-								groupClassName="col-sm-3 mb-3"
-								value={values.sdaPin}
-								error={errors.sdaPin}
-								isInvalid={errors.sdaPin}
-								onChange={handleChange}
-								min={-1}
-								max={29}
-							/>
-							<FormControl type="number"
-								label="SCL Pin"
-								name="sclPin"
-								className="form-control-sm"
-								groupClassName="col-sm-3 mb-3"
-								value={values.sclPin}
-								error={errors.sclPin}
-								isInvalid={errors.sclPin}
-								onChange={handleChange}
-								min={-1}
-								max={29}
-							/>
-						</Row>
-						<Row className="mb-3">
 							<FormControl type="text"
 								label="I2C Address"
 								name="i2cAddress"
 								className="form-control-sm"
-								groupClassName="col-sm-3 mb-3"
+								groupClassName="col-sm-4 mb-3"
 								value={values.i2cAddress}
 								error={errors.i2cAddress}
 								isInvalid={errors.i2cAddress}
 								onChange={handleChange}
 								maxLength={4}
 							/>
-							<FormControl type="number"
-								label="I2C Speed"
-								name="i2cSpeed"
-								className="form-control-sm"
-								groupClassName="col-sm-3 mb-3"
-								value={values.i2cSpeed}
-								error={errors.i2cSpeed}
-								isInvalid={errors.i2cSpeed}
+						</Row>
+						<h5 className="mt-3">Display Options</h5>
+						<Row className="mb-3">
+							<FormSelect
+								label="Driver IC"
+								name="displayDriver"
+								className="form-select-sm"
+								groupClassName="col-sm-4 mb-3"
+								value={values.displayDriver}
+								error={errors.displayDriver}
+								isInvalid={errors.displayDriver}
 								onChange={handleChange}
-								min={100000}
-							/>
+							>
+								{I2C_DISPLAY_DRIVERS.map((o, i) => <option key={`displayDriver-option-${i}`} value={o.value}>{o.label}</option>)}
+							</FormSelect>
 							<FormSelect
 								label="Flip Display"
 								name="flipDisplay"
 								className="form-select-sm"
-								groupClassName="col-sm-3 mb-3"
+								groupClassName="col-sm-4 mb-3"
 								value={values.flipDisplay}
 								error={errors.flipDisplay}
 								isInvalid={errors.flipDisplay}
@@ -228,7 +189,7 @@ export default function DisplayConfigPage() {
 								label="Invert Display"
 								name="invertDisplay"
 								className="form-select-sm"
-								groupClassName="col-sm-3 mb-3"
+								groupClassName="col-sm-4 mb-3"
 								value={values.invertDisplay}
 								error={errors.invertDisplay}
 								isInvalid={errors.invertDisplay}

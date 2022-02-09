@@ -107,12 +107,10 @@ string getDisplayOptions()
 	DynamicJsonDocument doc(LWIP_HTTPD_POST_MAX_PAYLOAD_LEN);
 
 	BoardOptions options = getBoardOptions();
-	doc["enabled"]       = options.hasI2CDisplay ? 1 : 0;
-	doc["sdaPin"]        = options.i2cSDAPin;
-	doc["sclPin"]        = options.i2cSCLPin;
-	doc["i2cAddress"]    = options.displayI2CAddress;
-	doc["i2cBlock"]      = options.i2cBlock;
+	doc["i2cPinMapping"] = options.i2cSDAPin;
 	doc["i2cSpeed"]      = options.i2cSpeed;
+	doc["i2cAddress"]    = options.displayI2CAddress;
+	doc["displayDriver"] = options.displaySize;
 	doc["flipDisplay"]   = options.displayFlip ? 1 : 0;
 	doc["invertDisplay"] = options.displayInvert ? 1 : 0;
 
@@ -144,14 +142,23 @@ string setDisplayOptions()
 	DynamicJsonDocument doc = get_post_data();
 
 	BoardOptions options = getBoardOptions();
-	options.hasI2CDisplay     = doc["enabled"];
-	options.i2cSDAPin         = doc["sdaPin"];
-	options.i2cSCLPin         = doc["sclPin"];
-	options.displayI2CAddress = doc["i2cAddress"];
-	options.i2cBlock          = doc["i2cBlock"];
 	options.i2cSpeed          = doc["i2cSpeed"];
+	options.i2cSDAPin         = doc["i2cPinMapping"];
+	options.displayI2CAddress = doc["i2cAddress"];
+	options.displaySize       = doc["displayDriver"];
 	options.displayFlip       = doc["flipDisplay"];
 	options.displayInvert     = doc["invertDisplay"];
+
+	if (options.i2cSDAPin > -1)
+	{
+		options.hasI2CDisplay = true;
+		options.i2cSCLPin = options.i2cSDAPin + 1;
+		options.i2cBlock  = options.i2cSDAPin % 4 == 0 ? 0 : 1;
+	}
+	else
+	{
+		options.hasI2CDisplay = false;
+	}
 
 	setBoardOptions(options);
 	GamepadStore.save();
