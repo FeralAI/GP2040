@@ -94,7 +94,7 @@ void setStatusBar(Gamepad *gamepad)
 	// Limit to 21 chars with 6x8 font for now
 	statusBar.clear();
 
-	switch (gamepad->options.inputMode)
+	switch (gamepad->displayInputMode)
 	{
 		case INPUT_MODE_HID:    statusBar += "DINPUT"; break;
 		case INPUT_MODE_SWITCH: statusBar += "SWITCH"; break;
@@ -104,7 +104,6 @@ void setStatusBar(Gamepad *gamepad)
 
 	switch (gamepad->options.dpadMode)
 	{
-
 		case DPAD_MODE_DIGITAL:      statusBar += "         DPAD"; break;
 		case DPAD_MODE_LEFT_ANALOG:  statusBar += "         LEFT"; break;
 		case DPAD_MODE_RIGHT_ANALOG: statusBar += "        RIGHT"; break;

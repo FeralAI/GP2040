@@ -81,6 +81,15 @@ void setup()
 	else if (gamepad.pressedF1() && gamepad.pressedUp())
 		reset_usb_boot(0, 0);
 
+	gamepad.displayInputMode = inputMode;
+
+	bool configMode = inputMode == INPUT_MODE_CONFIG;
+	if (inputMode != gamepad.options.inputMode && !configMode)
+	{
+		gamepad.options.inputMode = inputMode;
+		gamepad.save();
+	}
+
 	queue_init(&gamepadQueue, sizeof(Gamepad), 1);
 
 	for (auto it = modules.begin(); it != modules.end();)
@@ -92,13 +101,6 @@ void setup()
 			it++;
 		else
 			it = modules.erase(it);
-	}
-
-	bool configMode = inputMode == INPUT_MODE_CONFIG;
-	if (inputMode != gamepad.options.inputMode && !configMode)
-	{
-		gamepad.options.inputMode = inputMode;
-		gamepad.save();
 	}
 
 	initialize_driver(inputMode);

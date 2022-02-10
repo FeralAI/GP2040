@@ -79,6 +79,7 @@ public:
 
 	vector<GamepadButtonMapping *> analogMappings;
 	GamepadButtonMapping **gamepadMappings;
+	InputMode displayInputMode;
 };
 
 #endif

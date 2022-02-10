@@ -95,6 +95,8 @@ void Gamepad::setup()
 			analogMappings.push_back(mapAnalogRy);
 		}
 	}
+
+	displayInputMode = options.inputMode;
 }
 
 void Gamepad::read()
