@@ -104,6 +104,22 @@ inline void drawVewlix(int startX, int startY, int buttonRadius, int buttonPaddi
 	obdPreciseEllipse(&obd, startX + buttonMargin * 6.25, startY + buttonMargin, buttonRadius, buttonRadius, 1, gamepad->pressedL2());
 }
 
+inline void drawCapcom(int startX, int startY, int buttonRadius, int buttonPadding, Gamepad *gamepad)
+{
+	const int buttonMargin = buttonPadding + (buttonRadius * 2);
+
+	// 8-button Vewlix
+	obdPreciseEllipse(&obd, startX + buttonMargin * 3.625, startY, buttonRadius, buttonRadius, 1, gamepad->pressedB3());
+	obdPreciseEllipse(&obd, startX + buttonMargin * 4.625, startY, buttonRadius, buttonRadius, 1, gamepad->pressedB4());
+	obdPreciseEllipse(&obd, startX + buttonMargin * 5.625, startY, buttonRadius, buttonRadius, 1, gamepad->pressedR1());
+	obdPreciseEllipse(&obd, startX + buttonMargin * 6.625, startY, buttonRadius, buttonRadius, 1, gamepad->pressedL1());
+
+	obdPreciseEllipse(&obd, startX + buttonMargin * 3.25, startY + buttonMargin, buttonRadius, buttonRadius, 1, gamepad->pressedB1());
+	obdPreciseEllipse(&obd, startX + buttonMargin * 4.25, startY + buttonMargin, buttonRadius, buttonRadius, 1, gamepad->pressedB2());
+	obdPreciseEllipse(&obd, startX + buttonMargin * 5.25, startY + buttonMargin, buttonRadius, buttonRadius, 1, gamepad->pressedR2());
+	obdPreciseEllipse(&obd, startX + buttonMargin * 6.25, startY + buttonMargin, buttonRadius, buttonRadius, 1, gamepad->pressedL2());
+}
+
 void setStatusBar(Gamepad *gamepad)
 {
 	// Limit to 21 chars with 6x8 font for now
@@ -191,7 +207,10 @@ void DisplayModule::process(Gamepad *gamepad)
 	switch (BUTTON_LAYOUT_RIGHT)
 	{
 		case BUTTON_LAYOUT_VEWLIX:
-			drawVewlix(8, 20, 8, 2, gamepad);
+			drawVewlix(8, 28, 8, 2, gamepad);
+			break;
+		case BUTTON_LAYOUT_CAPCOM:
+			drawCapcom(8, 28, 8, 2, gamepad);
 			break;
 	}
 
