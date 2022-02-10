@@ -11,6 +11,12 @@ typedef enum
 	BUTTON_LAYOUT_ARCADE,
 	BUTTON_LAYOUT_HITBOX,
 	BUTTON_LAYOUT_WASD,
+	NUTTON_LAYOUT_UDLR,
 } ButtonLayout;
+
+typedef enum
+{
+	BUTTON_LAYOUT_VEWLIX,
+} ButtonLayoutRight;
 
 #endif
