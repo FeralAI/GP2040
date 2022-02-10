@@ -121,6 +121,7 @@ void setStatusBar(Gamepad *gamepad)
 void DisplayModule::setup()
 {
 	BoardOptions options = getBoardOptions();
+	buttonLayout = options.buttonLayout;
 	enabled = options.hasI2CDisplay && options.i2cSDAPin != -1 && options.i2cSCLPin != -1;
 	if (enabled)
 	{
@@ -154,7 +155,7 @@ void DisplayModule::process(Gamepad *gamepad)
 	setStatusBar(gamepad);
 
 	drawStatusBar();
-	switch (BUTTON_LAYOUT)
+	switch (buttonLayout)
 	{
 		case BUTTON_LAYOUT_ARCADE:
 			drawArcadeStick(8, 28, 8, 2, gamepad);

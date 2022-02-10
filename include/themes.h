@@ -267,10 +267,10 @@ static map<uint32_t, RGB> themeXboxAll({
 	{ GAMEPAD_MASK_L2, ColorWhite },
 });
 
-void addStaticThemes(LEDOptions options)
+void addStaticThemes(LEDOptions options, ButtonLayout layout)
 {
 	// Rainbow theme on a Hitbox layout should use green for up button
-	themeStaticRainbow[GAMEPAD_MASK_DU] = (options.ledLayout == BUTTON_LAYOUT_HITBOX) ? ColorGreen : ColorOrange;
+	themeStaticRainbow[GAMEPAD_MASK_DU] = (layout == BUTTON_LAYOUT_HITBOX) ? ColorGreen : ColorOrange;
 
 	StaticTheme::ClearThemes();
 

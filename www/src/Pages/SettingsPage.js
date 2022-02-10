@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Form } from 'react-bootstrap';
+import { Button, Form, Row } from 'react-bootstrap';
 import { Formik, useFormikContext } from 'formik';
 import * as yup from 'yup';
+import FormSelect from '../Components/FormSelect';
 import Section from '../Components/Section';
 import WebApi from '../Services/WebApi';
 
@@ -23,10 +24,17 @@ const SOCD_MODES = [
 	{ label: 'Last Win', value: 2 },
 ];
 
+const BUTTON_LAYOUTS = [
+	{ label: 'Stick Layout', value: 0 },
+	{ label: 'Hit Box Layout', value: 1 },
+	{ label: 'WASD Layout', value: 2 },
+];
+
 const schema = yup.object().shape({
-	dpadMode : yup.number().required().oneOf(DPAD_MODES.map(o => o.value)).label('D-Pad Mode'),
-	inputMode: yup.number().required().oneOf(INPUT_MODES.map(o => o.value)).label('Input Mode'),
-	socdMode : yup.number().required().oneOf(SOCD_MODES.map(o => o.value)).label('SOCD Mode'),
+	dpadMode    : yup.number().required().oneOf(DPAD_MODES.map(o => o.value)).label('D-Pad Mode'),
+	inputMode   : yup.number().required().oneOf(INPUT_MODES.map(o => o.value)).label('Input Mode'),
+	socdMode    : yup.number().required().oneOf(SOCD_MODES.map(o => o.value)).label('SOCD Mode'),
+	buttonLayout: yup.number().required().positive().integer().min(0).max(2).label('Button Layout'),
 });
 
 const FormContext = () => {
@@ -46,6 +54,8 @@ const FormContext = () => {
 			values.inputMode = parseInt(values.inputMode);
 		if (!!values.socdMode)
 			values.socdMode = parseInt(values.socdMode);
+		if (!!values.buttonLayout)
+			values.buttonLayout = parseInt(values.buttonLayout);
 	}, [values, setValues]);
 
 	return null;
@@ -98,6 +108,20 @@ export default function SettingsPage() {
 								<Form.Control.Feedback type="invalid">{errors.socdMode}</Form.Control.Feedback>
 							</div>
 						</Form.Group>
+						<Row className="mb-3">
+							<FormSelect
+									label="Button Layout"
+									name="buttonLayout"
+									className="form-select-sm"
+									groupClassName="col-sm-4 mb-3"
+									value={values.buttonLayout}
+									error={errors.buttonLayout}
+									isInvalid={errors.buttonLayout}
+									onChange={handleChange}
+								>
+									{BUTTON_LAYOUTS.map((o, i) => <option key={`buttonLayout-option-${i}`} value={o.value}>{o.label}</option>)}
+								</FormSelect>
+						</Row>
 						<Button type="submit">Save</Button>
 						{saveMessage ? <span className="alert">{saveMessage}</span> : null}
 						<FormContext />

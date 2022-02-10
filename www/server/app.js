@@ -41,14 +41,13 @@ app.get('/api/resetSettings', (req, res) => {
 app.get('/api/getDisplayOptions', (req, res) => {
 	console.log('/api/getDisplayOptions');
 	return res.send({
-		enabled: 1,
-		sdaPin: 0,
-		sclPin: 1,
-		i2cAddress: '0x3D',
-		i2cBlock: 0,
+		i2cPinMapping: 26,
 		i2cSpeed: 400000,
+		i2cAddress: '3C',
+		displayDriver: 3,
 		flipDisplay: 0,
-		invertDisplay: 1,
+		invertDisplay: 0,
+		usedPins: [],
 	});
 });
 
@@ -58,6 +57,7 @@ app.get('/api/getGamepadOptions', (req, res) => {
 		dpadMode: 0,
 		inputMode: 1,
 		socdMode: 2,
+		buttonLayout: 0,
 	});
 });
 
@@ -73,7 +73,6 @@ app.get('/api/getLedOptions', (req, res) => {
 		brightnessSteps: 5,
 		dataPin: 15,
 		ledFormat: 0,
-		ledLayout: 1,
 		ledsPerButton: 2,
 		ledButtonMap: {
 			Up: 3,

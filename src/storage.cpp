@@ -52,7 +52,7 @@ BoardOptions getBoardOptions()
 		options.buttonLayout      = BUTTON_LAYOUT;
 		options.i2cSDAPin         = I2C_SDA_PIN;
 		options.i2cSCLPin         = I2C_SCL_PIN;
-		options.i2cBlock          = (I2C_BLOCK == i2c0) ? 0 : 1;
+		options.i2cBlock          = (I2C_SDA_PIN % 4 == 0) ? 0 : 1;
 		options.i2cSpeed          = I2C_SPEED;
 		options.hasI2CDisplay     = HAS_I2C_DISPLAY;
 		options.displayI2CAddress = DISPLAY_I2C_ADDR;
