@@ -18,10 +18,6 @@
 #define BOARD_LEDS_PIN -1
 #endif
 
-#ifndef BUTTON_LAYOUT
-#define BUTTON_LAYOUT BUTTON_LAYOUT_ARCADE
-#endif
-
 #ifndef LED_FORMAT
 #define LED_FORMAT LED_FORMAT_GRB
 #endif

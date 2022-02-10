@@ -9,7 +9,12 @@
 #include <stdint.h>
 #include <string>
 #include "pico/stdlib.h"
+#include "enums.h"
 #include "gamepad.h"
+
+#ifndef BUTTON_LAYOUT
+#define BUTTON_LAYOUT BUTTON_LAYOUT_ARCADE
+#endif
 
 using namespace std;
 
