@@ -18,18 +18,11 @@ const LED_FORMATS = [
 	{ label: 'RGBW', value: 3 },
 ];
 
-const BUTTON_LAYOUTS = [
-	{ label: '8-Button Layout', value: 0 },
-	{ label: 'Hit Box Layout', value: 1 },
-	{ label: 'WASD Layout', value: 2 },
-];
-
 const defaultValue = {
 	brightnessMaximum: 255,
 	brightnessSteps: 5,
 	dataPin: -1,
 	ledFormat: 0,
-	ledLayout: 0,
 	ledsPerButton: 2,
 };
 
@@ -41,7 +34,6 @@ const schema = yup.object().shape({
 	// eslint-disable-next-line no-template-curly-in-string
 	dataPin           : yup.number().required().min(-1).max(29).test('', '${originalValue} is already assigned!', (value) => usedPins.indexOf(value) === -1).label('Data Pin'),
 	ledFormat         : yup.number().required().positive().integer().min(0).max(3).label('LED Format'),
-	ledLayout         : yup.number().required().positive().integer().min(0).max(2).label('LED Layout'),
 	ledsPerButton      : yup.number().required().positive().integer().min(1).label('LEDs Per Pixel'),
 });
 
@@ -165,20 +157,6 @@ export default function LEDConfigPage() {
 								>
 								{LED_FORMATS.map((o, i) => <option key={`ledFormat-option-${i}`} value={o.value}>{o.label}</option>)}
 							</FormSelect>
-							<FormSelect
-								label="LED Layout"
-								name="ledLayout"
-								className="form-select-sm"
-								groupClassName="col-sm-4 mb-3"
-								value={values.ledLayout}
-								error={errors.ledLayout}
-								isInvalid={errors.ledLayout}
-								onChange={handleChange}
-							>
-								{BUTTON_LAYOUTS.map((o, i) => <option key={`ledLayout-option-${i}`} value={o.value}>{o.label}</option>)}
-							</FormSelect>
-						</Row>
-						<Row>
 							<FormControl type="number"
 								label="LEDs Per Button"
 								name="ledsPerButton"
@@ -190,6 +168,8 @@ export default function LEDConfigPage() {
 								onChange={handleChange}
 								min={1}
 							/>
+						</Row>
+						<Row>
 							<FormControl type="number"
 								label="Max Brightness"
 								name="brightnessMaximum"

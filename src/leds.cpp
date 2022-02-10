@@ -250,9 +250,10 @@ uint8_t setupButtonPositions()
 
 void LEDModule::configureLEDs()
 {
+	BoardOptions boardOptions = getBoardOptions();
 	nextRunTime = make_timeout_time_ms(10000); // Set crazy timeout to prevent loop from running while we reconfigure
 	uint8_t buttonCount = setupButtonPositions();
-	vector<vector<Pixel>> pixels = createLedButtonLayout(ledOptions.ledLayout, ledOptions.ledsPerButton, buttonCount);
+	vector<vector<Pixel>> pixels = createLedButtonLayout(boardOptions.buttonLayout, ledOptions.ledsPerButton, buttonCount);
 	matrix.setup(pixels, ledOptions.ledsPerButton);
 	ledCount = matrix.getLedCount();
 	if (PLED_TYPE == PLED_TYPE_RGB && PLED_COUNT > 0)
@@ -276,7 +277,7 @@ void LEDModule::configureLEDs()
 	Animation::format = ledOptions.ledFormat;
 	AnimationStation::ConfigureBrightness(ledOptions.brightnessMaximum, ledOptions.brightnessSteps);
 	AnimationStation::SetOptions(AnimationStore.getAnimationOptions());
-	addStaticThemes(ledOptions);
+	addStaticThemes(ledOptions, boardOptions.buttonLayout);
 	as.SetMode(AnimationStation::options.baseAnimationIndex);
 	as.SetMatrix(matrix);
 
@@ -290,7 +291,6 @@ void LEDModule::setup()
 	{
 		ledOptions.dataPin = BOARD_LEDS_PIN;
 		ledOptions.ledFormat = LED_FORMAT;
-		ledOptions.ledLayout = BUTTON_LAYOUT;
 		ledOptions.ledsPerButton = LEDS_PER_PIXEL;
 		ledOptions.brightnessMaximum = LED_BRIGHTNESS_MAXIMUM;
 		ledOptions.brightnessSteps = LED_BRIGHTNESS_STEPS;

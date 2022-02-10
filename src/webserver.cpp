@@ -169,11 +169,13 @@ string setDisplayOptions()
 string getGamepadOptions()
 {
 	DynamicJsonDocument doc(LWIP_HTTPD_POST_MAX_PAYLOAD_LEN);
-
 	GamepadOptions options = GamepadStore.getGamepadOptions();
-	doc["dpadMode"]  = options.dpadMode;
-	doc["inputMode"] = options.inputMode;
-	doc["socdMode"]  = options.socdMode;
+	BoardOptions boardOptions = getBoardOptions();
+
+	doc["dpadMode"]     = options.dpadMode;
+	doc["inputMode"]    = options.inputMode;
+	doc["socdMode"]     = options.socdMode;
+	doc["buttonLayout"] = boardOptions.buttonLayout;
 
 	return serialize_json(doc);
 }
@@ -181,6 +183,11 @@ string getGamepadOptions()
 string setGamepadOptions()
 {
 	DynamicJsonDocument doc = get_post_data();
+
+	BoardOptions boardOptions = getBoardOptions();
+	boardOptions.buttonLayout = doc["buttonLayout"];
+	setBoardOptions(boardOptions);
+	GamepadStore.save();
 
 	gamepad.options.dpadMode  = doc["dpadMode"];
 	gamepad.options.inputMode = doc["inputMode"];
@@ -196,7 +203,6 @@ string getLedOptions()
 
 	doc["dataPin"]           = ledModule.ledOptions.dataPin;
 	doc["ledFormat"]         = ledModule.ledOptions.ledFormat;
-	doc["ledLayout"]         = ledModule.ledOptions.ledLayout;
 	doc["ledsPerButton"]     = ledModule.ledOptions.ledsPerButton;
 	doc["brightnessMaximum"] = ledModule.ledOptions.brightnessMaximum;
 	doc["brightnessSteps"]   = ledModule.ledOptions.brightnessSteps;
@@ -258,7 +264,6 @@ string setLedOptions()
 	ledModule.ledOptions.useUserDefinedLEDs = true;
 	ledModule.ledOptions.dataPin            = doc["dataPin"];
 	ledModule.ledOptions.ledFormat          = doc["ledFormat"];
-	ledModule.ledOptions.ledLayout          = doc["ledLayout"];
 	ledModule.ledOptions.ledsPerButton      = doc["ledsPerButton"];
 	ledModule.ledOptions.brightnessMaximum  = doc["brightnessMaximum"];
 	ledModule.ledOptions.brightnessSteps    = doc["brightnessSteps"];

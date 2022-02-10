@@ -57,6 +57,7 @@ app.get('/api/getGamepadOptions', (req, res) => {
 		dpadMode: 0,
 		inputMode: 1,
 		socdMode: 2,
+		buttonLayout: 0,
 	});
 });
 
@@ -72,7 +73,6 @@ app.get('/api/getLedOptions', (req, res) => {
 		brightnessSteps: 5,
 		dataPin: 15,
 		ledFormat: 0,
-		ledLayout: 1,
 		ledsPerButton: 2,
 		ledButtonMap: {
 			Up: 3,
