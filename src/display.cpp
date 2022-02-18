@@ -22,7 +22,7 @@ inline void drawHitbox(int startX, int startY, int buttonRadius, int buttonPaddi
 {
 	const int buttonMargin = buttonPadding + (buttonRadius * 2);
 
-	// UDLR
+	// Hitbox
 	obdPreciseEllipse(&obd, startX, startY, buttonRadius, buttonRadius, 1, gamepad->pressedLeft());
 	obdPreciseEllipse(&obd, startX + buttonMargin, startY, buttonRadius, buttonRadius, 1, gamepad->pressedDown());
 	obdPreciseEllipse(&obd, startX + (buttonMargin * 1.875), startY + (buttonMargin / 2), buttonRadius, buttonRadius, 1, gamepad->pressedRight());
@@ -33,7 +33,7 @@ inline void drawWasdBox(int startX, int startY, int buttonRadius, int buttonPadd
 {
 	const int buttonMargin = buttonPadding + (buttonRadius * 2);
 
-	// UDLR
+	// WASD
 	obdPreciseEllipse(&obd, startX, startY + buttonMargin * 0.5, buttonRadius, buttonRadius, 1, gamepad->pressedLeft());
 	obdPreciseEllipse(&obd, startX + buttonMargin, startY + buttonMargin * 0.875, buttonRadius, buttonRadius, 1, gamepad->pressedDown());
 	obdPreciseEllipse(&obd, startX + buttonMargin * 1.5, startY - buttonMargin * 0.125, buttonRadius, buttonRadius, 1, gamepad->pressedUp());
@@ -81,6 +81,22 @@ inline void drawArcadeStick(int startX, int startY, int buttonRadius, int button
 	} else {
 		obdPreciseEllipse(&obd, startX + buttonMargin / 2, startY + buttonMargin / 2, buttonRadius, buttonRadius, 1, 1);
 	}
+}
+
+inline void drawMAMEL(int startX, int startY, int buttonRadius, int buttonPadding, Gamepad *gamepad)
+{
+	const int buttonMargin = buttonPadding + (buttonRadius * 2);
+
+	// MAME
+	obdRectangle(&obd, startX, startY + buttonMargin, startX + buttonMargin, startY + buttonMargin * 2, 1, gamepad->pressedLeft());
+	obdRectangle(&obd, startX + buttonMargin, startY + buttonMargin, startX + buttonMargin * 2, startY + buttonMargin * 2, 1, gamepad->pressedDown());
+	obdRectangle(&obd, startX + buttonMargin, startY, startX + buttonMargin * 2, startY + buttonMargin, 1, gamepad->pressedUp());
+	obdRectangle(&obd, startX + buttonMargin * 2, startY + buttonMargin, startX + buttonMargin * 3, startY + buttonMargin * 2, 1, gamepad->pressedRight());
+/*	obdPreciseEllipse(&obd, startX, startY + buttonMargin * 0.5, buttonRadius, buttonRadius, 1, gamepad->pressedLeft());
+	obdPreciseEllipse(&obd, startX + buttonMargin, startY + buttonMargin * 0.875, buttonRadius, buttonRadius, 1, gamepad->pressedDown());
+	obdPreciseEllipse(&obd, startX + buttonMargin * 1.5, startY - buttonMargin * 0.125, buttonRadius, buttonRadius, 1, gamepad->pressedUp());
+	obdPreciseEllipse(&obd, startX + (buttonMargin * 2), startY + buttonMargin * 1.25, buttonRadius, buttonRadius, 1, gamepad->pressedRight());
+*/
 }
 
 inline void drawVewlix(int startX, int startY, int buttonRadius, int buttonPadding, Gamepad *gamepad)
@@ -355,7 +371,7 @@ void DisplayModule::process(Gamepad *gamepad)
 	// Check timer for splash
 	if (getMillis() < 5000) {
 		clearScreen();
-		drawSplashScreen(0, 90);
+		drawSplashScreen(1, 90);
 	} else {
 		clearScreen();
 
@@ -380,6 +396,15 @@ void DisplayModule::process(Gamepad *gamepad)
 			case BUTTON_LAYOUT_UDLR:
 				drawUDLR(8, 28, 8, 2, gamepad);
 				break;
+
+			case BUTTON_LAYOUT_MIXBOX:
+				//drawMixBox(8, 28, 5, 0, gamepad);
+				drawWasdBox(55, 28, 7, 3, gamepad);
+				break;
+			case BUTTON_LAYOUT_MAMEL:
+				drawMAMEL(8, 28, 5, 0, gamepad);
+				drawWasdBox(55, 28, 7, 3, gamepad);
+				break;
 		}
 
 		switch (BUTTON_LAYOUT_RIGHT)
@@ -396,8 +421,11 @@ void DisplayModule::process(Gamepad *gamepad)
 			case BUTTON_LAYOUT_SEGA2P:
 				drawSega2p(8, 28, 8, 2, gamepad);
 				break;
+			case BUTTON_LAYOUT_DDRR:
+				//lol
+				break;
 		}
-	}
+	//}
 
 	obdDumpBuffer(&obd, NULL);
 }
