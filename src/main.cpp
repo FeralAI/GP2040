@@ -8,6 +8,8 @@
 #include "BoardConfig.h"
 
 //Lee Comment Test 2
+int TestVarLee = 5;
+
 
 #include <vector>
 #include "pico/stdlib.h"
