@@ -236,6 +236,54 @@ inline void drawCapcom6(int startX, int startY, int buttonRadius, int buttonPadd
 	obdPreciseEllipse(&obd, startX + buttonMargin * 5.25, startY + buttonMargin, buttonRadius, buttonRadius, 1, gamepad->pressedR2());
 }
 
+inline void drawHitboxButtons(int startX, int startY, int buttonRadius, int buttonPadding, Gamepad *gamepad)
+{
+	const int buttonMargin = buttonPadding + (buttonRadius * 2);
+
+	// 8-button
+	obdPreciseEllipse(&obd, startX + (buttonMargin * 2.75), startY, buttonRadius, buttonRadius, 1, gamepad->pressedB3());
+	obdPreciseEllipse(&obd, startX + (buttonMargin * 3.75), startY - (buttonMargin / 4), buttonRadius, buttonRadius, 1, gamepad->pressedB4());
+	obdPreciseEllipse(&obd, startX + (buttonMargin * 4.75), startY - (buttonMargin / 4), buttonRadius, buttonRadius, 1, gamepad->pressedR1());
+	obdPreciseEllipse(&obd, startX + (buttonMargin * 5.75), startY, buttonRadius, buttonRadius, 1, gamepad->pressedL1());
+
+	obdPreciseEllipse(&obd, startX + (buttonMargin * 2.75), startY + buttonMargin, buttonRadius, buttonRadius, 1, gamepad->pressedB1());
+	obdPreciseEllipse(&obd, startX + (buttonMargin * 3.75), startY + buttonMargin - (buttonMargin / 4), buttonRadius, buttonRadius, 1, gamepad->pressedB2());
+	obdPreciseEllipse(&obd, startX + (buttonMargin * 4.75), startY + buttonMargin - (buttonMargin / 4), buttonRadius, buttonRadius, 1, gamepad->pressedR2());
+	obdPreciseEllipse(&obd, startX + (buttonMargin * 5.75), startY + buttonMargin, buttonRadius, buttonRadius, 1, gamepad->pressedL2());
+}
+
+inline void drawWasdButtons(int startX, int startY, int buttonRadius, int buttonPadding, Gamepad *gamepad)
+{
+	const int buttonMargin = buttonPadding + (buttonRadius * 2);
+
+	// 8-button
+	obdPreciseEllipse(&obd, startX + buttonMargin * 3.625, startY, buttonRadius, buttonRadius, 1, gamepad->pressedB3());
+	obdPreciseEllipse(&obd, startX + buttonMargin * 4.625, startY - (buttonMargin / 4), buttonRadius, buttonRadius, 1, gamepad->pressedB4());
+	obdPreciseEllipse(&obd, startX + buttonMargin * 5.625, startY - (buttonMargin / 4), buttonRadius, buttonRadius, 1, gamepad->pressedR1());
+	obdPreciseEllipse(&obd, startX + buttonMargin * 6.625, startY, buttonRadius, buttonRadius, 1, gamepad->pressedL1());
+
+	obdPreciseEllipse(&obd, startX + buttonMargin * 3.25, startY + buttonMargin, buttonRadius, buttonRadius, 1, gamepad->pressedB1());
+	obdPreciseEllipse(&obd, startX + buttonMargin * 4.25, startY + buttonMargin - (buttonMargin / 4), buttonRadius, buttonRadius, 1, gamepad->pressedB2());
+	obdPreciseEllipse(&obd, startX + buttonMargin * 5.25, startY + buttonMargin - (buttonMargin / 4), buttonRadius, buttonRadius, 1, gamepad->pressedR2());
+	obdPreciseEllipse(&obd, startX + buttonMargin * 6.25, startY + buttonMargin, buttonRadius, buttonRadius, 1, gamepad->pressedL2());
+}
+
+inline void drawArcadeButtons(int startX, int startY, int buttonRadius, int buttonPadding, Gamepad *gamepad)
+{
+	const int buttonMargin = buttonPadding + (buttonRadius * 2);
+
+	// 8-button
+	obdPreciseEllipse(&obd, startX + buttonMargin * 3.125, startY, buttonRadius, buttonRadius, 1, gamepad->pressedB3());
+	obdPreciseEllipse(&obd, startX + buttonMargin * 4.125, startY - (buttonMargin / 4), buttonRadius, buttonRadius, 1, gamepad->pressedB4());
+	obdPreciseEllipse(&obd, startX + buttonMargin * 5.125, startY - (buttonMargin / 4), buttonRadius, buttonRadius, 1, gamepad->pressedR1());
+	obdPreciseEllipse(&obd, startX + buttonMargin * 6.125, startY, buttonRadius, buttonRadius, 1, gamepad->pressedL1());
+
+	obdPreciseEllipse(&obd, startX + buttonMargin * 2.875, startY + buttonMargin, buttonRadius, buttonRadius, 1, gamepad->pressedB1());
+	obdPreciseEllipse(&obd, startX + buttonMargin * 3.875, startY + buttonMargin - (buttonMargin / 4), buttonRadius, buttonRadius, 1, gamepad->pressedB2());
+	obdPreciseEllipse(&obd, startX + buttonMargin * 4.875, startY + buttonMargin - (buttonMargin / 4), buttonRadius, buttonRadius, 1, gamepad->pressedR2());
+	obdPreciseEllipse(&obd, startX + buttonMargin * 5.875, startY + buttonMargin, buttonRadius, buttonRadius, 1, gamepad->pressedL2());
+}
+
 // Modes:
 // 1 - Default, hold image
 // 2 - GP2040 close-in animation
@@ -472,6 +520,15 @@ void DisplayModule::process(Gamepad *gamepad)
 
 		switch (BUTTON_LAYOUT_RIGHT)
 		{
+			case BUTTON_LAYOUT_ARCADEB:
+				drawArcadeButtons(8, 28, 8, 2, gamepad);
+				break;
+			case BUTTON_LAYOUT_HITBOXB:
+				drawHitboxButtons(8, 20, 8, 2, gamepad);
+				break;
+			case BUTTON_LAYOUT_WASDB:
+				drawWasdButtons(8, 28, 7, 3, gamepad);
+				break;
 			case BUTTON_LAYOUT_VEWLIX:
 				drawVewlix(8, 28, 8, 2, gamepad);
 				break;
@@ -483,6 +540,9 @@ void DisplayModule::process(Gamepad *gamepad)
 				break;
 			case BUTTON_LAYOUT_SEGA2P:
 				drawSega2p(8, 28, 8, 2, gamepad);
+				break;
+			case BUTTON_LAYOUT_NOIR8:
+				drawNoir8(8, 28, 8, 2, gamepad);
 				break;
 			case BUTTON_LAYOUT_DANCEPADB:
 				drawDancepadB(39, 12, 15, 2, gamepad);
