@@ -18,6 +18,22 @@ inline void clearScreen(int render = 0)
 	obdFill(&obd, 0, render);
 }
 
+inline void drawDiamond(int cx, int cy, int size, uint8_t colour, uint8_t filled)
+{
+	if (filled) {
+		int i;
+		for (i = 0; i < size; i++) {
+			obdDrawLine(&obd, cx - i, cy - size + i, cx + i, cy - size + i, colour, 0);
+			obdDrawLine(&obd, cx - i, cy + size - i, cx + i, cy + size - i, colour, 0);
+		}
+		obdDrawLine(&obd, cx - size, cy, cx + size, cy, colour, 0); // Fill in the middle
+	}
+	obdDrawLine(&obd, cx - size, cy, cx, cy - size, colour, 0);
+	obdDrawLine(&obd, cx, cy - size, cx + size, cy, colour, 0);
+	obdDrawLine(&obd, cx + size, cy, cx, cy + size, colour, 0);
+	obdDrawLine(&obd, cx, cy + size, cx - size, cy, colour, 0);
+}
+
 inline void drawHitbox(int startX, int startY, int buttonRadius, int buttonPadding, Gamepad *gamepad)
 {
 	const int buttonMargin = buttonPadding + (buttonRadius * 2);
@@ -83,7 +99,7 @@ inline void drawArcadeStick(int startX, int startY, int buttonRadius, int button
 	}
 }
 
-inline void drawMAMEL(int startX, int startY, int buttonRadius, int buttonPadding, Gamepad *gamepad)
+inline void drawMAMEA(int startX, int startY, int buttonRadius, int buttonPadding, Gamepad *gamepad)
 {
 	const int buttonMargin = buttonPadding + (buttonRadius * 2);
 
@@ -92,11 +108,17 @@ inline void drawMAMEL(int startX, int startY, int buttonRadius, int buttonPaddin
 	obdRectangle(&obd, startX + buttonMargin, startY + buttonMargin, startX + buttonMargin * 2, startY + buttonMargin * 2, 1, gamepad->pressedDown());
 	obdRectangle(&obd, startX + buttonMargin, startY, startX + buttonMargin * 2, startY + buttonMargin, 1, gamepad->pressedUp());
 	obdRectangle(&obd, startX + buttonMargin * 2, startY + buttonMargin, startX + buttonMargin * 3, startY + buttonMargin * 2, 1, gamepad->pressedRight());
-/*	obdPreciseEllipse(&obd, startX, startY + buttonMargin * 0.5, buttonRadius, buttonRadius, 1, gamepad->pressedLeft());
-	obdPreciseEllipse(&obd, startX + buttonMargin, startY + buttonMargin * 0.875, buttonRadius, buttonRadius, 1, gamepad->pressedDown());
-	obdPreciseEllipse(&obd, startX + buttonMargin * 1.5, startY - buttonMargin * 0.125, buttonRadius, buttonRadius, 1, gamepad->pressedUp());
-	obdPreciseEllipse(&obd, startX + (buttonMargin * 2), startY + buttonMargin * 1.25, buttonRadius, buttonRadius, 1, gamepad->pressedRight());
-*/
+}
+
+inline void drawMixBox(int startX, int startY, int buttonRadius, int buttonPadding, Gamepad *gamepad)
+{
+	const int buttonMargin = buttonPadding + (buttonRadius * 2);
+
+	// MixBox
+	drawDiamond(startX, startY, buttonRadius, 1, gamepad->pressedLeft());
+	drawDiamond(startX + buttonMargin / 2, startY + buttonMargin / 2, buttonRadius, 1, gamepad->pressedDown());
+	drawDiamond(startX + buttonMargin, startY, buttonRadius, 1, gamepad->pressedUp());
+	drawDiamond(startX + buttonMargin, startY + buttonMargin, buttonRadius, 1, gamepad->pressedRight());
 }
 
 inline void drawVewlix(int startX, int startY, int buttonRadius, int buttonPadding, Gamepad *gamepad)
@@ -369,10 +391,10 @@ void DisplayModule::loop()
 void DisplayModule::process(Gamepad *gamepad)
 {
 	// Check timer for splash
-	if (getMillis() < 5000) {
-		clearScreen();
-		drawSplashScreen(1, 90);
-	} else {
+	//if (getMillis() < 5000 && SPLASH_MODE != NOSPLASH) {
+	//	clearScreen();
+	//	drawSplashScreen(1, 90);
+	//} else {
 		clearScreen();
 
 		setStatusBar(gamepad);
@@ -398,11 +420,12 @@ void DisplayModule::process(Gamepad *gamepad)
 				break;
 
 			case BUTTON_LAYOUT_MIXBOX:
-				//drawMixBox(8, 28, 5, 0, gamepad);
+				drawMixBox(18, 28, 5, 2, gamepad);
 				drawWasdBox(55, 28, 7, 3, gamepad);
 				break;
-			case BUTTON_LAYOUT_MAMEL:
-				drawMAMEL(8, 28, 5, 0, gamepad);
+
+			case BUTTON_LAYOUT_MAMEA:
+				drawMAMEA(8, 28, 5, 0, gamepad);
 				drawWasdBox(55, 28, 7, 3, gamepad);
 				break;
 		}
@@ -421,7 +444,7 @@ void DisplayModule::process(Gamepad *gamepad)
 			case BUTTON_LAYOUT_SEGA2P:
 				drawSega2p(8, 28, 8, 2, gamepad);
 				break;
-			case BUTTON_LAYOUT_DDRR:
+			case BUTTON_LAYOUT_DANCEPADB:
 				//lol
 				break;
 		}
