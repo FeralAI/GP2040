@@ -99,15 +99,30 @@ inline void drawArcadeStick(int startX, int startY, int buttonRadius, int button
 	}
 }
 
-inline void drawMAMEA(int startX, int startY, int buttonRadius, int buttonPadding, Gamepad *gamepad)
+inline void drawMAMEA(int startX, int startY, int buttonSize, int buttonPadding, Gamepad *gamepad)
 {
-	const int buttonMargin = buttonPadding + (buttonRadius * 2);
+	const int buttonMargin = buttonPadding + buttonSize;
 
 	// MAME
-	obdRectangle(&obd, startX, startY + buttonMargin, startX + buttonMargin, startY + buttonMargin * 2, 1, gamepad->pressedLeft());
-	obdRectangle(&obd, startX + buttonMargin, startY + buttonMargin, startX + buttonMargin * 2, startY + buttonMargin * 2, 1, gamepad->pressedDown());
-	obdRectangle(&obd, startX + buttonMargin, startY, startX + buttonMargin * 2, startY + buttonMargin, 1, gamepad->pressedUp());
-	obdRectangle(&obd, startX + buttonMargin * 2, startY + buttonMargin, startX + buttonMargin * 3, startY + buttonMargin * 2, 1, gamepad->pressedRight());
+	obdRectangle(&obd, startX, startY + buttonMargin, startX + buttonSize, startY + buttonSize + buttonMargin, 1, gamepad->pressedLeft());
+	obdRectangle(&obd, startX + buttonMargin, startY + buttonMargin, startX + buttonSize + buttonMargin, startY + buttonSize + buttonMargin, 1, gamepad->pressedDown());
+	obdRectangle(&obd, startX + buttonMargin, startY, startX + buttonSize + buttonMargin, startY + buttonSize, 1, gamepad->pressedUp());
+	obdRectangle(&obd, startX + buttonMargin * 2, startY + buttonMargin, startX + buttonSize + buttonMargin * 2, startY + buttonSize + buttonMargin, 1, gamepad->pressedRight());
+}
+
+inline void drawMAMEB(int startX, int startY, int buttonSize, int buttonPadding, Gamepad *gamepad)
+{
+	const int buttonMargin = buttonPadding + buttonSize;
+
+	// 6-button MAME Style
+	obdRectangle(&obd, startX, startY, startX + buttonSize, startY + buttonSize, 1, gamepad->pressedB3());
+	obdRectangle(&obd, startX + buttonMargin, startY, startX + buttonSize + buttonMargin, startY + buttonSize, 1, gamepad->pressedB4());
+	obdRectangle(&obd, startX + buttonMargin * 2, startY, startX + buttonSize + buttonMargin * 2, startY + buttonSize, 1, gamepad->pressedR1());
+
+	obdRectangle(&obd, startX, startY + buttonMargin, startX + buttonSize, startY + buttonMargin + buttonSize, 1, gamepad->pressedB1());
+	obdRectangle(&obd, startX + buttonMargin, startY + buttonMargin, startX + buttonSize + buttonMargin, startY + buttonMargin + buttonSize, 1, gamepad->pressedB2());
+	obdRectangle(&obd, startX + buttonMargin * 2, startY + buttonMargin, startX + buttonSize + buttonMargin * 2, startY + buttonMargin + buttonSize, 1, gamepad->pressedR2());
+
 }
 
 inline void drawMixBox(int startX, int startY, int buttonRadius, int buttonPadding, Gamepad *gamepad)
@@ -446,7 +461,7 @@ void DisplayModule::process(Gamepad *gamepad)
 				break;
 
 			case BUTTON_LAYOUT_MAMEA:
-				drawMAMEA(8, 28, 5, 0, gamepad);
+				drawMAMEA(8, 28, 10, 1, gamepad);
 				//drawWasdBox(55, 28, 7, 3, gamepad);
 				break;
 
@@ -471,6 +486,9 @@ void DisplayModule::process(Gamepad *gamepad)
 				break;
 			case BUTTON_LAYOUT_DANCEPADB:
 				drawDancepadB(39, 12, 15, 2, gamepad);
+				break;
+			case BUTTON_LAYOUT_MAMEB:
+				drawMAMEB(68, 28, 10, 1, gamepad);
 				break;
 		}
 	//}
