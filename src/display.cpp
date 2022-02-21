@@ -137,28 +137,6 @@ inline void drawMixBox(int startX, int startY, int buttonRadius, int buttonPaddi
 	drawDiamond(startX + buttonMargin, startY + buttonMargin, buttonRadius, 1, gamepad->pressedRight());
 }
 
-inline void drawDancepadA(int startX, int startY, int buttonSize, int buttonPadding, Gamepad *gamepad)
-{
-	const int buttonMargin = buttonPadding + buttonSize;
-
-	// MAME
-	obdRectangle(&obd, startX, startY + buttonMargin, startX + buttonSize, startY + buttonSize + buttonMargin, 1, gamepad->pressedLeft());
-	obdRectangle(&obd, startX + buttonMargin, startY + buttonMargin * 2, startX + buttonSize + buttonMargin, startY + buttonSize + buttonMargin * 2, 1, gamepad->pressedDown());
-	obdRectangle(&obd, startX + buttonMargin, startY, startX + buttonSize + buttonMargin, startY + buttonSize, 1, gamepad->pressedUp());
-	obdRectangle(&obd, startX + buttonMargin * 2, startY + buttonMargin, startX + buttonSize + buttonMargin * 2, startY + buttonSize + buttonMargin, 1, gamepad->pressedRight());
-}
-
-inline void drawDancepadB(int startX, int startY, int buttonSize, int buttonPadding, Gamepad *gamepad)
-{
-	const int buttonMargin = buttonPadding + buttonSize;
-
-	// MAME
-	obdRectangle(&obd, startX, startY, startX + buttonSize, startY + buttonSize, 1, gamepad->pressedB2()); // Up/Left
-	obdRectangle(&obd, startX, startY + buttonMargin * 2, startX + buttonSize, startY + buttonSize + buttonMargin * 2, 1, gamepad->pressedB4()); // Down/Left
-	obdRectangle(&obd, startX + buttonMargin * 2, startY, startX + buttonSize + buttonMargin * 2, startY + buttonSize, 1, gamepad->pressedB1()); // Up/Right
-	obdRectangle(&obd, startX + buttonMargin * 2, startY + buttonMargin * 2, startX + buttonSize + buttonMargin * 2, startY + buttonSize + buttonMargin * 2, 1, gamepad->pressedB3()); // Down/Right
-}
-
 inline void drawVewlix(int startX, int startY, int buttonRadius, int buttonPadding, Gamepad *gamepad)
 {
 	const int buttonMargin = buttonPadding + (buttonRadius * 2);
@@ -397,30 +375,20 @@ void DisplayModule::process(Gamepad *gamepad)
 			case BUTTON_LAYOUT_ARCADE:
 				drawArcadeStick(8, 28, 8, 2, gamepad);
 				break;
-
 			case BUTTON_LAYOUT_HITBOX:
 				drawHitbox(8, 20, 8, 2, gamepad);
 				break;
-
 			case BUTTON_LAYOUT_WASD:
 				drawWasdBox(8, 28, 7, 3, gamepad);
 				break;
-
 			case BUTTON_LAYOUT_UDLR:
 				drawUDLR(8, 28, 8, 2, gamepad);
 				break;
-
 			case BUTTON_LAYOUT_MIXBOX:
 				drawMixBox(18, 28, 5, 2, gamepad);
 				break;
-
 			case BUTTON_LAYOUT_MAMEA:
 				drawMAMEA(8, 28, 10, 1, gamepad);
-				//drawWasdBox(55, 28, 7, 3, gamepad);
-				break;
-
-			case BUTTON_LAYOUT_DANCEPADA:
-				drawDancepadA(39, 12, 15, 2, gamepad);
 				break;
 		}
 
@@ -449,9 +417,6 @@ void DisplayModule::process(Gamepad *gamepad)
 				break;
 			case BUTTON_LAYOUT_NOIR8:
 				drawNoir8(8, 28, 8, 2, gamepad);
-				break;
-			case BUTTON_LAYOUT_DANCEPADB:
-				drawDancepadB(39, 12, 15, 2, gamepad);
 				break;
 			case BUTTON_LAYOUT_MAMEB:
 				drawMAMEB(68, 28, 10, 1, gamepad);
