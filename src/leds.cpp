@@ -192,7 +192,7 @@ vector<vector<Pixel>> createLedButtonLayout(ButtonLayout layout, vector<vector<u
 {
 	switch (layout)
 	{
-		case BUTTON_LAYOUT_ARCADE:
+		case BUTTON_LAYOUT_UDLR:
 			return createLedLayoutArcadeButtons(positions);
 
 		case BUTTON_LAYOUT_HITBOX:
@@ -200,6 +200,9 @@ vector<vector<Pixel>> createLedButtonLayout(ButtonLayout layout, vector<vector<u
 
 		case BUTTON_LAYOUT_WASD:
 			return createLedLayoutArcadeWasd(positions);
+
+		default:
+			return createLedLayoutArcadeButtons(positions); // This needs to be confirmed.
 	}
 }
 
