@@ -7,7 +7,7 @@ This project provides a 4 player XInput solution for arcade cabinets using a win
 Features:
 * High compatibility with modern PC games (Emulates Xbox 360 controller, BUT DOES NOT WORK ON ANY XBOX)
 * Players 1 to 4 stay in the correct order (without any software or configuration on computer)
-* Extremely low latency
+* Extremely low latency (up to 3ms in addition to 1ms of existing GP2040 firmware - unverified)
 * Compatible with most raspberry pi arcade setups as well (although almost any dinput encoders are adequate with a pi)
 
 ******************************************************
