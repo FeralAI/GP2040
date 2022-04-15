@@ -210,7 +210,7 @@ void loop()
 	nextSerial = getMillis() + serialInterval;
 	}
 
-	//Steps to execute based on physical player location
+	//Steps to execute based on physical player location for GP2040-X4
 	if (physicalPlayer == 1) {
 	gamepad.pressedLeft() ? serialOut[0] = 1 : serialOut[0] = 0; // read left button input to serial out
 	gpio_put(PIN_LED, serialOut[0]);
