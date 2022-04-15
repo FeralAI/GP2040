@@ -154,9 +154,6 @@ void loop()
 	static const uint32_t serialInterval = 1; //how often does serial read and write in ms
 	const size_t serialLen = 12; //Serial frame length (Should match number of bytes in serial buffer arrays) 
 
-	// Player number to be set based on PIN_PLAYER_0 and PIN_PLAYER_1
-	bool physicalPlayer0 = 0; //pin reading of first GPIO assign ping
-	bool physicalPlayer1 = 0; //pin reading of second GPIO assign ping
 	int physicalPlayer = 0; //pins 0 and 1 solved to get player 1, 2, 3, or 4
 	int computerPlayer = 0; //This is going to be assigned based on xinput position assigned by computer (From player LED status)
 
@@ -167,12 +164,10 @@ void loop()
 	//Determine Physical Player Position of Encoder
 	//Determined by combination of permanent assignment pins
 	//in addition to 2 or 4 player mode
-	physicalPlayer0 = !gpio_get(PIN_PLAYER_0); //inverted because pull-up is used
-	physicalPlayer1 = !gpio_get(PIN_PLAYER_1);
-	if(!physicalPlayer0 && !physicalPlayer1) physicalPlayer = 1;
-	if(!physicalPlayer0 && physicalPlayer1) physicalPlayer = 2;
-	if(physicalPlayer0 && !physicalPlayer1) physicalPlayer = 3;
-	if(physicalPlayer0 && physicalPlayer1) physicalPlayer = 4;
+	if(gpio_get(PIN_PLAYER_0) && gpio_get(PIN_PLAYER_1)) physicalPlayer = 1;
+	if(gpio_get(PIN_PLAYER_0) && !gpio_get(PIN_PLAYER_1)) physicalPlayer = 2;
+	if(!gpio_get(PIN_PLAYER_0) && gpio_get(PIN_PLAYER_1)) physicalPlayer = 3;
+	if(!gpio_get(PIN_PLAYER_0) && !gpio_get(PIN_PLAYER_1)) physicalPlayer = 4;
 
 
 
