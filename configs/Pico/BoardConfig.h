@@ -8,24 +8,42 @@
 
 #include <GamepadEnums.h>
 
-#define PIN_DPAD_UP     2
-#define PIN_DPAD_DOWN   3
-#define PIN_DPAD_RIGHT  4
-#define PIN_DPAD_LEFT   5
-#define PIN_BUTTON_B1   6
-#define PIN_BUTTON_B2   7
-#define PIN_BUTTON_R2   8
-#define PIN_BUTTON_L2   9
-#define PIN_BUTTON_B3   10
-#define PIN_BUTTON_B4   11
-#define PIN_BUTTON_R1   12
-#define PIN_BUTTON_L1   13
-#define PIN_BUTTON_S1   16
-#define PIN_BUTTON_S2   17
-#define PIN_BUTTON_L3   18
-#define PIN_BUTTON_R3   19
-#define PIN_BUTTON_A1   20
-#define PIN_BUTTON_A2   21
+//THIS WAS EDITED TO MATCH GP2040-X4 PINOUT AND SETUP
+#define PIN_DPAD_UP     0
+#define PIN_DPAD_DOWN   1
+#define PIN_DPAD_RIGHT  2
+#define PIN_DPAD_LEFT   3
+#define PIN_BUTTON_S1   4
+#define PIN_BUTTON_S2   5
+#define PIN_BUTTON_B3   6
+#define PIN_BUTTON_B4   7
+#define PIN_BUTTON_R1   8
+#define PIN_BUTTON_L1   9
+#define PIN_BUTTON_B1   10
+#define PIN_BUTTON_B2   11
+#define PIN_BUTTON_R2   12
+#define PIN_BUTTON_L2   13
+#define PIN_BUTTON_L3   14
+#define PIN_BUTTON_R3   15
+#define PIN_BUTTON_A1   26
+#define PIN_BUTTON_A2   27
+
+//AUXILLARY BUTTONS
+//(USED FOR VARIOUS CONFIGURATION SETTINGS, FUNCTION WILL CHANGE BASED ON PLAYER NUMBER)
+#define PIN_AUX_0       22
+#define PIN_AUX_1       28
+
+//PINS FOR CONFIGURING PLAYER POSITION (PERMANENT TO INDICATE PLAYER NUMBER)
+#define PIN_PLAYER_0    18
+#define PIN_PLAYER_1    19
+
+//PINS FOR 4PXE SERIAL RING
+#define PIN_UART0_TX    16
+#define PIN_UART0_RX    17
+#define PIN_UART1_TX    20
+#define PIN_UART1_RX    21
+
+#define PIN_LED         25
 
 #define DEFAULT_SOCD_MODE SOCD_MODE_NEUTRAL
 #define BUTTON_LAYOUT BUTTON_LAYOUT_ARCADE
