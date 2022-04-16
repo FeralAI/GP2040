@@ -67,15 +67,17 @@ int main()
 void setup()
 {
 	// Initialise UART - used for 4PXE serial ring sending values in circle
+	// Set the GPIO pin mux to the UART - 0 is TX, 1 is RX
     uart_init(uart0, 921600);
     uart_init(uart1, 921600);
-
-    // Set the GPIO pin mux to the UART - 0 is TX, 1 is RX
     gpio_set_function(PIN_UART0_RX, GPIO_FUNC_UART);
     gpio_set_function(PIN_UART0_TX, GPIO_FUNC_UART);
 	gpio_set_function(PIN_UART1_RX, GPIO_FUNC_UART);
     gpio_set_function(PIN_UART1_TX, GPIO_FUNC_UART);
-	    //uart_puts(uart0, "Hello world!"); this was from testing
+	uart_set_hw_flow(uart0, false, false);
+	uart_set_hw_flow(uart1, false, false);
+	uart_set_fifo_enabled(uart0, true);
+	uart_set_fifo_enabled(uart1, true);
 
 	//Initilize LED Pin on Pico
 	gpio_init(PIN_LED);
