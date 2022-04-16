@@ -154,8 +154,11 @@ void loop()
 	static const uint32_t serialInterval = 1; //how often does serial read and write in ms
 	const size_t serialLen = 12; //Serial frame length (Should match number of bytes in serial buffer arrays) 
 
+
 	int physicalPlayer = 0; //pins 0 and 1 solved to get player 1, 2, 3, or 4
+	int assignedPlayer = 0; //The pysical player position gets assigned desired player number based on 2 or 4 player mode (3124 or 1234)
 	int computerPlayer = 0; //This is going to be assigned based on xinput position assigned by computer (From player LED status)
+	int orderPlayers = 0; //This is the setting for 2 or 4 player mode (3124 or 1234). 0 = 4 player (1234), 1 = 2 Player (3124)
 
 	//Serial data holds for 4PXE
 	static uint8_t serialOut[12] = {}; //Stores test values to send on UART0
@@ -168,7 +171,6 @@ void loop()
 	if(gpio_get(PIN_PLAYER_0) && !gpio_get(PIN_PLAYER_1)) physicalPlayer = 2;
 	if(!gpio_get(PIN_PLAYER_0) && gpio_get(PIN_PLAYER_1)) physicalPlayer = 3;
 	if(!gpio_get(PIN_PLAYER_0) && !gpio_get(PIN_PLAYER_1)) physicalPlayer = 4;
-
 
 
 	if (getMillis() - nextRuntime < 0)
@@ -200,9 +202,12 @@ void loop()
 
 	//SERIAL SEND AND RECEIVE FOR GP2040-X4///////////
 	if (getMillis() > nextSerial){
-	uart_read_blocking(uart1, serialIn, serialLen); //THIS IS BREAKING USB FUNCTIONS
 	uart_write_blocking(uart0, serialOut, serialLen); //write on interval to avoid flooding buffers
 	nextSerial = getMillis() + serialInterval;
+	}
+
+	if (uart_is_readable(uart1)){
+	uart_read_blocking(uart1, serialIn, serialLen);
 	}
 
 	//Steps to execute based on physical player location for GP2040-X4
