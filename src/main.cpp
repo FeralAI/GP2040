@@ -229,7 +229,7 @@ void loop()
 	//SERIAL SEND FOR GP2040-X4///////////////////////////////////////////////////////////////////////////////////////////
 	if (getMillis() > nextSerial){
 		if (uart_is_writable(uart0)){
-		uart_write_blocking(uart0, serialOut[0], serialLen); //write on interval to avoid flooding buffers
+		uart_write_blocking(uart0, &serialOut[0], serialLen); //write on interval to avoid flooding buffers
 		nextSerial = getMicros() + serialInterval;
 		}
 	}
