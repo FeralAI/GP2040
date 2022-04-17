@@ -13,7 +13,9 @@
 #include "pico/bootrom.h"
 #include "pico/util/queue.h"
 #include "tusb.h"
-#include "Common.h" //added for GP2040-X4 to use bitWrite functions
+
+//added common.h for GP2040-X4 to use bitWrite functions//////////////////////////////////////////////////////////
+#include "Common.h" 
 
 #include "rndis/rndis.h"
 #include "usb_driver.h"
@@ -23,9 +25,16 @@
 #include "pleds.h"
 #include "display.h"
 
-
+//values to transmitted and received for GP2040-4X 4 player functionality//////////////////////////////////////////
+const size_t serialLen = 16; //Serial storage array size and serial frame length (RP2040 has a 16 byte FIFO UART buffer, so 16 is max)
+static uint8_t serialOut[serialLen] = {}; //Data Prepared to send on UART0
+static uint8_t serialIn[serialLen] = {}; //Buffer for received values on UART1
 
 uint32_t getMillis() { return to_ms_since_boot(get_absolute_time()); }
+
+//microsecond time stamp used for GP2040-4X Serial Timing///////////////////////////////////////////////////////////
+uint32_t getMicros() { return to_us_since_boot(get_absolute_time()); } 
+
 
 Gamepad gamepad(GAMEPAD_DEBOUNCE_MILLIS);
 static InputMode inputMode;
@@ -66,7 +75,7 @@ int main()
 
 void setup()
 {
-	// Initialise UART - used for 4PXE serial ring sending values in circle
+	// Initialise UART - used for 4PXE serial ring sending values in circle//////////////////////////////////////////
 	// Set the GPIO pin mux to the UART - 0 is TX, 1 is RX
     uart_init(uart0, 921600);
     uart_init(uart1, 921600);
@@ -79,11 +88,13 @@ void setup()
 	uart_set_fifo_enabled(uart0, true);
 	uart_set_fifo_enabled(uart1, true);
 
-	//Initilize LED Pin on Pico
+
+
+	//Initilize LED Pin on Pico////////////////////////////////////////////////////////////////////////////////////////
 	gpio_init(PIN_LED);
 	gpio_set_dir(PIN_LED, GPIO_OUT);
 
-	//Initilize inputs pins for player position and assign player number based on jumpers and auxillary buttons
+	//Initilize inputs pins for player position and assign player number based on jumpers and auxillary buttons////////
 	gpio_init(PIN_PLAYER_0);
 	gpio_init(PIN_PLAYER_1);
 	gpio_init(PIN_AUX_0);
@@ -143,7 +154,7 @@ void loop()
 {
 	
 
-	
+	//These are variables from main GP2040
 	static void *report;
 	static const uint16_t reportSize = gamepad.getReportSize();
 	static const uint32_t intervalMS = 1;
@@ -151,24 +162,19 @@ void loop()
 	static uint8_t featureData[32] = { };
 	static Gamepad snapshot;
 
-	//Variables added for GP2040-X4 UART communication features
-	static uint32_t nextSerial = 5000; //holds time of next serial read and write
-	static const uint32_t serialInterval = 1; //how often does serial read and write in ms
-	const size_t serialLen = 12; //Serial frame length (Should match number of bytes in serial buffer arrays) 
+	//Variables added for GP2040-X4 UART communication features////////////////////////////////////////////////
+	static uint32_t nextSerial = 0; //holds minimum time before next serial write
+	const uint32_t serialInterval = 600; //minimum time in us between serial transmissions to give time for receiving side to clear buffer
 
-
+	//Variables for player numbers for GP2040-X4////////////////////////////////////////////////////////////////
 	int physicalPlayer = 0; //pins 0 and 1 solved to get player 1, 2, 3, or 4
 	int assignedPlayer = 0; //The pysical player position gets assigned desired player number based on 2 or 4 player mode (3124 or 1234)
 	int computerPlayer = 0; //This is going to be assigned based on xinput position assigned by computer (From player LED status)
 	int orderPlayers = 0; //This is the setting for 2 or 4 player mode (3124 or 1234). 0 = 4 player (1234), 1 = 2 Player (3124)
 
-	//Serial data holds for 4PXE
-	static uint8_t serialOut[12] = {}; //Stores test values to send on UART0
-	static uint8_t serialIn[12] = {}; //Buffer for received values on UART1
 
-	//Determine Physical Player Position of Encoder
+	//Determine Physical Player Position of Encoder /////////////////////////////////////////////////////////////
 	//Determined by combination of permanent assignment pins
-	//in addition to 2 or 4 player mode
 	if(gpio_get(PIN_PLAYER_0) && gpio_get(PIN_PLAYER_1)) physicalPlayer = 1;
 	if(gpio_get(PIN_PLAYER_0) && !gpio_get(PIN_PLAYER_1)) physicalPlayer = 2;
 	if(!gpio_get(PIN_PLAYER_0) && gpio_get(PIN_PLAYER_1)) physicalPlayer = 3;
@@ -202,12 +208,15 @@ void loop()
 
 	nextRuntime = getMillis() + intervalMS;
 
-	//SERIAL SEND AND RECEIVE FOR GP2040-X4///////////
+	//SERIAL SEND FOR GP2040-X4///////////
 	if (getMillis() > nextSerial){
-	uart_write_blocking(uart0, serialOut, serialLen); //write on interval to avoid flooding buffers
-	nextSerial = getMillis() + serialInterval;
+		if (uart_is_writable(uart0)){
+		uart_write_blocking(uart0, serialOut, serialLen); //write on interval to avoid flooding buffers
+		nextSerial = getMicros() + serialInterval;
+		}
 	}
 
+	//SERIAL RECEIVE INTERUPT FOR GP2040-X4///////////
 	if (uart_is_readable(uart1)){
 	uart_read_blocking(uart1, serialIn, serialLen);
 	}
@@ -230,6 +239,13 @@ void loop()
 	gpio_put(PIN_LED, serialIn[0]);
 	}
 
+}
+
+//UART data received interupt - added for GP2040-X4 serial communication//
+void on_uart_rx() {
+    while (uart_is_readable(uart1)) {
+    uart_read_blocking(uart1, serialIn, serialLen);
+    }
 }
 
 void core1()
