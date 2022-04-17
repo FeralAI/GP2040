@@ -35,8 +35,9 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //values to transmitted and received for GP2040-4X 4 player functionality/////////////////////////////////////////////////
 const size_t serialLen = 1; //Serial storage array size and serial frame length (RP2040 has a 16 byte FIFO UART buffer, so 16 is max)
-static uint8_t serialOut[serialLen] = {}; //Data Prepared to send on UART0
-static uint8_t serialIn[serialLen] = {}; //Buffer for received values on UART1
+static uint8_t serialOut[serialLen] = {0}; //Data Prepared to send on UART0
+static uint8_t serialIn[serialLen] = {0}; //Buffer for received values on UART1
+
 
 uint32_t getMillis() { return to_ms_since_boot(get_absolute_time()); }
 
@@ -180,7 +181,7 @@ void loop()
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Variables added for GP2040-X4 UART communication features///////////////////////////////////////////////////////////
 	static uint32_t nextSerial = 0; //holds minimum time before next serial write
-	const uint32_t serialInterval = 2000; //minimum time in us between serial transmissions to give time for receiving side to clear buffer
+	const uint32_t serialInterval = 500; //minimum time in us between serial transmissions to give time for receiving side to clear buffer
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Variables for player numbers for GP2040-X4//////////////////////////////////////////////////////////////////////////
@@ -227,11 +228,9 @@ void loop()
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//SERIAL SEND FOR GP2040-X4///////////////////////////////////////////////////////////////////////////////////////////
-	if (getMillis() > nextSerial){
-		if (uart_is_writable(uart0)){
-		uart_write_blocking(uart0, &serialOut[0], serialLen); //write on interval to avoid flooding buffers
+	if (getMicros() > nextSerial){
+		uart_write_blocking(uart0, serialOut, serialLen); //write on interval to avoid flooding buffers
 		nextSerial = getMicros() + serialInterval;
-		}
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
