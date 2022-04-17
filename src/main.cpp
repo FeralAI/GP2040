@@ -5,6 +5,8 @@
 
 #define GAMEPAD_DEBOUNCE_MILLIS 5
 
+#define UART_ID uart1 //This is the ID for UART1 interupt for receiving serial
+
 #include "BoardConfig.h"
 
 #include <vector>
@@ -17,6 +19,10 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //added common.h for GP2040-X4 to use bitWrite functions//////////////////////////////////////////////////////////////////
 #include "Common.h" 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//added uart.h and irq.h for GP2040-X4 to use serial communication functions////////////////////////////////////////////////////////
+#include "hardware/uart.h"
+#include "hardware/irq.h"
 
 #include "rndis/rndis.h"
 #include "usb_driver.h"
@@ -28,7 +34,7 @@
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //values to transmitted and received for GP2040-4X 4 player functionality/////////////////////////////////////////////////
-const size_t serialLen = 16; //Serial storage array size and serial frame length (RP2040 has a 16 byte FIFO UART buffer, so 16 is max)
+const size_t serialLen = 1; //Serial storage array size and serial frame length (RP2040 has a 16 byte FIFO UART buffer, so 16 is max)
 static uint8_t serialOut[serialLen] = {}; //Data Prepared to send on UART0
 static uint8_t serialIn[serialLen] = {}; //Buffer for received values on UART1
 
@@ -89,6 +95,8 @@ void setup()
     gpio_set_function(PIN_UART1_TX, GPIO_FUNC_UART);
 	uart_set_hw_flow(uart0, false, false);
 	uart_set_hw_flow(uart1, false, false);
+	uart_set_format(uart0, 8, 1, UART_PARITY_NONE);
+	uart_set_format(uart1, 8, 1, UART_PARITY_NONE);
 	uart_set_fifo_enabled(uart0, true);
 	uart_set_fifo_enabled(uart1, true);
 
@@ -154,6 +162,12 @@ void setup()
 	initialize_driver(inputMode);
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//UART data received interupt - added for GP2040-X4 serial communication//////////////////////////////////////////////////
+void on_uart_rx() {
+    uart_read_blocking(uart1, serialIn, serialLen);
+}
+
 void loop()
 {
 	static void *report;
@@ -166,7 +180,7 @@ void loop()
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Variables added for GP2040-X4 UART communication features///////////////////////////////////////////////////////////
 	static uint32_t nextSerial = 0; //holds minimum time before next serial write
-	const uint32_t serialInterval = 600; //minimum time in us between serial transmissions to give time for receiving side to clear buffer
+	const uint32_t serialInterval = 2000; //minimum time in us between serial transmissions to give time for receiving side to clear buffer
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Variables for player numbers for GP2040-X4//////////////////////////////////////////////////////////////////////////
@@ -215,44 +229,42 @@ void loop()
 	//SERIAL SEND FOR GP2040-X4///////////////////////////////////////////////////////////////////////////////////////////
 	if (getMillis() > nextSerial){
 		if (uart_is_writable(uart0)){
-		uart_write_blocking(uart0, serialOut, serialLen); //write on interval to avoid flooding buffers
+		uart_write_blocking(uart0, serialOut[0], serialLen); //write on interval to avoid flooding buffers
 		nextSerial = getMicros() + serialInterval;
 		}
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//SERIAL RECEIVE INTERUPT FOR GP2040-X4///////////////////////////////////////////////////////////////////////////////
-	if (uart_is_readable(uart1)){
-	uart_read_blocking(uart1, serialIn, serialLen);
-	}
+	int UART_IRQ = UART_ID == uart0 ? UART0_IRQ : UART1_IRQ;
+    irq_set_exclusive_handler(UART_IRQ, on_uart_rx);
+    irq_set_enabled(UART_IRQ, true);
+    uart_set_irq_enables(uart1, true, false);    // Now enable the UART to send interrupts - RX only
+    uart_set_irq_enables(UART_ID, true, false);
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Steps to execute based on physical player location for GP2040-X4////////////////////////////////////////////////////
 	if (physicalPlayer == 1) {
-	gamepad.pressedLeft() ? serialOut[0] = 1 : serialOut[0] = 0; // read left button input to serial out
-	gpio_put(PIN_LED, serialOut[0]);
+	gamepad.pressedLeft() ? bitWrite(serialOut[0],0,1) : bitWrite(serialOut[0],0,0); // read left button input to serial out byte 0 bit 0
+	gpio_put(PIN_LED, bitRead(serialOut[0], 0));
 	}
 
 	if (physicalPlayer == 2){
 	serialOut[0] = serialIn[0];
+	(gamepad.pressedLeft() || bitRead(serialIn[0],0)) ? gpio_put(PIN_LED,1) : gpio_put(PIN_LED,0); // button check to see if running
 	}
 
 	if (physicalPlayer == 3){
 	serialOut[0] = serialIn[0];
+	(gamepad.pressedLeft() || bitRead(serialIn[0],0)) ? gpio_put(PIN_LED,1) : gpio_put(PIN_LED,0); // button check to see if running
 	}
 
 	if (physicalPlayer == 4){
-	gpio_put(PIN_LED, serialIn[0]);
+	(gamepad.pressedLeft() || bitRead(serialIn[0],0)) ? gpio_put(PIN_LED,1) : gpio_put(PIN_LED,0); // button check to see if running
 	}
 
 }
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//UART data received interupt - added for GP2040-X4 serial communication//////////////////////////////////////////////////
-void on_uart_rx() {
-    while (uart_is_readable(uart1)) {
-    uart_read_blocking(uart1, serialIn, serialLen);
-    }
-}
+
 
 void core1()
 {
