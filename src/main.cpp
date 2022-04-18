@@ -34,9 +34,9 @@
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //values to transmitted and received for GP2040-4X 4 player functionality/////////////////////////////////////////////////
-const size_t serialLen = 1; //Serial storage array size and serial frame length (RP2040 has a 16 byte FIFO UART buffer, so 16 is max)
-static uint8_t serialOut[serialLen] = {0}; //Data Prepared to send on UART0
-static uint8_t serialIn[serialLen] = {0}; //Buffer for received values on UART1
+const size_t serialLen = 16; //Serial storage array size and serial frame length (RP2040 has a 16 byte FIFO UART buffer, so 16 is max)
+static uint8_t serialOut[serialLen] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}; //Data Prepared to send on UART0
+static uint8_t serialIn[serialLen] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}; //Buffer for received values on UART1
 
 
 uint32_t getMillis() { return to_ms_since_boot(get_absolute_time()); }
@@ -235,7 +235,7 @@ void loop()
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//SERIAL RECEIVE INTERUPT FOR GP2040-X4///////////////////////////////////////////////////////////////////////////////
-	int UART_IRQ = UART_ID == uart0 ? UART0_IRQ : UART1_IRQ;
+	int UART_IRQ = UART_ID == uart0 ? UART0_IRQ : UART1_IRQ; //This is written this way because I borrowed from example//
     irq_set_exclusive_handler(UART_IRQ, on_uart_rx);
     irq_set_enabled(UART_IRQ, true);
     uart_set_irq_enables(uart1, true, false);    // Now enable the UART to send interrupts - RX only
@@ -245,21 +245,22 @@ void loop()
 	//Steps to execute based on physical player location for GP2040-X4////////////////////////////////////////////////////
 	if (physicalPlayer == 1) {
 	gamepad.pressedLeft() ? bitWrite(serialOut[0],0,1) : bitWrite(serialOut[0],0,0); // read left button input to serial out byte 0 bit 0
+	gamepad.pressedLeft() ? bitWrite(serialOut[15],0,1) : bitWrite(serialOut[15],0,0); // read left button input to serial out byte 0 bit 0
 	gpio_put(PIN_LED, bitRead(serialOut[0], 0));
 	}
 
 	if (physicalPlayer == 2){
-	serialOut[0] = serialIn[0];
-	(gamepad.pressedLeft() || bitRead(serialIn[0],0)) ? gpio_put(PIN_LED,1) : gpio_put(PIN_LED,0); // button check to see if running
+	serialOut[0] = serialIn[15];
+	(gamepad.pressedLeft() || bitRead(serialIn[15],0)) ? gpio_put(PIN_LED,1) : gpio_put(PIN_LED,0); // button check to see if running
 	}
 
 	if (physicalPlayer == 3){
-	serialOut[0] = serialIn[0];
-	(gamepad.pressedLeft() || bitRead(serialIn[0],0)) ? gpio_put(PIN_LED,1) : gpio_put(PIN_LED,0); // button check to see if running
+	serialOut[0] = serialIn[15];
+	(gamepad.pressedLeft() || bitRead(serialIn[15],0)) ? gpio_put(PIN_LED,1) : gpio_put(PIN_LED,0); // button check to see if running
 	}
 
 	if (physicalPlayer == 4){
-	(gamepad.pressedLeft() || bitRead(serialIn[0],0)) ? gpio_put(PIN_LED,1) : gpio_put(PIN_LED,0); // button check to see if running
+	(gamepad.pressedLeft() || bitRead(serialIn[15],0)) ? gpio_put(PIN_LED,1) : gpio_put(PIN_LED,0); // button check to see if running
 	}
 
 }
