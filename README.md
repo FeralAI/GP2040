@@ -1,3 +1,5 @@
+THIS IS A WORK IN PROGRESS!
+IT DOES NOT WORK RIGHT NOW
 ******************************************************
 Lee Maskell's 4PXE Firmware (fork of FeralAI's GP2040)
 ******************************************************
