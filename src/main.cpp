@@ -88,8 +88,8 @@ void setup()
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Initialise UART - used for 4PXE serial ring sending values in circle///////////////////////////////////////////////
 	// Set the GPIO pin mux to the UART - 0 is TX, 1 is RX
-    uart_init(uart0, 921600);
-    uart_init(uart1, 921600);
+    uart_init(uart0, 9600); //MAX 921600 tested working with 1 byte
+    uart_init(uart1, 9600);
     gpio_set_function(PIN_UART0_RX, GPIO_FUNC_UART);
     gpio_set_function(PIN_UART0_TX, GPIO_FUNC_UART);
 	gpio_set_function(PIN_UART1_RX, GPIO_FUNC_UART);
