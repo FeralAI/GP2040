@@ -267,6 +267,21 @@ static map<uint32_t, RGB> themeXboxAll({
 	{ GAMEPAD_MASK_L2, ColorWhite },
 });
 
+static map<uint32_t, RGB> themeFightBox({
+	{ GAMEPAD_MASK_DU, ColorRed },
+	{ GAMEPAD_MASK_DD, ColorRed },
+	{ GAMEPAD_MASK_DL, ColorRed },
+	{ GAMEPAD_MASK_DR, ColorRed },
+	{ GAMEPAD_MASK_B1, ColorWhite },
+	{ GAMEPAD_MASK_B2, ColorWhite },
+	{ GAMEPAD_MASK_B3, ColorWhite },
+	{ GAMEPAD_MASK_B4, ColorWhite },
+	{ GAMEPAD_MASK_R1, ColorWhite },
+	{ GAMEPAD_MASK_R2, ColorWhite },
+	{ GAMEPAD_MASK_L1, ColorWhite },
+	{ GAMEPAD_MASK_L2, ColorWhite },
+});
+
 void addStaticThemes(LEDOptions options)
 {
 	// Rainbow theme on a Hitbox layout should use green for up button
@@ -282,6 +297,7 @@ void addStaticThemes(LEDOptions options)
 	StaticTheme::AddTheme(themeSuperFamicomAll);
 	StaticTheme::AddTheme(themePlayStation);
 	StaticTheme::AddTheme(themePlayStationAll);
+	StaticTheme::AddTheme(themeFightBox);
 
 	StaticTheme::AddTheme(themeNeoGeo);
 	StaticTheme::AddTheme(themeNeoGeoCurved);
