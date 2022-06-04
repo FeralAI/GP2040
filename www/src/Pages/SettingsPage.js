@@ -18,9 +18,34 @@ const DPAD_MODES = [
 ];
 
 const SOCD_MODES = [
-	{ label: 'Up Priority', value: 0 },
-	{ label: 'Neutral', value: 1 },
-	{ label: 'Last Win', value: 2 },
+	{ label: 'Up Priority (Legacy)', value: 0 },
+	{ label: 'Neutral (Legacy)', value: 1 },
+	{ label: 'Last Win (Legacy)', value: 2 },
+	{ label: 'L+R Neutral U+D Neutral', value: 3 },
+	{ label: 'L+R Neutral U+D Down Priority', value: 4 },
+	{ label: 'L+R Neutral U+D Up Priority', value: 5 },
+	{ label: 'L+R Neutral U+D Last Input Priority', value: 6 },
+	{ label: 'L+R Neutral U+D First Input Priority', value: 7 },
+	{ label: 'L+R Left Priority U+D Neutral', value: 8 },
+	{ label: 'L+R Left Priority U+D Down Priority', value: 9 },
+	{ label: 'L+R Left Priority U+D Up Priority', value: 10 },
+	{ label: 'L+R Left Priority U+D Last Input Priority', value: 11 },
+	{ label: 'L+R Left Priority U+D First Input Priority', value: 12 },
+	{ label: 'L+R Right Priority U+D Neutral', value: 13 },
+	{ label: 'L+R Right Priority U+D Down Priority', value: 14 },
+	{ label: 'L+R Right Priority U+D Up Priority', value: 15 },
+	{ label: 'L+R Right Priority U+D Last Input Priority', value: 16 },
+	{ label: 'L+R Right Priority U+D First Input Priority', value: 17 },
+	{ label: 'L+R Last Input Priority U+D Neutral', value: 18 },
+	{ label: 'L+R Last Input Priority U+D Down Priority', value: 19 },
+	{ label: 'L+R Last Input Priority U+D Up Priority', value: 20 },
+	{ label: 'L+R Last Input Priority U+D Last Input Priority', value: 21 },
+	{ label: 'L+R Last Input Priority U+D First Input Priority', value: 22 },
+	{ label: 'L+R First Input Priority U+D Neutral', value: 23 },
+	{ label: 'L+R First Input Priority U+D Down Priority', value: 24 },
+	{ label: 'L+R First Input Priority U+D Up Priority', value: 25 },
+	{ label: 'L+R First Input Priority U+D Last Input Priority', value: 26 },
+	{ label: 'L+R First Input Priority U+D First Input Priority', value: 27 },
 ];
 
 const schema = yup.object().shape({

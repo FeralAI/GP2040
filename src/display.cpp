@@ -105,9 +105,9 @@ void setStatusBar(Gamepad *gamepad)
 	switch (gamepad->options.dpadMode)
 	{
 
-		case DPAD_MODE_DIGITAL:      statusBar += "         DPAD"; break;
-		case DPAD_MODE_LEFT_ANALOG:  statusBar += "         LEFT"; break;
-		case DPAD_MODE_RIGHT_ANALOG: statusBar += "        RIGHT"; break;
+		case DPAD_MODE_DIGITAL:      statusBar += "      DPAD"; break;
+		case DPAD_MODE_LEFT_ANALOG:  statusBar += "      LEFT"; break;
+		case DPAD_MODE_RIGHT_ANALOG: statusBar += "     RIGHT"; break;
 	}
 
 	switch (gamepad->options.socdMode)
@@ -115,6 +115,31 @@ void setStatusBar(Gamepad *gamepad)
 		case SOCD_MODE_NEUTRAL:               statusBar += "-N"; break;
 		case SOCD_MODE_UP_PRIORITY:           statusBar += "-U"; break;
 		case SOCD_MODE_SECOND_INPUT_PRIORITY: statusBar += "-L"; break;
+		case SOCD_MODE_X_NEUTRAL_Y_NEUTRAL:   statusBar += "-XNYN"; break;
+		case SOCD_MODE_X_NEUTRAL_Y_DOWN:      statusBar += "-XNYD"; break;
+		case SOCD_MODE_X_NEUTRAL_Y_UP:        statusBar += "-XNYU"; break;
+		case SOCD_MODE_X_NEUTRAL_Y_LIP:       statusBar += "-XNY>"; break;
+		case SOCD_MODE_X_NEUTRAL_Y_FIP:       statusBar += "-XNY<"; break;
+		case SOCD_MODE_X_LEFT_Y_NEUTRAL:      statusBar += "-XLYN"; break;
+		case SOCD_MODE_X_LEFT_Y_DOWN:         statusBar += "-XLYD"; break;
+		case SOCD_MODE_X_LEFT_Y_UP:           statusBar += "-XLYU"; break;
+		case SOCD_MODE_X_LEFT_Y_LIP:          statusBar += "-XLY>"; break;
+		case SOCD_MODE_X_LEFT_Y_FIP:          statusBar += "-XLY<"; break;
+		case SOCD_MODE_X_RIGHT_Y_NEUTRAL:     statusBar += "-XRYN"; break;
+		case SOCD_MODE_X_RIGHT_Y_DOWN:        statusBar += "-XRYD"; break;
+		case SOCD_MODE_X_RIGHT_Y_UP:          statusBar += "-XRYU"; break;
+		case SOCD_MODE_X_RIGHT_Y_LIP:         statusBar += "-XRY>"; break;
+		case SOCD_MODE_X_RIGHT_Y_FIP:         statusBar += "-XRY<"; break;
+		case SOCD_MODE_X_LIP_Y_NEUTRAL:       statusBar += "-X>YN"; break;
+		case SOCD_MODE_X_LIP_Y_DOWN:          statusBar += "-X>YD"; break;
+		case SOCD_MODE_X_LIP_Y_UP:            statusBar += "-X>YU"; break;
+		case SOCD_MODE_X_LIP_Y_LIP:           statusBar += "-X>Y>"; break;
+		case SOCD_MODE_X_LIP_Y_FIP:           statusBar += "-X>Y<"; break;
+		case SOCD_MODE_X_FIP_Y_NEUTRAL:       statusBar += "-X<YN"; break;
+		case SOCD_MODE_X_FIP_Y_DOWN:          statusBar += "-X<YD"; break;
+		case SOCD_MODE_X_FIP_Y_UP:            statusBar += "-X<YU"; break;
+		case SOCD_MODE_X_FIP_Y_LIP:           statusBar += "-X<Y>"; break;
+		case SOCD_MODE_X_FIP_Y_FIP:           statusBar += "-X<Y<"; break;
 	}
 }
 
