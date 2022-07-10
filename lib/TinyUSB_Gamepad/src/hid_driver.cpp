@@ -21,7 +21,7 @@ bool send_hid_report(uint8_t report_id, void *report, uint8_t report_size)
 	return false;
 }
 
-bool hid_device_control_request(uint8_t rhport, tusb_control_request_t const * request)
+bool hid_device_control_request(uint8_t rhport, uint8_t stage, tusb_control_request_t const * request)
 {
 	if (
 		get_input_mode() == INPUT_MODE_HID &&
@@ -34,7 +34,7 @@ bool hid_device_control_request(uint8_t rhport, tusb_control_request_t const * r
 	}
 	else
 	{
-		return hidd_control_request(rhport, request);
+		return hidd_control_xfer_cb(rhport, stage, request);
 	}
 }
 
@@ -45,8 +45,7 @@ const usbd_class_driver_t hid_driver = {
 	.init = hidd_init,
 	.reset = hidd_reset,
 	.open = hidd_open,
-	.control_request = hid_device_control_request,
-	.control_complete = hidd_control_complete,
+	.control_xfer_cb = hid_device_control_request,
 	.xfer_cb = hidd_xfer_cb,
 	.sof = NULL
 };
