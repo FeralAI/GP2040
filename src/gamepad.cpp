@@ -50,20 +50,21 @@ void Gamepad::setup()
 	{
 		gpio_init(gamepadMappings[i]->pin);             // Initialize pin
 		gpio_set_dir(gamepadMappings[i]->pin, GPIO_IN); // Set as INPUT
-		gpio_pull_up(gamepadMappings[i]->pin);          // Set as PULLUP
+		//gpio_pull_up(gamepadMappings[i]->pin);          // Set as PULLUP
 	}
 
 	#ifdef PIN_SETTINGS
 		gpio_init(PIN_SETTINGS);             // Initialize pin
 		gpio_set_dir(PIN_SETTINGS, GPIO_IN); // Set as INPUT
-		gpio_pull_up(PIN_SETTINGS);          // Set as PULLUP
+		//gpio_pull_up(PIN_SETTINGS);          // Set as PULLUP
 	#endif
 }
 
 void Gamepad::read()
 {
 	// Need to invert since we're using pullups
-	uint32_t values = ~gpio_get_all();
+	//uint32_t values = ~gpio_get_all();
+	uint32_t values = gpio_get_all();
 
 	#ifdef PIN_SETTINGS
 	state.aux = 0
