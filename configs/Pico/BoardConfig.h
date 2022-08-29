@@ -12,16 +12,16 @@
 #define PIN_DPAD_DOWN   3
 #define PIN_DPAD_RIGHT  5
 #define PIN_DPAD_LEFT   4
-#define PIN_BUTTON_B1   9
-#define PIN_BUTTON_B2   10
-#define PIN_BUTTON_R2   15
-#define PIN_BUTTON_L2   12
-#define PIN_BUTTON_B3   13
-#define PIN_BUTTON_B4   17
-#define PIN_BUTTON_R1   11
-#define PIN_BUTTON_L1   16
-#define PIN_BUTTON_S1   8
-#define PIN_BUTTON_S2   7
+#define PIN_BUTTON_B1   9 // LK
+#define PIN_BUTTON_B2   10 // MK
+#define PIN_BUTTON_R2   12 // AK
+#define PIN_BUTTON_L2   16 // AP
+#define PIN_BUTTON_B3   13 // LP
+#define PIN_BUTTON_B4   17 // MP
+#define PIN_BUTTON_R1   15 // HK
+#define PIN_BUTTON_L1   11 // HP
+#define PIN_BUTTON_S1   8 // Select
+#define PIN_BUTTON_S2   7 // Start
 
 // Not connected on mine
 #define PIN_BUTTON_L3   18
