@@ -1,3 +1,5 @@
+> GP2040 is no longer being maintained. Please check out the more fully-featured community fork called [GP2040-CE](https://github.com/OpenStickCommunity/GP2040-CE). Documentation for GP2040-CE can be found at <https://gp2040-ce.info>. Thank you to the [Open Stick Community](https://github.com/OpenStickCommunity) members for picking up the slack and advancing this project in my absence.
+
 # GP2040 Firmware
 
 GP2040 is a gamepad firmware for the Raspberry Pi Pico and other boards based on the RP2040 microcontroller, and provides high performance with a rich feature set across multiple platforms. GP2040 is compatible with PC, MiSTer, Android, Raspberry Pi, Nintendo Switch, PS3 and PS4 (legacy controller support).
@@ -45,7 +47,7 @@ The instructions will slightly vary based on your device. These instructions are
 > If the device has been previously used for something other than GP2040, please flash this file first to clear the on-board storage: [flash_nuke.uf2](docs/downloads/flash_nuke.uf2). After flashing the nuke file, wait a minute for the clear program to run and the RPI-RP2 drive to reappear.
 
 1. Download the latest `GP2040.uf2` file from the [Releases](https://github.com/FeralAI/GP2040/releases) section for your board (e.g. `GP2040-PiPico.uf2` for the Raspberry Pi Pico).
-1. Unplug your Pico.
+1. Unplug your Pico.[label](https://www.reddit.com/r/fightsticks/comments/zt628p/gp2040ce_open_stick_community_introduction_and/)
 1. Hold the BOOTSEL button on the Pico and plug into your computer. A new removable drive named `RPI-RP2` should appear in your file explorer.
 1. Drag and drop the `GP2040.uf2` file into the removable drive. This will flash the board.
 1. The board is now running the GP2040 firmware and will appear as a controller on your computer.
