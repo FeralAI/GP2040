@@ -115,6 +115,7 @@ string getDisplayOptions()
 	doc["i2cSpeed"]      = options.i2cSpeed;
 	doc["flipDisplay"]   = options.displayFlip ? 1 : 0;
 	doc["invertDisplay"] = options.displayInvert ? 1 : 0;
+	doc["displaySize"] 	 = options.displaySize;
 
 	auto usedPins = doc.createNestedArray("usedPins");
 	usedPins.add(gamepad.mapDpadUp->pin);
@@ -152,6 +153,7 @@ string setDisplayOptions()
 	options.i2cSpeed          = doc["i2cSpeed"];
 	options.displayFlip       = doc["flipDisplay"];
 	options.displayInvert     = doc["invertDisplay"];
+	options.displaySize       = doc["displaySize"];
 
 	setBoardOptions(options);
 	GamepadStore.save();
