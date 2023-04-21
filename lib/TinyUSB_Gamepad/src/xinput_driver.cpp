@@ -76,17 +76,10 @@ static uint16_t xinput_open(uint8_t rhport, tusb_desc_interface_t const *itf_des
 	return driver_length;
 }
 
-static bool xinput_device_control_request(uint8_t rhport, tusb_control_request_t const *request)
+static bool xinput_device_control_request(uint8_t rhport, uint8_t stage, tusb_control_request_t const *request)
 {
 	(void)rhport;
-	(void)request;
-
-	return true;
-}
-
-static bool xinput_control_complete(uint8_t rhport, tusb_control_request_t const *request)
-{
-	(void)rhport;
+	(void)stage;
 	(void)request;
 
 	return true;
@@ -112,8 +105,7 @@ const usbd_class_driver_t xinput_driver =
 	.init = xinput_init,
 	.reset = xinput_reset,
 	.open = xinput_open,
-	.control_request = xinput_device_control_request,
-	.control_complete = xinput_control_complete,
+	.control_xfer_cb = xinput_device_control_request,
 	.xfer_cb = xinput_xfer_callback,
 	.sof = NULL
 };
