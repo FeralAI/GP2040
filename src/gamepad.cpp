@@ -37,33 +37,34 @@ void Gamepad::setup()
 	mapButtonA1  = new GamepadButtonMapping(boardOptions.pinButtonA1,  GAMEPAD_MASK_A1);
 	mapButtonA2  = new GamepadButtonMapping(boardOptions.pinButtonA2,  GAMEPAD_MASK_A2);
 
-	gamepadMappings = new GamepadButtonMapping *[GAMEPAD_DIGITAL_INPUT_COUNT]
+	gamepadMappings = new GamepadButtonMapping *[GAMEPAD_DIGITAL_INPUT_COUNT - 4]
 	{
 		mapDpadUp,   mapDpadDown, mapDpadLeft, mapDpadRight,
 		mapButtonB1, mapButtonB2, mapButtonB3, mapButtonB4,
 		mapButtonL1, mapButtonR1, mapButtonL2, mapButtonR2,
-		mapButtonS1, mapButtonS2, mapButtonL3, mapButtonR3,
-		mapButtonA1, mapButtonA2
+		mapButtonS1, mapButtonS2, //mapButtonL3, mapButtonR3,
+		//mapButtonA1, mapButtonA2
 	};
 
-	for (int i = 0; i < GAMEPAD_DIGITAL_INPUT_COUNT; i++)
+	for (int i = 0; i < GAMEPAD_DIGITAL_INPUT_COUNT - 4; i++)
 	{
 		gpio_init(gamepadMappings[i]->pin);             // Initialize pin
 		gpio_set_dir(gamepadMappings[i]->pin, GPIO_IN); // Set as INPUT
-		gpio_pull_up(gamepadMappings[i]->pin);          // Set as PULLUP
+		//gpio_pull_up(gamepadMappings[i]->pin);          // Set as PULLUP
 	}
 
 	#ifdef PIN_SETTINGS
 		gpio_init(PIN_SETTINGS);             // Initialize pin
 		gpio_set_dir(PIN_SETTINGS, GPIO_IN); // Set as INPUT
-		gpio_pull_up(PIN_SETTINGS);          // Set as PULLUP
+		//gpio_pull_up(PIN_SETTINGS);          // Set as PULLUP
 	#endif
 }
 
 void Gamepad::read()
 {
 	// Need to invert since we're using pullups
-	uint32_t values = ~gpio_get_all();
+	//uint32_t values = ~gpio_get_all();
+	uint32_t values = gpio_get_all();
 
 	#ifdef PIN_SETTINGS
 	state.aux = 0
